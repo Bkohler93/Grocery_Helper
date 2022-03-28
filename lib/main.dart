@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:grocery_helper_app/extensions/string.dart';
 import 'package:grocery_helper_app/models/grocery_list.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_helper_app/models/meal.dart';
@@ -288,22 +289,22 @@ class _GroceryListPageState extends State<GroceryListPage> {
   }
 
   void _addGroceryItem() {
-    String itemName = textNameController.text;
+    String itemName = textNameController.text.capitalize();
     List<String> itemQtyUnit = textQtyController.text.split(' ');
-    String category = textCategoryController.text;
+    String category = textCategoryController.text.capitalize();
 
     if (itemQtyUnit.length > 1) {
       Provider.of<GroceryListModel>(context, listen: false).addUserEnteredGroceryItem(GroceryItem(
         category,
         itemName,
-        qty: itemQtyUnit[0],
-        qtyUnit: itemQtyUnit[1],
+        qty: itemQtyUnit[0].capitalize(),
+        qtyUnit: itemQtyUnit[1].capitalize(),
       ));
     } else if (itemQtyUnit.length == 1) {
       Provider.of<GroceryListModel>(context, listen: false).addUserEnteredGroceryItem(GroceryItem(
         category,
         itemName,
-        qty: itemQtyUnit[0],
+        qty: itemQtyUnit[0].capitalize(),
       ));
     } else {
       Provider.of<GroceryListModel>(context, listen: false)
@@ -617,17 +618,17 @@ class _AddMealPageState extends State<AddMealPage> {
   final List<GroceryItem> _ingredients = [];
 
   void _addGroceryItem() {
-    String itemName = ingredientNameController.text;
+    String itemName = ingredientNameController.text.capitalize();
     List<String> itemQtyUnit = qtyController.text.split(' ');
-    String category = categoryController.text;
+    String category = categoryController.text.capitalize();
 
     if (itemQtyUnit.length > 1) {
       setState(() {
         _ingredients.add(GroceryItem(
           category,
           itemName,
-          qty: itemQtyUnit[0],
-          qtyUnit: itemQtyUnit[1],
+          qty: itemQtyUnit[0].capitalize(),
+          qtyUnit: itemQtyUnit[1].capitalize(),
         ));
       });
     } else if (itemQtyUnit.length == 1) {
@@ -635,7 +636,7 @@ class _AddMealPageState extends State<AddMealPage> {
         _ingredients.add(GroceryItem(
           category,
           itemName,
-          qty: itemQtyUnit[0],
+          qty: itemQtyUnit[0].capitalize(),
           qtyUnit: " ",
         ));
       });
@@ -837,7 +838,8 @@ class _AddMealPageState extends State<AddMealPage> {
                                   _loading = true;
                                 });
                                 await SQLHelper.insertMeal(
-                                    Meal(name: mealNameController.text), ingredientsView);
+                                    Meal(name: mealNameController.text.capitalize()),
+                                    ingredientsView);
                                 setState(() {
                                   _loading = false;
                                 });
@@ -859,7 +861,8 @@ class _AddMealPageState extends State<AddMealPage> {
                                   _loading = true;
                                 });
                                 await SQLHelper.insertMeal(
-                                    Meal(name: mealNameController.text), ingredientsView);
+                                    Meal(name: mealNameController.text.capitalize()),
+                                    ingredientsView);
                                 mealNameController.clear();
                                 qtyController.clear();
                                 ingredientNameController.clear();
