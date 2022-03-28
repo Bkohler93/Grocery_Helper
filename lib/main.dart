@@ -2,11 +2,8 @@ import 'dart:collection';
 
 import 'package:grocery_helper_app/models/grocery_list.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_helper_app/models/ingredient.dart';
 import 'package:grocery_helper_app/models/meal.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
-import 'dart:async';
 import 'package:grocery_helper_app/data/db.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 
@@ -517,7 +514,10 @@ class _GroceryItemState extends State<GroceryListItem> {
             });
           },
           onTap: () {
-            Provider.of<GroceryListModel>(context, listen: false).checkItem(widget.name);
+            Provider.of<GroceryListModel>(context, listen: false).checkItem(
+              name: widget.name,
+              category: widget.category,
+            );
             setState(() {
               _checkedOff = !_checkedOff;
               widget.handleCheckedOff(_checkedOff);
@@ -535,7 +535,10 @@ class _GroceryItemState extends State<GroceryListItem> {
                     value: _checkedOff,
                     splashRadius: 0.0,
                     onChanged: (value) {
-                      Provider.of<GroceryListModel>(context, listen: false).checkItem(widget.name);
+                      Provider.of<GroceryListModel>(context, listen: false).checkItem(
+                        name: widget.name,
+                        category: widget.category,
+                      );
                       setState(() {
                         _checkedOff = !_checkedOff;
                         widget.handleCheckedOff(_checkedOff);
@@ -548,33 +551,38 @@ class _GroceryItemState extends State<GroceryListItem> {
                       decoration: _checkedOff ? TextDecoration.lineThrough : null,
                     ),
                   ),
-                  width: 200.0,
+                  width: 100.0,
                 ),
                 _isEditing
-                    ? Positioned(
-                        right: 200,
-                        child: SizedBox(
-                          height: 50,
-                          child: ButtonBar(
-                            children: [
-                              SizedBox(
-                                  width: 40,
-                                  child: TextButton(
-                                    child: const Icon(Icons.edit, size: 20),
-                                    onPressed: () {},
-                                  )),
-                              SizedBox(
+                    ? SizedBox(
+                        width: 105,
+                        child: ButtonBar(
+                          buttonPadding: const EdgeInsets.all(0),
+                          children: [
+                            SizedBox(
                                 width: 40,
                                 child: TextButton(
+                                  child: const Icon(Icons.edit, size: 20),
                                   onPressed: () {},
-                                  child: const Icon(Icons.delete, size: 20),
-                                ),
-                              )
-                            ],
-                          ),
+                                )),
+                            SizedBox(
+                              width: 40,
+                              child: TextButton(
+                                onPressed: () {
+                                  Provider.of<GroceryListModel>(context, listen: false)
+                                      .deleteItem(name: widget.name, category: widget.category);
+                                  setState(() {
+                                    _isEditing = !_isEditing;
+                                    _checkedOff = !_checkedOff;
+                                  });
+                                },
+                                child: const Icon(Icons.delete, size: 20),
+                              ),
+                            )
+                          ],
                         ),
                       )
-                    : const SizedBox(height: 50.0),
+                    : const SizedBox(width: 105),
                 Container(
                   child: Text(
                     widget.qty + ' ' + widget.qtyUnit,
@@ -651,7 +659,7 @@ class _AddMealPageState extends State<AddMealPage> {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => Navigator.pop(context)),
           title: const Text('Add Meals'),
         ),

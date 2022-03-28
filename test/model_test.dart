@@ -9,8 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:grocery_helper_app/models/grocery_list.dart';
 
 void main() {
-  test('adding new grocery item to grocery list increases grocery list size',
-      () {
+  test('adding new grocery item to grocery list increases grocery list size', () {
     final groceries = GroceryListModel();
     final numGroceries = groceries.groceryListSize;
 
@@ -20,9 +19,7 @@ void main() {
     groceries.add(GroceryItem("produce", "apple", qty: "1"));
   });
 
-  test(
-      'adding repeated grocery item to grocery list increases grocery list size',
-      () {
+  test('adding repeated grocery item to grocery list increases grocery list size', () {
     final groceries = GroceryListModel();
     groceries.add(GroceryItem("produce", "apple", qty: "1"));
     groceries.add(GroceryItem("produce", "apple", qty: "1"));
@@ -38,29 +35,22 @@ void main() {
     expect(groceries.groceryListSize, 0);
   });
 
-  test(
-      'adding repeated grocery items to grocery list increase grocery list item quantity',
-      () {
+  test('adding repeated grocery items to grocery list increase grocery list item quantity', () {
     final groceriesModel = GroceryListModel();
     groceriesModel.add(GroceryItem("produce", "apple", qty: "1"));
     groceriesModel.add(GroceryItem("produce", "apple", qty: "1"));
 
-    String? result =
-        groceriesModel.groceries["produce"]!.groceryItems["apple"]!.qty;
+    String? result = groceriesModel.groceries["produce"]!.groceryItems["apple"]!.qty;
     expect(result, "2");
   });
 
-  test(
-      'adding repeated grocery item to list with fractional quantity increases existing quantity',
+  test('adding repeated grocery item to list with fractional quantity increases existing quantity',
       () {
     final groceriesModel = GroceryListModel();
-    groceriesModel
-        .add(GroceryItem("baking", "flour", qty: "1/2", qtyUnit: "cup"));
-    groceriesModel
-        .add(GroceryItem("baking", "flour", qty: "1/3", qtyUnit: "cup"));
+    groceriesModel.add(GroceryItem("baking", "flour", qty: "1/2", qtyUnit: "cup"));
+    groceriesModel.add(GroceryItem("baking", "flour", qty: "1/3", qtyUnit: "cup"));
 
-    String? result =
-        groceriesModel.groceries["baking"]!.groceryItems["flour"]!.qty;
+    String? result = groceriesModel.groceries["baking"]!.groceryItems["flour"]!.qty;
     expect(result, "5/6");
   });
 
@@ -68,10 +58,9 @@ void main() {
     final groceriesModel = GroceryListModel();
     groceriesModel.add(GroceryItem("baking", "flour"));
 
-    groceriesModel.checkItem("flour");
+    groceriesModel.checkItem(name: "flour", category: "baking");
 
-    bool? result =
-        groceriesModel.groceries["baking"]?.groceryItems["flour"]?.checkedOff;
+    bool? result = groceriesModel.groceries["baking"]?.groceryItems["flour"]?.checkedOff;
     expect(result, true);
   });
 }

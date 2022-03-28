@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:flutter/foundation.dart';
 import 'package:grocery_helper_app/models/ingredient.dart';
 import 'package:grocery_helper_app/models/meal.dart';
 import 'package:path/path.dart';
@@ -47,36 +46,91 @@ class SQLHelper {
 
   static Future<void> fillTables(sql.Database db) async {
     await db.execute("""
-      INSERT INTO meals(name) VALUES ("Cheese and Potatoes"), ("Beans and Rice")
+      INSERT INTO meals(name) VALUES ("Meatballs with Bulgogi Sauce"), ("Cheesy Beef Tostadas"), ("Chicken Pineapple Quesadillas"), ("Parmesan-crusted Chicken")
     """);
 
     await db.execute("""
-      INSERT INTO ingredients(name, category) VALUES ("potato", "produce"), ("cheese","produce"), ("beans", "canned"), ("rice","bulk")
+      INSERT INTO ingredients(name, category) VALUES ("Lemon", "Produce"), ("Panko Breadcrumbs","Asian"), ("Fry Seasoning", "Spices"), ("Parmesan Cheese","Deli"), ("Chicken Breast","Meat"), ("Dijon Mustard", "Condiments"), ("Mayonnaise","Condiments"), ("Spaghetti","Pasta"),("Grape Tomatoes","Produce"), ("Garlic", "Produce"), ("Cream Cheese","Dairy"), ("Green Beans","Produce"),("Ginger","Produce"), ("Scallions", "Produce"), ("Jasmine Rice","Bulk"), ("Ground Beef","Meat"), ("Bulgogi Sauce", "Asian"), ("Yogurt","Dairy"), ("Sriracha","Asian"),("Sesame Seeds","Spices"), ("Roma Tomato", "Produce"), ("Cilantro","Produce"), ("Lime","Produce"),("Long Green Pepper","Produce"), ("Yellow Onion", "Produce"), ("Hot Sauce","Condiments"), ("Southwest Spice Blend","Spices"),("Chili Powder","Spices"), ("Beef Stock", "Soup"), ("Flour Tortillas","Mexican"), ("Mexican Cheese Blend","Dairy"), ("Green Bell Pepper", "Produce"), ("Green Bell Pepper","Produce"), ("Pineapple","Produce"),("Canned Pineapple","Canned"), ("Mozzarella Cheese", "Deli"), ("Paprika","Spices"), ("Milk","Dairy")
     """);
 
     await db.execute("""
       INSERT INTO meal_ingredients(meal_id, ingredient_id, qty, qty_unit) VALUES
-        ((SELECT id from meals WHERE name="Cheese and Potatoes"),
-          (SELECT id from ingredients WHERE name="potato"), "3", ""),
-        ((SELECT id from meals WHERE name="Cheese and Potatoes"),
-          (SELECT id from ingredients WHERE name="cheese"),"12", "oz"),
-        ((SELECT id from meals WHERE name="Beans and Rice"),
-          (SELECT id from ingredients WHERE name="beans"),"1","can"),
-        ((SELECT id from meals WHERE name="Beans and Rice"),
-          (SELECT id from ingredients WHERE name="rice"),"1","cup")
-    """);
-    await db.execute("""
-      INSERT INTO shopping_list(name, category, checked, qty, qty_unit) 
-      VALUES ("broccoli",   "produce",  0, "1", "head"),
-            ("grapes",      "produce",  0, " ", " "),
-            ("mini wheats", "breakfast",1, " ", " "),
-            ("rice",        "bulk",     0, "2", "cups")
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Roma Tomato"), "2", ""),
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Cilantro"),"1/2", "oz"),
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Lime"),"2",""),
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Long Green Pepper"),"2",""),
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Yellow Onion"), "1", ""),
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Yogurt"),"8", "Tbsp"),
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Hot Sauce"),"2","Tsp"),
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Ground Beef"),"1","lb"),
+          ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Southwest Spice Blend"),"2","Tbsp"),
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Chili Powder"), "2", "Tsp"),
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Beef Stock Concentrate"),"1/2", "cup"),
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Flour Tortillas"),"12",""),
+        ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
+          (SELECT id from ingredients WHERE name="Mexican Cheese Blend"),"1","cup"),
+        ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
+          (SELECT id from ingredients WHERE name="Mexican Cheese Blend"),"1","cup"),
+        ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
+          (SELECT id from ingredients WHERE name="Green Beans"),"12","oz"),
+        ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
+          (SELECT id from ingredients WHERE name="Ginger"),"1","Thumb"),
+        ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
+          (SELECT id from ingredients WHERE name="Scallions"),"2",""),
+        ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
+          (SELECT id from ingredients WHERE name="Jasmine Rice"),"3/2","cup"),
+        ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
+          (SELECT id from ingredients WHERE name="Ground Beef"),"20","oz"),
+        ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
+          (SELECT id from ingredients WHERE name="Panko Breadcrumbs"),"1/2","cup"),
+        ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
+          (SELECT id from ingredients WHERE name="Bulgogi Sauce"),"8","oz"),
+        ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
+          (SELECT id from ingredients WHERE name="Yogurt"),"4","Tbsp"),
+        ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
+          (SELECT id from ingredients WHERE name="Sriracha"),"1","Tsp"),
+        ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
+          (SELECT id from ingredients WHERE name="Sesame Seeds"),"1","Tbsp"),
+        ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
+          (SELECT id from ingredients WHERE name="Lemon"),"1",""),
+        ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
+          (SELECT id from ingredients WHERE name="Panko Breadcrumbs"),"1/2","cup"),
+        ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
+          (SELECT id from ingredients WHERE name="Fry Seasoning"),"1","cup"),
+        ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
+          (SELECT id from ingredients WHERE name="Parmesan Cheese"),"1","cup"),
+        ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
+          (SELECT id from ingredients WHERE name="Chicken Breast"),"1","lb"),
+        ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
+          (SELECT id from ingredients WHERE name="Dijon Mustard"),"2","Tsp"),
+        ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
+          (SELECT id from ingredients WHERE name="Mayonnaise"),"2","Tbsp"),
+        ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
+          (SELECT id from ingredients WHERE name="Spaghetti"),"6","oz"),
+        ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
+          (SELECT id from ingredients WHERE name="Grape Tomatoes"),"8","oz"),
+        ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
+          (SELECT id from ingredients WHERE name="Garlic"),"2","cloves"),
+        ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
+          (SELECT id from ingredients WHERE name="Cream Cheese"),"2","Tbsp")
     """);
   }
 
   //retrieve database
   static Future<sql.Database> db() async {
-    //!sql.databaseFactory.deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
+    //sql.databaseFactory.deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
     return sql.openDatabase(join(await sql.getDatabasesPath(), 'grocery.db'), version: 1,
         onCreate: (sql.Database database, int version) async {
       await createTables(database);
@@ -217,6 +271,19 @@ class SQLHelper {
 
   static Future<void> updateCheckedItem(String name) async {
     final db = await SQLHelper.db();
+
+    // retrieve checked property from shopping_list
+    var results = await db.rawQuery("""
+      SELECT checked FROM shopping_list WHERE
+      shopping_list.name = ?
+    """, [name]);
+
+    var checkedValue = results.first.values.first;
+
+    // update item in shopping_list to be !checked
+    await db.rawUpdate("""
+      UPDATE shopping_list SET checked = ? WHERE name = ?
+    """, [checkedValue == 1 ? 0 : 1, name]);
   }
 
   static Future<void> deleteMeal(String name) async {
@@ -233,5 +300,13 @@ class SQLHelper {
     await db.rawDelete("""
       DELETE FROM meals WHERE meals.id = ?
     """, [id.first.values.first]);
+  }
+
+  static Future<void> removeShoppingItem(String name) async {
+    final db = await SQLHelper.db();
+
+    await db.rawDelete("""
+      DELETE FROM shopping_list WHERE shopping_list.name = ?
+    """, [name]);
   }
 }

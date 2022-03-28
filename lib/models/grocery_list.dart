@@ -121,21 +121,24 @@ class GroceryListModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void checkItem(String name) {
-    _groceries.entries.forEach(((element) {
-      for (var item in element.value.groceryItems.entries) {
-        if (item.value.name == name) {
-          item.value.checkedOff = !item.value.checkedOff;
-          SQLHelper.updateCheckedItem(name);
-        }
-      }
-    }));
+  void checkItem({required String name, required String category}) {
+    if (_groceries[category]?.groceryItems[name]?.checkedOff != null) {
+      _groceries[category]?.groceryItems[name]?.checkedOff =
+          !_groceries[category]!.groceryItems[name]!.checkedOff;
+    }
   }
 
   //cause grocery list to be built early
   void wakeUp() {}
 
-  void deleteItem(String name) {}
+  void deleteItem({required String name, required String category}) {
+    _groceries[category]?.groceryItems.remove(name);
+    if (_groceries[category]!.groceryItems.isEmpty) {
+      _groceries.remove(category);
+    }
+    SQLHelper.removeShoppingItem(name);
+    notifyListeners();
+  }
 }
 
 class GroupedGroceryList {
