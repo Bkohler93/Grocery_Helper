@@ -121,11 +121,12 @@ class GroceryListModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void checkItem({required String name, required String category}) {
+  Future<void> checkItem({required String name, required String category}) async {
     if (_groceries[category]?.groceryItems[name]?.checkedOff != null) {
       _groceries[category]?.groceryItems[name]?.checkedOff =
           !_groceries[category]!.groceryItems[name]!.checkedOff;
     }
+    await SQLHelper.updateCheckedItem(name);
   }
 
   //cause grocery list to be built early
