@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:grocery_helper_app/extensions/string.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart';
 import '../models/grocery_list.dart';
 import '../widgets/grocery_list_item.dart';
 
