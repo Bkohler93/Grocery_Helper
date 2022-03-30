@@ -26,6 +26,37 @@ class _AddMealPageState extends State<AddMealPage> {
 
   final List<GroceryItem> _ingredients = [];
 
+  void _handleSavePress(Function(BuildContext context)? pop) async {
+    if (_formKey.currentState!.validate() && _ingredients.isNotEmpty) {
+      UnmodifiableListView<GroceryItem> ingredientsView = UnmodifiableListView(_ingredients);
+      setState(() {
+        _loading = true;
+      });
+      await SQLHelper.insertMeal(Meal(name: mealNameController.text.capitalize()), ingredientsView);
+      mealNameController.clear();
+      qtyController.clear();
+      ingredientNameController.clear();
+      categoryController.clear();
+      setState(() {
+        _loading = false;
+        _ingredients.clear();
+      });
+      if (pop != null) {
+        pop(context);
+      }
+    } else if (_ingredients.isEmpty) {
+      final snackBar = SnackBar(
+        content: const Text("Add at least one ingredient"),
+        action: SnackBarAction(
+          label: 'Close',
+          onPressed: () {},
+        ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
   void _addGroceryItem() {
     String itemName = ingredientNameController.text.capitalize();
     List<String> itemQtyUnit = qtyController.text.split(' ');
@@ -72,6 +103,15 @@ class _AddMealPageState extends State<AddMealPage> {
               icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => Navigator.pop(context)),
           title: const Text('Add Meals'),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: () async => _handleSavePress(null),
+              ),
+            )
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -233,68 +273,6 @@ class _AddMealPageState extends State<AddMealPage> {
                         );
                       }).toList()),
                       const Spacer(),
-                      Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 3 / 7,
-                          height: 40.0,
-                          child: ElevatedButton(
-                            child: const Text('Save + Exit'),
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate() && _ingredients.isNotEmpty) {
-                                UnmodifiableListView<GroceryItem> ingredientsView =
-                                    UnmodifiableListView(_ingredients);
-                                setState(() {
-                                  _loading = true;
-                                });
-                                await SQLHelper.insertMeal(
-                                    Meal(name: mealNameController.text.capitalize()),
-                                    ingredientsView);
-                                setState(() {
-                                  _loading = false;
-                                });
-                                Navigator.pop(context);
-                              }
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 3 / 7,
-                          height: 40.0,
-                          child: ElevatedButton(
-                            child: const Text('Save'),
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate() && _ingredients.isNotEmpty) {
-                                UnmodifiableListView<GroceryItem> ingredientsView =
-                                    UnmodifiableListView(_ingredients);
-                                setState(() {
-                                  _loading = true;
-                                });
-                                await SQLHelper.insertMeal(
-                                    Meal(name: mealNameController.text.capitalize()),
-                                    ingredientsView);
-                                mealNameController.clear();
-                                qtyController.clear();
-                                ingredientNameController.clear();
-                                categoryController.clear();
-                                setState(() {
-                                  _loading = false;
-                                  _ingredients.clear();
-                                });
-                              } else if (_ingredients.isEmpty) {
-                                final snackBar = SnackBar(
-                                  content: const Text("Add at least one ingredient"),
-                                  action: SnackBarAction(
-                                    label: 'Close',
-                                    onPressed: () {},
-                                  ),
-                                );
-
-                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                              }
-                            },
-                          ),
-                        )
-                      ])
                     ],
                   ))),
         ));
