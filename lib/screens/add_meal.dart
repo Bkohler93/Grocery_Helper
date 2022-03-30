@@ -17,7 +17,8 @@ class AddMealPage extends StatefulWidget {
 
 class _AddMealPageState extends State<AddMealPage> {
   final _formKey = GlobalKey<FormState>();
-  bool _loading = false;
+  bool isLoading = false;
+  bool isDone = false;
   final _ingredientFormKey = GlobalKey<FormState>();
   final ingredientNameController = TextEditingController();
   final categoryController = TextEditingController();
@@ -30,7 +31,7 @@ class _AddMealPageState extends State<AddMealPage> {
     if (_formKey.currentState!.validate() && _ingredients.isNotEmpty) {
       UnmodifiableListView<GroceryItem> ingredientsView = UnmodifiableListView(_ingredients);
       setState(() {
-        _loading = true;
+        isLoading = true;
       });
       await SQLHelper.insertMeal(Meal(name: mealNameController.text.capitalize()), ingredientsView);
       mealNameController.clear();
@@ -38,7 +39,8 @@ class _AddMealPageState extends State<AddMealPage> {
       ingredientNameController.clear();
       categoryController.clear();
       setState(() {
-        _loading = false;
+        isLoading = false;
+        isDone = true;
         _ingredients.clear();
       });
       if (pop != null) {
@@ -103,15 +105,7 @@ class _AddMealPageState extends State<AddMealPage> {
               icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => Navigator.pop(context)),
           title: const Text('Add Meals'),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: IconButton(
-                icon: const Icon(Icons.save),
-                onPressed: () async => _handleSavePress(null),
-              ),
-            )
-          ],
+          actions: [buildSaveButton()],
         ),
         body: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -121,25 +115,7 @@ class _AddMealPageState extends State<AddMealPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 40.0),
-                        child: TextFormField(
-                          controller: mealNameController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a name for this meal';
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                              hintText: 'Sloppy Joes',
-                              labelText: 'Name',
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  borderSide:
-                                      const BorderSide(color: Colors.lightBlue, width: 1.0))),
-                        ),
-                      ),
+                      buildMealNameField(),
                       SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: const Padding(
@@ -149,132 +125,196 @@ class _AddMealPageState extends State<AddMealPage> {
                                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
                               ),
                               padding: EdgeInsets.only(bottom: 10.0))),
-                      _loading == true ? JumpingText('Loading...') : const SizedBox(height: 0.0),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 15.0),
-                        child: Form(
-                          key: _ingredientFormKey,
-                          child: Row(children: [
-                            SizedBox(
-                              child: TextFormField(
-                                  controller: ingredientNameController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Enter name';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'Banana',
-                                  )),
-                              width: MediaQuery.of(context).size.width * 0.24,
-                            ),
-                            SizedBox(
-                              child: TextFormField(
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Enter quantity';
-                                  }
-                                  return null;
-                                },
-                                controller: qtyController,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: '1 bunch',
-                                ),
-                              ),
-                              width: MediaQuery.of(context).size.width * 0.24,
-                            ),
-                            SizedBox(
-                              child: TextFormField(
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Enter category';
-                                  }
-                                  return null;
-                                },
-                                controller: categoryController,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'produce',
-                                ),
-                              ),
-                              width: MediaQuery.of(context).size.width * 0.24,
-                            ),
-                            const Spacer(),
-                            TextButton(
-                                style: ButtonStyle(
-                                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-                                ),
-                                onPressed: () {
-                                  if (_ingredientFormKey.currentState!.validate()) {
-                                    _addGroceryItem();
-                                  }
-                                },
-                                child: const Text('Add'))
-                          ]),
-                        ),
-                      ),
+                      buildAddIngredientsField(context),
                       Wrap(
                           children: _ingredients.map((ingredient) {
-                        return Material(
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                _ingredients
-                                    .removeWhere((element) => element.name == ingredient.name);
-                              });
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.fromLTRB(3.0, 3.0, 3.0, 3.0),
-                              decoration: BoxDecoration(
-                                color: Colors.blue[100],
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
-                                child: RichText(
-                                  text: TextSpan(children: [
-                                    TextSpan(
-                                      text: ingredient.name,
-                                      style: const TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    const WidgetSpan(
-                                      child: SizedBox(width: 15),
-                                    ),
-                                    TextSpan(
-                                      text: "${ingredient.qty} ${ingredient.qtyUnit}",
-                                      style: const TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    const WidgetSpan(
-                                      child: SizedBox(width: 5),
-                                    ),
-                                    const TextSpan(
-                                      text: "x",
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ]),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
+                        return buildIngredientsList(ingredient);
                       }).toList()),
                       const Spacer(),
                     ],
                   ))),
         ));
+  }
+
+  Widget buildAddIngredientsField(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: Form(
+        key: _ingredientFormKey,
+        child: Row(children: [
+          SizedBox(
+            child: TextFormField(
+                controller: ingredientNameController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter name';
+                  }
+                  return null;
+                },
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Banana',
+                )),
+            width: MediaQuery.of(context).size.width * 0.24,
+          ),
+          SizedBox(
+            child: TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Enter quantity';
+                }
+                return null;
+              },
+              controller: qtyController,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: '1 bunch',
+              ),
+            ),
+            width: MediaQuery.of(context).size.width * 0.24,
+          ),
+          SizedBox(
+            child: TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Enter category';
+                }
+                return null;
+              },
+              controller: categoryController,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'produce',
+              ),
+            ),
+            width: MediaQuery.of(context).size.width * 0.24,
+          ),
+          const Spacer(),
+          TextButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              ),
+              onPressed: () {
+                if (_ingredientFormKey.currentState!.validate()) {
+                  _addGroceryItem();
+                }
+              },
+              child: const Text('Add'))
+        ]),
+      ),
+    );
+  }
+
+  Widget buildMealNameField() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 40.0),
+      child: TextFormField(
+        onChanged: (text) => setState(() {
+          isDone = false;
+        }),
+        controller: mealNameController,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter a name for this meal';
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+            hintText: 'Sloppy Joes',
+            labelText: 'Name',
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0),
+                borderSide: const BorderSide(color: Colors.lightBlue, width: 1.0))),
+      ),
+    );
+  }
+
+  Widget buildIngredientsList(GroceryItem ingredient) {
+    return Material(
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _ingredients.removeWhere((element) => element.name == ingredient.name);
+          });
+        },
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(3.0, 3.0, 3.0, 3.0),
+          decoration: BoxDecoration(
+            color: Colors.blue[100],
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
+            child: RichText(
+              text: TextSpan(children: [
+                TextSpan(
+                  text: ingredient.name,
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 12,
+                  ),
+                ),
+                const WidgetSpan(
+                  child: SizedBox(width: 15),
+                ),
+                TextSpan(
+                  text: "${ingredient.qty} ${ingredient.qtyUnit}",
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 12,
+                  ),
+                ),
+                const WidgetSpan(
+                  child: SizedBox(width: 5),
+                ),
+                const TextSpan(
+                  text: "x",
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ]),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildSaveButton() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: isLoading
+          ? const SizedBox(
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 4,
+                ),
+              ),
+              width: 40,
+            )
+          : isDone
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.green,
+                        ),
+                        child: const Icon(Icons.done, size: 25, color: Colors.white),
+                      )),
+                )
+              : IconButton(
+                  icon: const Icon(Icons.save),
+                  onPressed: () async => _handleSavePress(null),
+                ),
+    );
   }
 }
