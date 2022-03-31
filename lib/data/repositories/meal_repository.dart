@@ -1,16 +1,11 @@
 import 'package:grocery_helper_app/data/db_provider.dart';
 
+import '../models/grocery_item.dart';
 import '../models/meal.dart';
-
-abstract class IMealRepository {
-  Future<List<Meal>> getMeals();
-  Future<Meal?> getMeal({int id, String name});
-  Future<void> insert(Meal meal);
-  Future<void> update(Meal meal);
-  Future<void> delete({int id, String name});
-}
+import 'i_meal_repository.dart';
 
 class MealRepository implements IMealRepository {
+  @override
   Future<List<Meal>> getMeals() async {
     List<Meal> meals = [];
     var rawMealData = await SQLHelper.getMeals();
@@ -22,9 +17,8 @@ class MealRepository implements IMealRepository {
   }
 
   @override
-  Future<void> delete({int? id, String? name}) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<void> delete(String name) async {
+    await SQLHelper.deleteMeal(name);
   }
 
   @override
@@ -34,13 +28,14 @@ class MealRepository implements IMealRepository {
   }
 
   @override
-  Future<void> insert(Meal meal) {
-    // TODO: implement insert
-    throw UnimplementedError();
+  Future<bool> insert(String name, List<GroceryItem> items) async {
+    int mealId = await SQLHelper.insertMeal(name, items.map((item) => item.toMap()).toList());
+
+    return (mealId > 0);
   }
 
   @override
-  Future<void> update(Meal meal) {
+  Future<void> update(String name, List<GroceryItem> items) {
     // TODO: implement update
     throw UnimplementedError();
   }

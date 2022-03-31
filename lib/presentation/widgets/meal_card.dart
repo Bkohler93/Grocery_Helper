@@ -1,30 +1,27 @@
 import 'package:flutter/material.dart';
 
 class MealCard extends StatelessWidget {
-  const MealCard(this.name, this.isSelected, this.isEditing, this.onSelected, this.onEditingMeal,
-      this.onDeleteMeal, this.idx,
+  const MealCard(this.name, this.isSelected, this.onSelected, this.isEditing, this.onEdit,
       {Key? key})
       : super(key: key);
 
   final String name;
-  final bool isSelected;
-  final bool isEditing;
-  final ValueChanged<int> onSelected;
-  final ValueChanged<int> onEditingMeal;
-  final ValueChanged<String> onDeleteMeal;
-  final int idx;
+  final bool isSelected; //display selected icon
+  final bool isEditing; //display edit/delete buttons
+  final ValueChanged<String> onSelected; //tell parent widget this meal selected
+  final ValueChanged<String> onEdit; //tell parent this widget to edit
+
+  // final int idx;
 
   void _handleTap() {
-    onSelected(idx);
+    onSelected(name);
   }
 
   void _handleLongPress() {
-    onEditingMeal(idx);
+    onEdit(name);
   }
 
-  void _handleDelete() {
-    onDeleteMeal(name);
-  }
+  void _handleDelete() {}
 
   @override
   Widget build(BuildContext context) {

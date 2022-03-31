@@ -128,7 +128,7 @@ class SQLHelper {
 
   //retrieve database
   static Future<sql.Database> db() async {
-    sql.databaseFactory.deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
+    //!sql.databaseFactory.deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
     return sql.openDatabase(join(await sql.getDatabasesPath(), 'grocery.db'), version: 1,
         onCreate: (sql.Database database, int version) async {
       await createTables(database);
@@ -312,5 +312,3 @@ class SQLHelper {
     """, [name]);
   }
 }
-
-//TODO Create Models NEXT!!!! Then Repositories (groceries and one for meals)!!!

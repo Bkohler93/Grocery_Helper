@@ -16,6 +16,8 @@ class ChooseMealsPage extends StatefulWidget {
 
 class _ChooseMealsPageState extends State<ChooseMealsPage> {
   //List<Map<String, dynamic>> mealViews = [];
+  final Map<String, bool> mealsSelected = {};
+  final Map<String, bool> mealsEditing = {};
 
   @override
   void initState() {
@@ -124,7 +126,36 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
     return ListView(
         scrollDirection: Axis.vertical,
         children: meals.map((meal) {
-          return MealCard(meal.name, false, false, (int) {}, (int) {}, (int) {}, 0);
+          //initialize selected/editing values only if unitialized
+          if (mealsSelected[meal.name] == null || mealsEditing[meal.name] == null) {
+            mealsSelected[meal.name] = false;
+            mealsEditing[meal.name] = false;
+          }
+
+          return MealCard(meal.name, mealsSelected[meal.name]!, _handleMealClicked,
+              mealsEditing[meal.name]!, _handleMealEditing);
         }).toList());
+  }
+
+  void _handleMealClicked(String name) {
+    setState(() {
+      mealsSelected[name] = !mealsSelected[name]!;
+    });
+  }
+
+  //disable editing on any meals that currently have editing enabled
+  void _handleMealEditing(String name) {
+    mealsEditing.forEach((key, value) {
+      if (value == true && key != name) {
+        setState(() {
+          mealsEditing[key] = false;
+        });
+      }
+    });
+    bool currentValue = mealsEditing[name]!;
+
+    setState(() {
+      mealsEditing[name] = !currentValue;
+    });
   }
 }

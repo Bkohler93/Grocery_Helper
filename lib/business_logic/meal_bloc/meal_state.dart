@@ -1,15 +1,21 @@
 part of 'meal_bloc.dart';
 
-abstract class MealState {
+abstract class MealState extends Equatable {
   const MealState();
 }
 
 class MealInitial extends MealState {
   const MealInitial();
+
+  @override
+  List<Object> get props => [];
 }
 
 class MealLoading extends MealState {
   const MealLoading();
+
+  @override
+  List<Object> get props => [];
 }
 
 class MealLoaded extends MealState {
@@ -17,14 +23,7 @@ class MealLoaded extends MealState {
   const MealLoaded(this.meals);
 
   @override
-  bool operator ==(Object o) {
-    if (identical(this, o)) return true;
-
-    return o is MealLoaded && o.meals == meals;
-  }
-
-  @override
-  int get hashcode => meals.hashCode;
+  List<Object> get props => [meals];
 }
 
 class MealError extends MealState {
@@ -32,12 +31,21 @@ class MealError extends MealState {
   const MealError(this.message);
 
   @override
-  bool operator ==(Object o) {
-    if (identical(this, o)) return true;
+  List<Object> get props => [message];
+}
 
-    return o is MealError && o.message == message;
-  }
+class MealAdded extends MealState {
+  final bool success;
+
+  const MealAdded(this.success);
 
   @override
-  int get hashcode => message.hashCode;
+  List<Object> get props => [success];
+}
+
+class MealDeleted extends MealState {
+  const MealDeleted();
+
+  @override
+  List<Object> get props => [];
 }

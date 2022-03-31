@@ -16,7 +16,11 @@ void main() {
     //   create: (BuildContext context) => GroceryListModel(),
     // child:
     MaterialApp(
-        home: const MyApp(), title: "Grocery Helper", theme: ThemeData(primarySwatch: Colors.blue)),
+        home: const MyApp(),
+        title: "Grocery Helper",
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        )),
   );
   // );
 }
@@ -26,9 +30,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 1,
-      child: Scaffold(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<MealBloc>(
+          create: (context) => MealBloc(MealRepository()),
+        ),
+        //TODO INITIALIZE Grocery Bloc provider
+        // BlocProvider<GroceryBloc>(
+        //   create: (context) => GroceryBloc(GroceryRepository()),
+        // )
+      ],
+      child: DefaultTabController(
+        length: 1,
+        child: Scaffold(
           appBar: AppBar(
             bottom: const TabBar(tabs: [
               Tab(icon: Icon(Icons.restaurant_menu)),
@@ -59,12 +73,11 @@ class MyApp extends StatelessWidget {
               ),
             ],
           ),
-          body: BlocProvider(
-            create: (context) => MealBloc(MealRepository()),
-            child: const TabBarView(
-              children: [ChooseMealsPage() /*, GroceryListPage()*/],
-            ),
-          )),
+          body: const TabBarView(
+            children: [ChooseMealsPage() /*, GroceryListPage()*/],
+          ),
+        ),
+      ),
     );
   }
 }
