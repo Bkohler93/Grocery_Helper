@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grocery_helper_app/data/models/meal.dart';
 import 'package:provider/provider.dart';
 import 'package:grocery_helper_app/data/db_provider.dart';
 import 'package:grocery_helper_app/data/models/grocery_list.dart';
+import '../../business_logic/meal_bloc/meal_bloc.dart';
 import '../widgets/meal_card.dart';
 
 class ChooseMealsPage extends StatefulWidget {
@@ -12,89 +15,70 @@ class ChooseMealsPage extends StatefulWidget {
 }
 
 class _ChooseMealsPageState extends State<ChooseMealsPage> {
-  List<Map<String, dynamic>> mealViews = [];
-
-  void _refreshMeals() async {
-    final data = await SQLHelper.getMeals();
-
-    var _mealViews = [
-      for (var meal in data)
-        {
-          "isSelected": false,
-          "isEditing": false,
-          "name": meal.name,
-        }
-    ];
-
-    setState(() {
-      mealViews = _mealViews;
-    });
-  }
+  //List<Map<String, dynamic>> mealViews = [];
 
   @override
   void initState() {
+    final mealBloc = context.read<MealBloc>();
+    mealBloc.add(GetMeals());
     super.initState();
-    _refreshMeals();
-    Provider.of<GroceryListModel>(context, listen: false).wakeUp();
   }
 
   @override
   Widget build(BuildContext context) {
     final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
 
-    void _handleMealSelected(int idx) {
-      setState(() {
-        mealViews[idx]['isSelected'] = !mealViews[idx]['isSelected'];
-      });
-    }
+    // void _handleMealSelected(int idx) {
+    //   setState(() {
+    //     mealViews[idx]['isSelected'] = !mealViews[idx]['isSelected'];
+    //   });
+    // }
 
-    void _handleDeleteMeal(String name) async {
-      await SQLHelper.deleteMeal(name);
+    // void _handleDeleteMeal(String name) async {
+    //   await SQLHelper.deleteMeal(name);
 
-      _refreshMeals();
-    }
+    //   _refreshMeals();
+    // }
 
-    void _handleEditingMeal(int idx) {
-      setState(() {
-        mealViews[idx]['isEditing'] = !mealViews[idx]['isEditing'];
-      });
-    }
+    // void _handleEditingMeal(int idx) {
+    //   setState(() {
+    //     mealViews[idx]['isEditing'] = !mealViews[idx]['isEditing'];
+    //   });
+    // }
 
-    void _handleBuildGroceryList() async {
-      List<String> mealsToAdd = [];
-      for (var mealView in mealViews) {
-        if (mealView['isSelected']) {
-          mealsToAdd.add(mealView['name']);
-        }
-      }
-      await Provider.of<GroceryListModel>(context, listen: false).addMealsToList(mealsToAdd);
-    }
+    // void _handleBuildGroceryList() async {
+    //   List<String> mealsToAdd = [];
+    //   for (var mealView in mealViews) {
+    //     if (mealView['isSelected']) {
+    //       mealsToAdd.add(mealView['name']);
+    //     }
+    //   }
+    //   await Provider.of<GroceryListModel>(context, listen: false).addMealsToList(mealsToAdd);
+    // }
 
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
-        ListView(
-          children: mealViews
-              .asMap()
-              .entries
-              .map((entry) => MealCard(
-                    entry.value['name'],
-                    entry.value['isSelected'],
-                    entry.value['isEditing'],
-                    _handleMealSelected,
-                    _handleEditingMeal,
-                    _handleDeleteMeal,
-                    entry.key,
-                  ))
-              .toList(),
-        ),
+        BlocConsumer<MealBloc, MealState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              if (state is MealInitial) {
+                return buildInitialInput();
+              } else if (state is MealLoading) {
+                return buildLoading();
+              } else if (state is MealLoaded) {
+                return buildListWithData(state.meals);
+              } else {
+                return buildInitialInput();
+              }
+            }),
         Positioned(
           bottom: 50.0,
           width: 300.0,
           height: 60.0,
           child: ElevatedButton(
             style: style,
-            onPressed: _handleBuildGroceryList,
+            onPressed: () {} /*_handleBuildGroceryList*/,
             child: const Text("Build Grocery List"),
           ),
         ),
@@ -110,7 +94,7 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
                     textStyle: const TextStyle(fontSize: 16),
                   ),
                   onPressed: () {
-                    _refreshMeals();
+                    /*_refreshMeals();*/
                   },
                   child: RichText(
                     text: const TextSpan(
@@ -122,5 +106,25 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
         ),
       ],
     );
+  }
+
+  Widget buildInitialInput() {
+    return Center(
+      child: CircularProgressIndicator(color: Colors.green),
+    );
+  }
+
+  Widget buildLoading() {
+    return Center(
+      child: CircularProgressIndicator(color: Colors.blue),
+    );
+  }
+
+  Widget buildListWithData(List<Meal> meals) {
+    return ListView(
+        scrollDirection: Axis.vertical,
+        children: meals.map((meal) {
+          return MealCard(meal.name, false, false, (int) {}, (int) {}, (int) {}, 0);
+        }).toList());
   }
 }
