@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/grocery_list.dart';
+import 'package:grocery_helper_app/data/models/grocery_list.dart';
 
 class GroceryListItem extends StatefulWidget {
   const GroceryListItem(

@@ -1,10 +1,11 @@
-import 'package:grocery_helper_app/models/grocery_list.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_helper_app/screens/choose_meals.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/add_meal.dart';
-import 'screens/grocery_list.dart';
+import 'package:grocery_helper_app/data/models/grocery_list.dart';
+import 'package:grocery_helper_app/presentation/screens/choose_meals.dart';
+
+import 'presentation/screens/add_meal.dart';
+import 'presentation/screens/grocery_list.dart';
 
 void main() {
   runApp(

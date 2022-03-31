@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:grocery_helper_app/extensions/string.dart';
 import 'package:provider/provider.dart';
 
-import '../models/grocery_list.dart';
-import '../widgets/grocery_list_item.dart';
+import 'package:grocery_helper_app/data/models/grocery_list.dart';
+import 'package:grocery_helper_app/presentation/widgets/grocery_list_item.dart';
 
 class GroceryListPage extends StatefulWidget {
   const GroceryListPage({Key? key}) : super(key: key);

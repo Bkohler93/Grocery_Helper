@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../data/db.dart';
-import '../models/grocery_list.dart';
+import 'package:grocery_helper_app/data/db_provider.dart';
+import 'package:grocery_helper_app/data/models/grocery_list.dart';
 import '../widgets/meal_card.dart';
 
 class ChooseMealsPage extends StatefulWidget {

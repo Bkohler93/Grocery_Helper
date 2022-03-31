@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:grocery_helper_app/extensions/string.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 
-import '../data/db.dart';
-import '../models/grocery_list.dart';
-import '../models/meal.dart';
+import 'package:grocery_helper_app/data/db_provider.dart';
+import 'package:grocery_helper_app/data/models/grocery_list.dart';
+import 'package:grocery_helper_app/data/models/meal.dart';
 
 class AddMealPage extends StatefulWidget {
   const AddMealPage({Key? key}) : super(key: key);

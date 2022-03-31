@@ -6,7 +6,8 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:grocery_helper_app/models/grocery_list.dart';
+import 'package:grocery_helper_app/data/models/grocery_list.dart';
+import 'package:grocery_helper_app/data/repositories/meal_repository.dart';
 
 void main() {
   test('adding new grocery item to grocery list increases grocery list size', () {
@@ -62,5 +63,13 @@ void main() {
 
     bool? result = groceriesModel.groceries["baking"]?.groceryItems["flour"]?.checkedOff;
     expect(result, true);
+  });
+
+  test('meals retrieved from database', () async {
+    final repository = MealRepository();
+
+    var meals = await repository.getMeals();
+
+    expect(meals.length > 0, true);
   });
 }

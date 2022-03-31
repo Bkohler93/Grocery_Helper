@@ -1,12 +1,10 @@
-import 'dart:collection';
-
-import 'package:grocery_helper_app/models/ingredient.dart';
-import 'package:grocery_helper_app/models/meal.dart';
+import 'package:grocery_helper_app/data/models/ingredient.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart' as sql;
-import 'package:grocery_helper_app/models/grocery_list.dart';
 import 'dart:async';
 
+//TODO All returns should be RAW DATA from database, NOT MODELS like how it is now
+//! This shoudl be instantiated INSIDE the REPOSITORY (currently grocer_list)
 class SQLHelper {
   static Future<void> createTables(sql.Database db) async {
     await db.execute("""CREATE TABLE meals(
@@ -140,13 +138,13 @@ class SQLHelper {
 
   //insert new meal into meals table, and insert ingredients into
   // ingredients and meal_ingredients table.
-  static Future<int> insertMeal(Meal meal, List<GroceryItem> items) async {
+  static Future<int> insertMeal(String mealName, List<Map> ingredients) async {
     final db = await SQLHelper.db();
     //check if meal already in db
     var mealCheckResults = await db.rawQuery("""
       SELECT * FROM meals
       WHERE meals.name = ?
-    """, [meal.name]);
+    """, [mealName]);
 
     //meal already exists
     if (mealCheckResults.isNotEmpty) {
@@ -155,19 +153,19 @@ class SQLHelper {
 
     var id = await db.rawInsert("""
       INSERT INTO meals (name) VALUES (?)
-    """, [meal.name]);
+    """, [mealName]);
 
     //check if ingredient already exists before adding new entry to
     // ingredients table. Then add all items to meal_ingredients table
-    for (GroceryItem item in items) {
+    for (Map ingredient in ingredients) {
       //get ingredient matching name from db, in order to get ingredientId
       List<Map> results = await db.query("ingredients",
-          columns: Ingredient.columns, where: "name = ?", whereArgs: [item.name]);
+          columns: Ingredient.columns, where: "name = ?", whereArgs: [ingredient["name"]]);
 
       int ingredientId = results.isNotEmpty ? results[0]["id"] : await db.rawInsert("""
           INSERT INTO ingredients(name, category)
           VALUES (?, ?)
-        """, [item.name, item.category]);
+        """, [ingredient["name"], ingredient["category"]]);
 
       //insert with 'id' and ingredientId
       await db.rawInsert("""
@@ -175,40 +173,40 @@ class SQLHelper {
           meal_id, ingredient_id, qty_unit, qty) 
         VALUES(
           ?, ?, ?, ?
-      )""", [id, ingredientId, item.qtyUnit, item.qty]);
+      )""", [id, ingredientId, ingredient["qty_unit"], ingredient["qty"]]);
     }
 
     return id;
   }
 
   //insert new ingredient
-  static Future<int> insertIngredient(Ingredient ingredient) async {
+  static Future<int> insertIngredient(Map<String, Object?> ingredient) async {
     final db = await SQLHelper.db();
 
-    final id = await db.insert('ingredients', ingredient.toMap(),
+    final id = await db.insert('ingredients', ingredient,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
     return id;
   }
 
   //retrieve list of meals
-  static Future<List<Meal>> getMeals() async {
+  static Future<List<Map>> getMeals() async {
     // sql.databaseFactory
     //     .deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
     final db = await SQLHelper.db();
     var result = await db.query('meals');
 
-    List<Meal> meals = [];
+    List<Map> meals = [];
     for (var meal in result) {
-      meals.add(Meal.fromMap(meal));
+      meals.add(meal);
     }
 
     return meals;
   }
 
   // retrieve entire list of grocery items from db using list of meals selected. All ingredients are already store in database.
-  static Future<List<GroceryItem>> getIngredients(List<String> mealNames) async {
+  static Future<List<Map>> getIngredients(List<String> mealNames) async {
     final db = await SQLHelper.db();
-    List<GroceryItem> items = [];
+    List<Map> items = [];
 
     for (String name in mealNames) {
       List<Map> data = await db.rawQuery("""
@@ -219,8 +217,12 @@ class SQLHelper {
       """, [name]);
 
       for (var item in data) {
-        items.add(GroceryItem(item['category'], item["name"],
-            qty: item['qty'], qtyUnit: item['qty_unit']));
+        items.add({
+          "category": item['category'],
+          "item": item["name"],
+          "qty": item['qty'],
+          "qtyUnit": item['qty_unit']
+        });
       }
     }
 
@@ -230,21 +232,18 @@ class SQLHelper {
   //insert single grocery item
 
   //insert grocery list into database, check if grocery list is already empty or not.
-  static Future<void> insertGroceries(
-      UnmodifiableMapView<String, GroupedGroceryList> groceries) async {
+  static Future<void> insertGroceries(List<Map<String, Object?>> groceries) async {
     final db = await SQLHelper.db();
 
     var batch = db.batch();
-    for (GroupedGroceryList g in groceries.values) {
-      for (GroceryItem gItem in g.groceryItems.values) {
-        db.insert('shopping_list', gItem.toMap());
-      }
+    for (Map<String, Object?> groceryItem in groceries) {
+      db.insert('shopping_list', groceryItem);
     }
     await batch.commit(noResult: true);
   }
 
-  static Future<List<GroceryItem>> retrieveGroceries() async {
-    List<GroceryItem> items = [];
+  static Future<List<Map<String, Object?>>> retrieveGroceries() async {
+    List<Map<String, Object?>> items = [];
     final db = await SQLHelper.db();
 
     List<Map> data = await db.rawQuery("""
@@ -253,10 +252,13 @@ class SQLHelper {
 
     for (var row in data) {
       items.add(
-        GroceryItem(row["category"], row["name"],
-            checkedOff: row["checked"] == 1 ? true : false,
-            qty: row["qty"],
-            qtyUnit: row["qty_unit"]),
+        {
+          "category": row["category"],
+          "name": row["name"],
+          "checked": row["checked"] == 1 ? true : false,
+          "qty": row["qty"],
+          "qtyUnit": row["qty_unit"]
+        },
       );
     }
 
@@ -310,3 +312,5 @@ class SQLHelper {
     """, [name]);
   }
 }
+
+//TODO Create Models NEXT!!!! Then Repositories (groceries and one for meals)!!!

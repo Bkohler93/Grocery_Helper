@@ -1,7 +1,27 @@
 import 'dart:collection';
 import 'package:fraction/fraction.dart';
 import 'package:flutter/foundation.dart';
-import 'package:grocery_helper_app/data/db.dart';
+import 'package:grocery_helper_app/data/db_provider.dart';
+
+//TODO This will be the REPOSITORY, meaning it will have the raw data turned into instances of models
+//! must include Data Provider as dependency
+
+//EXAMPLE
+/*
+ * class WeatherRepository{
+ *  final WeatherAPI weatherPI;
+ * 
+ *  Future<Weather> getWeatherForLocation(String location) async {
+ *    final RawWeather rawWeather = await weatherAPI.getRawWeather(location)
+ *    
+ *    final  Weather weather = Weather.fromJSON(rawWeather);
+ * 
+ *    //filter, sort, fine tunedata before sendin to business logic layer
+ * 
+ *    return weather;
+ *  }
+ * }
+*/
 
 class GroceryListModel extends ChangeNotifier {
   final Map<String, GroupedGroceryList> _groceries = {}; //category, list
