@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:grocery_helper_app/data/repositories/meal_repository.dart';
-import 'package:provider/provider.dart';
+import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
 
 // import 'package:grocery_helper_app/data/models/grocery_list.dart';
 import 'package:grocery_helper_app/presentation/screens/choose_meals.dart';

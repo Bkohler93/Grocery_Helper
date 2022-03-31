@@ -1,7 +1,7 @@
 import 'package:grocery_helper_app/data/db_provider.dart';
+import 'package:grocery_helper_app/data/models/grocery_item.dart';
+import 'package:grocery_helper_app/data/models/meal.dart';
 
-import '../models/grocery_item.dart';
-import '../models/meal.dart';
 import 'i_meal_repository.dart';
 
 class MealRepository implements IMealRepository {

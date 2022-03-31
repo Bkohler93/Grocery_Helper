@@ -1,11 +1,11 @@
 import 'dart:async';
 
+import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/meal.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:grocery_helper_app/data/repositories/meal/i_meal_repository.dart';
 
-import '../../data/models/grocery_item.dart';
-import '../../data/repositories/i_meal_repository.dart';
 part 'meal_event.dart';
 part 'meal_state.dart';
 
@@ -13,12 +13,20 @@ class MealBloc extends Bloc<MealEvent, MealState> {
   final IMealRepository _mealRepository;
 
   MealBloc(this._mealRepository) : super(const MealInitial()) {
-    on<GetMeals>((event, emit) => _getMeals(emit));
-    on<AddMeal>((event, emit) => _addMeal(emit, event));
-    on<DeleteMeal>((event, emit) => _deleteMeal(emit, event));
+    on<MealEvent>(mapEventToState);
   }
 
-  void _getMeals(Emitter emit) async {
+  void mapEventToState(MealEvent event, Emitter<MealState> emit) async {
+    if (event is GetMealsEvent) {
+      await _getMeals(emit);
+    } else if (event is AddMealEvent) {
+      await _addMeal(emit, event);
+    } else if (event is DeleteMealEvent) {
+      await _deleteMeal(emit, event);
+    }
+  }
+
+  Future<void> _getMeals(Emitter emit) async {
     emit(const MealLoading());
     try {
       final meals = await _mealRepository.getMeals();
@@ -28,7 +36,7 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     }
   }
 
-  void _addMeal(emit, event) async {
+  Future<void> _addMeal(emit, event) async {
     emit(const MealLoading());
     try {
       final success = await _mealRepository.insert(event.name, event.items);
@@ -43,7 +51,7 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     }
   }
 
-  void _deleteMeal(emit, event) async {
+  Future<void> _deleteMeal(emit, event) async {
     emit(const MealLoading());
     try {
       await _mealRepository.delete(event.name);

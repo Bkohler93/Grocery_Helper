@@ -1,8 +1,8 @@
-import 'package:grocery_helper_app/data/repositories/i_meal_repository.dart';
+import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/meal.dart';
 import 'dart:async';
 
-import '../models/grocery_item.dart';
+import 'package:grocery_helper_app/data/repositories/meal/i_meal_repository.dart';
 
 var mockMeals = <Meal>[
   Meal(name: "Meatballs with Bulgogi Sauce", id: 1),

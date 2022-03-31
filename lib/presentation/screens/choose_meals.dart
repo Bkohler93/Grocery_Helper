@@ -15,48 +15,19 @@ class ChooseMealsPage extends StatefulWidget {
 }
 
 class _ChooseMealsPageState extends State<ChooseMealsPage> {
-  //List<Map<String, dynamic>> mealViews = [];
   final Map<String, bool> mealsSelected = {};
   final Map<String, bool> mealsEditing = {};
 
   @override
   void initState() {
     final mealBloc = context.read<MealBloc>();
-    mealBloc.add(GetMeals());
+    mealBloc.add(GetMealsEvent());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
-
-    // void _handleMealSelected(int idx) {
-    //   setState(() {
-    //     mealViews[idx]['isSelected'] = !mealViews[idx]['isSelected'];
-    //   });
-    // }
-
-    // void _handleDeleteMeal(String name) async {
-    //   await SQLHelper.deleteMeal(name);
-
-    //   _refreshMeals();
-    // }
-
-    // void _handleEditingMeal(int idx) {
-    //   setState(() {
-    //     mealViews[idx]['isEditing'] = !mealViews[idx]['isEditing'];
-    //   });
-    // }
-
-    // void _handleBuildGroceryList() async {
-    //   List<String> mealsToAdd = [];
-    //   for (var mealView in mealViews) {
-    //     if (mealView['isSelected']) {
-    //       mealsToAdd.add(mealView['name']);
-    //     }
-    //   }
-    //   await Provider.of<GroceryListModel>(context, listen: false).addMealsToList(mealsToAdd);
-    // }
 
     return Stack(
       alignment: Alignment.center,
@@ -111,13 +82,13 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
   }
 
   Widget buildInitialInput() {
-    return Center(
+    return const Center(
       child: CircularProgressIndicator(color: Colors.green),
     );
   }
 
   Widget buildLoading() {
-    return Center(
+    return const Center(
       child: CircularProgressIndicator(color: Colors.blue),
     );
   }
@@ -139,6 +110,7 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
 
   void _handleMealClicked(String name) {
     setState(() {
+      mealsEditing.updateAll((key, value) => false);
       mealsSelected[name] = !mealsSelected[name]!;
     });
   }

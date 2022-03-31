@@ -6,7 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:grocery_helper_app/data/repositories/meal_repository.dart';
+import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
 
 void main() {
   test('meals retrieved from database', () async {

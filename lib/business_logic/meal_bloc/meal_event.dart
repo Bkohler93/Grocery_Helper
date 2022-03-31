@@ -2,19 +2,19 @@ part of 'meal_bloc.dart';
 
 abstract class MealEvent {}
 
-class GetMeals extends MealEvent {
-  GetMeals();
+class GetMealsEvent extends MealEvent {
+  GetMealsEvent();
 }
 
-class AddMeal extends MealEvent {
+class AddMealEvent extends MealEvent {
   String name;
   List<GroceryItem> items;
 
-  AddMeal(this.name, this.items);
+  AddMealEvent(this.name, this.items);
 }
 
-class DeleteMeal extends MealEvent {
+class DeleteMealEvent extends MealEvent {
   String name;
 
-  DeleteMeal(this.name);
+  DeleteMealEvent(this.name);
 }
