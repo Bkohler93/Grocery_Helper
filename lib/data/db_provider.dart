@@ -1,3 +1,4 @@
+import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/ingredient.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart' as sql;
@@ -240,6 +241,24 @@ class SQLHelper {
       db.insert('shopping_list', groceryItem);
     }
     await batch.commit(noResult: true);
+  }
+
+  static Future<int> insertGrocery(GroceryItem item) async {
+    final db = await SQLHelper.db();
+
+    //find matching grocery item in list
+    var queryResult = await db.rawQuery("""
+      SELECT id, name, qty, qty_unit FROM shopping_list WHERE name = ?
+    """, [item.name]);
+
+    if (queryResult.isEmpty) {
+      return await db.rawInsert("""
+        INSERT INTO shopping_list (name, category, checked, qty, qty_unit) 
+        VALUES (?, ?, ?, ?, ?)
+      """, [item.name, item.category, item.checkedOff, item.qty, item.qtyUnit]);
+    } else if (queryResult.isNotEmpty) {
+      //
+    }
   }
 
   static Future<List<Map<String, Object?>>> retrieveGroceries() async {

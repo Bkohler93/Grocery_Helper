@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/data/models/meal.dart';
-import 'package:provider/provider.dart';
-import 'package:grocery_helper_app/data/db_provider.dart';
-import 'package:grocery_helper_app/data/models/grocery_list.dart';
 import '../../business_logic/meal_bloc/meal_bloc.dart';
 import '../widgets/meal_card.dart';
 
