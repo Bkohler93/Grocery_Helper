@@ -23,6 +23,8 @@ class MealBloc extends Bloc<MealEvent, MealState> {
       await _addMeal(emit, event);
     } else if (event is DeleteMealEvent) {
       await _deleteMeal(emit, event);
+    } else if (event is PopulateGroceryList) {
+      await _populateGroceryList(emit, event);
     }
   }
 
@@ -59,6 +61,17 @@ class MealBloc extends Bloc<MealEvent, MealState> {
       emit(MealDeleted());
     } catch (error) {
       emit(MealError('No meal with that name exists'));
+    }
+  }
+
+  Future<void> _populateGroceryList(Emitter<MealState> emit, PopulateGroceryList event) async {
+    emit(const MealLoading());
+    try {
+      await _mealRepository.populateGroceryList(event.mealNames);
+
+      emit(GroceryListPopulated());
+    } catch (error) {
+      emit(MealError('There were some errors adding grocery items to your shopping list'));
     }
   }
 }

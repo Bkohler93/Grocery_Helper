@@ -18,3 +18,9 @@ class DeleteMealEvent extends MealEvent {
 
   DeleteMealEvent(this.name);
 }
+
+class PopulateGroceryList extends MealEvent {
+  List<String> mealNames;
+
+  PopulateGroceryList(this.mealNames);
+}

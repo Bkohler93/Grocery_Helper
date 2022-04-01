@@ -49,3 +49,10 @@ class MealDeleted extends MealState {
   @override
   List<Object> get props => [];
 }
+
+class GroceryListPopulated extends MealState {
+  const GroceryListPopulated();
+
+  @override
+  List<Object> get props => [];
+}

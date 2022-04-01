@@ -11,6 +11,26 @@ var mockMeals = <Meal>[
   Meal(name: "Parmesan-Crusted Chicken", id: 4)
 ];
 
+var mockGroceryList = <GroceryItem>[
+  GroceryItem(
+      category: 'meat', name: 'ground beef', qty: '1', qtyUnit: 'lb', id: 1, checkedOff: false),
+  GroceryItem(category: 'produce', name: 'lemon', qty: '1', qtyUnit: '', id: 2, checkedOff: false),
+  GroceryItem(category: 'bread', name: 'buns', qty: '', qtyUnit: '', id: 3, checkedOff: false),
+  GroceryItem(
+      category: 'asian', name: 'asian', qty: '3', qtyUnit: 'tbsp', id: 4, checkedOff: false),
+];
+
+Map<String, List<GroceryItem>> mockMealIngredients = {
+  "Meatballs with Bulgogi Sauce": [
+    GroceryItem(category: 'meat', name: 'ground beef', qty: '1', qtyUnit: 'lb'),
+    GroceryItem(category: 'asian', name: 'bulgogi sauce', qty: '2', qtyUnit: 'tbsp'),
+  ],
+  "Cheesy Beef Tostadas": [
+    GroceryItem(category: 'deli', name: 'mexican cheese blend', qty: '12', qtyUnit: 'oz'),
+    GroceryItem(category: 'bread', name: 'tortillas', qty: '10', qtyUnit: ''),
+  ]
+};
+
 class MockMealRepository implements IMealRepository {
   @override
   Future<void> delete(String name) async {
@@ -57,8 +77,13 @@ class MockMealRepository implements IMealRepository {
   }
 
   @override
-  Future<void> populateGroceryList(List<String> mealNames) {
-    // TODO: implement populateGroceryList
-    throw UnimplementedError();
+  Future<void> populateGroceryList(List<String> mealNames) async {
+    await Future.delayed(const Duration(microseconds: 500));
+
+    for (var name in mealNames) {
+      for (GroceryItem item in mockMealIngredients[name]!) {
+        mockGroceryList.add(item);
+      }
+    }
   }
 }

@@ -62,6 +62,14 @@ void main() {
       expect: () => [const MealLoading(), const MealError('No meal with that name exists')],
     );
 
+    blocTest<MealBloc, MealState>(
+      'emits [MealLoading, GroceryListPopulated] states after submitting meal names to add to grocery list',
+      build: () => mealBloc,
+      act: (bloc) =>
+          bloc.add(PopulateGroceryList(['Meatballs with Bulgogi Sauce', 'Cheesy Beef Tostadas'])),
+      expect: () => [const MealLoading(), const GroceryListPopulated()],
+    );
+
     tearDown(() {
       mealBloc.close();
     });
