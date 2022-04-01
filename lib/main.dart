@@ -1,21 +1,27 @@
-import 'package:grocery_helper_app/models/grocery_list.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_helper_app/screens/choose_meals.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
 
-import 'screens/add_meal.dart';
-import 'screens/grocery_list.dart';
+// import 'package:grocery_helper_app/data/models/grocery_list.dart';
+import 'package:grocery_helper_app/presentation/screens/choose_meals.dart';
+
+import 'business_logic/meal_bloc/meal_bloc.dart';
+// import 'presentation/screens/add_meal.dart';
+// import 'presentation/screens/grocery_list.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (BuildContext context) => GroceryListModel(),
-      child: MaterialApp(
-          home: const MyApp(),
-          title: "Grocery Helper",
-          theme: ThemeData(primarySwatch: Colors.blue)),
-    ),
+    // ChangeNotifierProvider(
+    //   create: (BuildContext context) => GroceryListModel(),
+    // child:
+    MaterialApp(
+        home: const MyApp(),
+        title: "Grocery Helper",
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        )),
   );
+  // );
 }
 
 class MyApp extends StatelessWidget {
@@ -23,16 +29,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<GroceryListModel>(context, listen: false).wakeUp();
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<MealBloc>(
+          create: (context) => MealBloc(MealRepository()),
+        ),
+        //TODO INITIALIZE Grocery Bloc provider
+        // BlocProvider<GroceryBloc>(
+        //   create: (context) => GroceryBloc(GroceryRepository()),
+        // )
+      ],
+      child: DefaultTabController(
+        length: 1,
+        child: Scaffold(
           appBar: AppBar(
             bottom: const TabBar(tabs: [
               Tab(icon: Icon(Icons.restaurant_menu)),
-              Tab(
-                icon: Icon(Icons.checklist),
-              )
+              // Tab(
+              //   icon: Icon(Icons.checklist),
+              // )
             ]),
             title: const Text('Grocery Helper'),
             actions: <Widget>[
@@ -47,10 +62,10 @@ class MyApp extends StatelessWidget {
                         textStyle: const TextStyle(fontSize: 16),
                       ),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AddMealPage()),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => const AddMealPage()),
+                        // );
                       },
                       child: const Text('Add Meal'),
                     )),
@@ -58,8 +73,10 @@ class MyApp extends StatelessWidget {
             ],
           ),
           body: const TabBarView(
-            children: [ChooseMealsPage(), GroceryListPage()],
-          )),
+            children: [ChooseMealsPage() /*, GroceryListPage()*/],
+          ),
+        ),
+      ),
     );
   }
 }
