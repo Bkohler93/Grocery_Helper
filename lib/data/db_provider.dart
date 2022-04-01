@@ -1,3 +1,4 @@
+import 'package:fraction/fraction.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/ingredient.dart';
 import 'package:path/path.dart';
@@ -45,86 +46,29 @@ class SQLHelper {
 
   static Future<void> fillTables(sql.Database db) async {
     await db.execute("""
-      INSERT INTO meals(name) VALUES ("Meatballs with Bulgogi Sauce"), ("Cheesy Beef Tostadas"), ("Chicken Pineapple Quesadillas"), ("Parmesan-Crusted Chicken")
+      INSERT INTO meals(name) VALUES ("meatballs with bulgogi sauce")
     """);
 
     await db.execute("""
-      INSERT INTO ingredients(name, category) VALUES ("Lemon", "Produce"), ("Panko Breadcrumbs","Asian"), ("Fry Seasoning", "Spices"), ("Parmesan Cheese","Deli"), ("Chicken Breast","Meat"), ("Dijon Mustard", "Condiments"), ("Mayonnaise","Condiments"), ("Spaghetti","Pasta"),("Grape Tomatoes","Produce"), ("Garlic", "Produce"), ("Cream Cheese","Dairy"), ("Green Beans","Produce"),("Ginger","Produce"), ("Scallions", "Produce"), ("Jasmine Rice","Bulk"), ("Ground Beef","Meat"), ("Bulgogi Sauce", "Asian"), ("Yogurt","Dairy"), ("Sriracha","Asian"),("Sesame Seeds","Spices"), ("Roma Tomato", "Produce"), ("Cilantro","Produce"), ("Lime","Produce"),("Long Green Pepper","Produce"), ("Yellow Onion", "Produce"), ("Hot Sauce","Condiments"), ("Southwest Spice Blend","Spices"),("Chili Powder","Spices"), ("Beef Stock", "Soup"), ("Flour Tortillas","Mexican"), ("Mexican Cheese Blend","Dairy"), ("Green Bell Pepper", "Produce"), ("Pineapple","Produce"),("Canned Pineapple","Canned"), ("Mozzarella Cheese", "Deli"), ("Paprika","Spices"), ("Milk","Dairy")
+      INSERT INTO ingredients(name, category) VALUES ("lemon", "produce"), ("ground beef", "meat"), ("bulgogi sauce", "asian"), ("chicken stock", "soup")
     """);
 
-    // await db.execute("""
-    //   INSERT INTO meal_ingredients(meal_id, ingredient_id, qty, qty_unit) VALUES
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Roma Tomato"), "2", ""),
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Cilantro"),"1/2", "oz"),
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Lime"),"2",""),
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Long Green Pepper"),"2",""),
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Yellow Onion"), "1", ""),
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Yogurt"),"8", "Tbsp"),
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Hot Sauce"),"2","Tsp"),
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Ground Beef"),"1","lb"),
-    //       ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Southwest Spice Blend"),"2","Tbsp"),
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Chili Powder"), "2", "Tsp"),
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Beef Stock Concentrate"),"1/2", "cup"),
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Flour Tortillas"),"12",""),
-    //     ((SELECT id from meals WHERE name="Cheesy Beef Tostadas"),
-    //       (SELECT id from ingredients WHERE name="Mexican Cheese Blend"),"1","cup"),
-    //     ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
-    //       (SELECT id from ingredients WHERE name="Mexican Cheese Blend"),"1","cup"),
-    //     ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
-    //       (SELECT id from ingredients WHERE name="Green Beans"),"12","oz"),
-    //     ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
-    //       (SELECT id from ingredients WHERE name="Ginger"),"1","Thumb"),
-    //     ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
-    //       (SELECT id from ingredients WHERE name="Scallions"),"2",""),
-    //     ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
-    //       (SELECT id from ingredients WHERE name="Jasmine Rice"),"3/2","cup"),
-    //     ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
-    //       (SELECT id from ingredients WHERE name="Ground Beef"),"20","oz"),
-    //     ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
-    //       (SELECT id from ingredients WHERE name="Panko Breadcrumbs"),"1/2","cup"),
-    //     ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
-    //       (SELECT id from ingredients WHERE name="Bulgogi Sauce"),"8","oz"),
-    //     ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
-    //       (SELECT id from ingredients WHERE name="Yogurt"),"4","Tbsp"),
-    //     ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
-    //       (SELECT id from ingredients WHERE name="Sriracha"),"1","Tsp"),
-    //     ((SELECT id from meals WHERE name="Meatballs with Bulgogi Sauce"),
-    //       (SELECT id from ingredients WHERE name="Sesame Seeds"),"1","Tbsp"),
-    //     ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
-    //       (SELECT id from ingredients WHERE name="Lemon"),"1",""),
-    //     ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
-    //       (SELECT id from ingredients WHERE name="Panko Breadcrumbs"),"1/2","cup"),
-    //     ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
-    //       (SELECT id from ingredients WHERE name="Fry Seasoning"),"1","cup"),
-    //     ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
-    //       (SELECT id from ingredients WHERE name="Parmesan Cheese"),"1","cup"),
-    //     ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
-    //       (SELECT id from ingredients WHERE name="Chicken Breast"),"1","lb"),
-    //     ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
-    //       (SELECT id from ingredients WHERE name="Dijon Mustard"),"2","Tsp"),
-    //     ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
-    //       (SELECT id from ingredients WHERE name="Mayonnaise"),"2","Tbsp"),
-    //     ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
-    //       (SELECT id from ingredients WHERE name="Spaghetti"),"6","oz"),
-    //     ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
-    //       (SELECT id from ingredients WHERE name="Grape Tomatoes"),"8","oz"),
-    //     ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
-    //       (SELECT id from ingredients WHERE name="Garlic"),"2","cloves"),
-    //     ((SELECT id from meals WHERE name="Parmesan-Crusted Chicken"),
-    //       (SELECT id from ingredients WHERE name="Cream Cheese"),"2","Tbsp")
-    // """);
+    await db.execute("""
+      INSERT INTO meal_ingredients(meal_id, ingredient_id, qty, qty_unit) VALUES
+        ((SELECT id from meals WHERE name="meatballs with bulgogi sauce"),
+          (SELECT id from ingredients WHERE name="lemon"), "2", ""),
+        ((SELECT id from meals WHERE name="meatballs with bulgogi sauce"),
+          (SELECT id from ingredients WHERE name="ground beef"),"1", "lb"),
+        ((SELECT id from meals WHERE name="meatballs with bulgogi sauce"),
+          (SELECT id from ingredients WHERE name="bulgogi sauce"),"3","tsp"),
+        ((SELECT id from meals WHERE name="meatballs with bulgogi sauce"),
+          (SELECT id from ingredients WHERE name="chicken stock"),"1/2","cup") 
+    """);
+
+    await db.execute("""
+      INSERT INTO shopping_list(name, category, checked, qty, qty_unit) VALUES
+      ('ground beef', 'meat', 0, '1', 'lb'), ('lemon', 'produce', 1, '2', "")
+    """);
   }
 
   //retrieve database
@@ -139,7 +83,7 @@ class SQLHelper {
 
   //insert new meal into meals table, and insert ingredients into
   // ingredients and meal_ingredients table.
-  static Future<int> insertMeal(String mealName, List<Map> ingredients) async {
+  static Future<int> insertMeal(String mealName, List<GroceryItem> ingredients) async {
     final db = await SQLHelper.db();
     //check if meal already in db
     var mealCheckResults = await db.rawQuery("""
@@ -158,15 +102,15 @@ class SQLHelper {
 
     //check if ingredient already exists before adding new entry to
     // ingredients table. Then add all items to meal_ingredients table
-    for (Map ingredient in ingredients) {
+    for (GroceryItem ingredient in ingredients) {
       //get ingredient matching name from db, in order to get ingredientId
       List<Map> results = await db.query("ingredients",
-          columns: Ingredient.columns, where: "name = ?", whereArgs: [ingredient["name"]]);
+          columns: GroceryItem.ingredientColumns, where: "name = ?", whereArgs: [ingredient.name]);
 
       int ingredientId = results.isNotEmpty ? results[0]["id"] : await db.rawInsert("""
           INSERT INTO ingredients(name, category)
           VALUES (?, ?)
-        """, [ingredient["name"], ingredient["category"]]);
+        """, [ingredient.name, ingredient.category]);
 
       //insert with 'id' and ingredientId
       await db.rawInsert("""
@@ -174,7 +118,7 @@ class SQLHelper {
           meal_id, ingredient_id, qty_unit, qty) 
         VALUES(
           ?, ?, ?, ?
-      )""", [id, ingredientId, ingredient["qty_unit"], ingredient["qty"]]);
+      )""", [id, ingredientId, ingredient.qtyUnit, ingredient.qty]);
     }
 
     return id;
@@ -205,9 +149,9 @@ class SQLHelper {
   }
 
   // retrieve entire list of grocery items from db using list of meals selected. All ingredients are already store in database.
-  static Future<List<Map>> getIngredients(List<String> mealNames) async {
+  static Future<List<GroceryItem>> getIngredients(List<String> mealNames) async {
     final db = await SQLHelper.db();
-    List<Map> items = [];
+    List<GroceryItem> items = [];
 
     for (String name in mealNames) {
       List<Map> data = await db.rawQuery("""
@@ -218,27 +162,27 @@ class SQLHelper {
       """, [name]);
 
       for (var item in data) {
-        items.add({
+        items.add(GroceryItem.fromMap({
           "category": item['category'],
-          "item": item["name"],
+          "name": item["name"],
           "qty": item['qty'],
-          "qtyUnit": item['qty_unit']
-        });
+          "qty_unit": item['qty_unit'],
+          "id": item['id'],
+          "checked": 0,
+        }));
       }
     }
 
     return items;
   }
 
-  //insert single grocery item
-
-  //insert grocery list into database, check if grocery list is already empty or not.
-  static Future<void> insertGroceries(List<Map<String, Object?>> groceries) async {
+  //insert grocery list into database
+  static Future<void> insertGroceries(List<GroceryItem> groceries) async {
     final db = await SQLHelper.db();
 
     var batch = db.batch();
-    for (Map<String, Object?> groceryItem in groceries) {
-      db.insert('shopping_list', groceryItem);
+    for (var groceryItem in groceries) {
+      await insertGrocery(groceryItem);
     }
     await batch.commit(noResult: true);
   }
@@ -248,21 +192,53 @@ class SQLHelper {
 
     //find matching grocery item in list
     var queryResult = await db.rawQuery("""
-      SELECT id, name, qty, qty_unit FROM shopping_list WHERE name = ?
+      SELECT id, name, qty, category, qty_unit FROM shopping_list WHERE name = ?
     """, [item.name]);
 
-    if (queryResult.isEmpty) {
-      return await db.rawInsert("""
+    //check if qty should be updated, otherwise just insert new entry
+    if (queryResult.isNotEmpty) {
+      //entries must have same name, category, qtyUnit, and qty's must be valid number
+      for (var entry in queryResult) {
+        if (entry['name'] == item.name &&
+            entry['category'] == item.category &&
+            entry['qty_unit'] == item.qtyUnit &&
+            item.qty != " " &&
+            entry['qty'] != null) {
+          //update shopping list quanty
+          RegExp fractionQtyRegEx = RegExp(r"(\d+)(/)(\d+)");
+
+          print("entry category: ${entry['category']}\t item category: ${item.category}");
+          if (fractionQtyRegEx.hasMatch(item.qty) ||
+              fractionQtyRegEx.hasMatch(entry['qty'].toString())) {
+            final oldQtyFrac = Fraction.fromString(entry['qty'].toString());
+            final newQtyFrac = Fraction.fromString(item.qty);
+
+            final totalQtyFrac = oldQtyFrac + newQtyFrac;
+
+            final totalQtyStr = totalQtyFrac.toString();
+
+            return await db.rawUpdate("""
+              UPDATE shopping_list SET qty = ? 
+              WHERE id = ?""", [totalQtyStr, entry['id']]);
+          } else {
+            print(
+                "adding whole numbers... now equal to${int.parse(entry['qty'].toString()) + int.parse(item.qty)}");
+            return await db.rawUpdate("""
+              UPDATE shopping_list SET qty=? 
+              WHERE id = ?
+              """, [int.parse(entry['qty'].toString()) + int.parse(item.qty), entry['id']]);
+          }
+        }
+      }
+    }
+    return await db.rawInsert("""
         INSERT INTO shopping_list (name, category, checked, qty, qty_unit) 
         VALUES (?, ?, ?, ?, ?)
       """, [item.name, item.category, item.checkedOff, item.qty, item.qtyUnit]);
-    } else if (queryResult.isNotEmpty) {
-      //
-    }
   }
 
-  static Future<List<Map<String, Object?>>> retrieveGroceries() async {
-    List<Map<String, Object?>> items = [];
+  static Future<List<GroceryItem>> retrieveGroceries() async {
+    List<GroceryItem> items = [];
     final db = await SQLHelper.db();
 
     List<Map> data = await db.rawQuery("""
@@ -270,15 +246,16 @@ class SQLHelper {
     """);
 
     for (var row in data) {
-      items.add(
+      items.add(GroceryItem.fromMap(
         {
           "category": row["category"],
           "name": row["name"],
-          "checked": row["checked"] == 1 ? true : false,
+          "checked": row["checked"],
+          'id': row['id'],
           "qty": row["qty"],
-          "qtyUnit": row["qty_unit"]
+          "qty_unit": row["qty_unit"]
         },
-      );
+      ));
     }
 
     return items;
@@ -290,21 +267,13 @@ class SQLHelper {
     await db.delete('shopping_list');
   }
 
-  static Future<void> updateCheckedItem(String name) async {
+  static Future<void> updateCheckedItem(GroceryItem item) async {
     final db = await SQLHelper.db();
-
-    // retrieve checked property from shopping_list
-    var results = await db.rawQuery("""
-      SELECT checked FROM shopping_list WHERE
-      shopping_list.name = ?
-    """, [name]);
-
-    var checkedValue = results.first.values.first;
 
     // update item in shopping_list to be !checked
     await db.rawUpdate("""
-      UPDATE shopping_list SET checked = ? WHERE name = ?
-    """, [checkedValue == 1 ? 0 : 1, name]);
+      UPDATE shopping_list SET checked = ? WHERE id = ?
+    """, [item.checkedOff ? 1 : 0, item.id]);
   }
 
   static Future<void> deleteMeal(String name) async {
@@ -323,11 +292,20 @@ class SQLHelper {
     """, [id.first.values.first]);
   }
 
-  static Future<void> removeShoppingItem(String name) async {
+  static Future<int> removeShoppingItem(int id) async {
     final db = await SQLHelper.db();
 
-    await db.rawDelete("""
-      DELETE FROM shopping_list WHERE shopping_list.name = ?
-    """, [name]);
+    return await db.rawDelete("""
+      DELETE FROM shopping_list WHERE shopping_list.id = ?
+    """, [id]);
+  }
+
+  static Future<int> updateShoppingItem(GroceryItem item) async {
+    final db = await SQLHelper.db();
+
+    return await db.rawUpdate("""
+      UPDATE shopping_list SET name = ?, qty = ?, qty_unit = ?, category = ?, checked = ? 
+      WHERE id = ?
+    """, [item.name, item.qty, item.qtyUnit, item.category, item.checkedOff ? 1 : 0, item.id]);
   }
 }

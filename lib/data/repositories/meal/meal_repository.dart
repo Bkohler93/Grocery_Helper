@@ -29,7 +29,7 @@ class MealRepository implements IMealRepository {
 
   @override
   Future<bool> insert(String name, List<GroceryItem> items) async {
-    int mealId = await SQLHelper.insertMeal(name, items.map((item) => item.toMap()).toList());
+    int mealId = await SQLHelper.insertMeal(name, items);
 
     return (mealId > 0);
   }
@@ -38,5 +38,14 @@ class MealRepository implements IMealRepository {
   Future<void> update(String name, List<GroceryItem> items) {
     // TODO: implement update
     throw UnimplementedError();
+  }
+
+  @override
+  Future<void> populateGroceryList(List<String> mealNames) async {
+    //get list of ingredients
+    List<GroceryItem> mealIngredients = await SQLHelper.getIngredients(mealNames);
+
+    //insert groceries into shopping_list
+    await SQLHelper.insertGroceries(mealIngredients);
   }
 }

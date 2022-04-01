@@ -4,32 +4,48 @@ import 'package:grocery_helper_app/data/repositories/grocery/i_grocery_repositor
 
 class GroceryRepository implements IGroceryRepository {
   @override
-  Future<int> addGroceryItem(GroceryItem item) {
-    int id = SQLHelper.()
+  Future<int> addGroceryItem(GroceryItem item) async {
+    var id = await SQLHelper.insertGrocery(item);
+    return id;
   }
 
   @override
-  Future<int> addGroceryItems(List<GroceryItem> items) {
-    // TODO: implement addGroceryItems
-    throw UnimplementedError();
+  Future<void> addGroceryItems(List<GroceryItem> items) async {
+    await SQLHelper.insertGroceries(items);
   }
 
   @override
-  Future<int> deleteGroceryItem(int id) {
-    // TODO: implement deleteGroceryItem
-    throw UnimplementedError();
+  Future<int> deleteGroceryItem(int id) async {
+    return await SQLHelper.removeShoppingItem(id);
   }
 
   @override
-  Future<List<GroceryItem>> getGroceries() {
-    // TODO: implement getGroceries
-    throw UnimplementedError();
+  Future<List<GroceryItem>> getGroceries() async {
+    return await SQLHelper.retrieveGroceries();
   }
 
   @override
-  Future<int> updateGroceryItem(GroceryItem item) {
-    // TODO: implement updateGroceryItem
-    throw UnimplementedError();
+  Future<int> updateGroceryItem(GroceryItem item) async {
+    return await SQLHelper.updateShoppingItem(item);
   }
 
+  @override
+  Future<Map<String, List<GroceryItem>>> getGroceriesByCategory() async {
+    List<GroceryItem> items = await SQLHelper.retrieveGroceries();
+
+    Map<String, List<GroceryItem>> groupedList = {};
+    for (var item in items) {
+      if (groupedList[item.category] == null) {
+        groupedList[item.category] = [];
+      }
+      groupedList[item.category]!.add(item);
+    }
+
+    return groupedList;
+  }
+
+  @override
+  Future<void> checkOffGroceryItem(GroceryItem item) async {
+    await SQLHelper.updateCheckedItem(item);
+  }
 }

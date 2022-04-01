@@ -55,4 +55,10 @@ class MockMealRepository implements IMealRepository {
     // TODO: implement update
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> populateGroceryList(List<String> mealNames) {
+    // TODO: implement populateGroceryList
+    throw UnimplementedError();
+  }
 }
