@@ -9,10 +9,9 @@ class MealRepository implements IMealRepository {
   Future<List<Meal>> getMeals() async {
     List<Meal> meals = [];
     var rawMealData = await SQLHelper.getMeals();
-    for (var row in rawMealData) {
-      meals.add(Meal.fromMap(row));
+    for (var meal in rawMealData) {
+      meals.add(meal);
     }
-
     return meals;
   }
 

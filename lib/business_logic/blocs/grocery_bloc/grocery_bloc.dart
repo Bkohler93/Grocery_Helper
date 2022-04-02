@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/i_grocery_repository.dart';

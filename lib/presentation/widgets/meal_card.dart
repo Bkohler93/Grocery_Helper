@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc_bloc.dart';
 
 class MealCard extends StatelessWidget {
   const MealCard(this.name, this.isSelected, this.onSelected, this.isEditing, this.onEdit,
@@ -26,54 +28,61 @@ class MealCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: InkWell(
-          onTap: _handleTap,
-          onLongPress: _handleLongPress,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              top: 15.0,
-              bottom: 15.0,
-              left: 10.0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(15.0),
-                  height: 18.0,
-                  width: 18.0,
-                  decoration: BoxDecoration(
-                    color: isSelected ? Colors.blue : null,
-                    shape: BoxShape.circle,
-                  ),
+      child: BlocConsumer<MealCardBloc, MealCardState>(
+        listener: (context, state) {
+          // TODO: implement listener
+        },
+        builder: (context, state) {
+          return InkWell(
+              onTap: () => context.read<MealCardBloc>().add(SelectMealEvent(name)),
+              onLongPress: () => context.read<MealCardBloc>().add(EditMealEvent(name)),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 15.0,
+                  bottom: 15.0,
+                  left: 10.0,
                 ),
-                Text(name),
-                const Spacer(),
-                isEditing
-                    ? SizedBox(
-                        height: 50,
-                        child: ButtonBar(
-                          children: [
-                            SizedBox(
-                                width: 40,
-                                child: TextButton(
-                                  child: const Icon(Icons.edit, size: 20),
-                                  onPressed: () {},
-                                )),
-                            SizedBox(
-                              width: 40,
-                              child: TextButton(
-                                onPressed: _handleDelete,
-                                child: const Icon(Icons.delete, size: 20),
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    : const SizedBox(height: 50.0)
-              ],
-            ),
-          )),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(15.0),
+                      height: 18.0,
+                      width: 18.0,
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.blue : null,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    Text(name),
+                    const Spacer(),
+                    isEditing
+                        ? SizedBox(
+                            height: 50,
+                            child: ButtonBar(
+                              children: [
+                                SizedBox(
+                                    width: 40,
+                                    child: TextButton(
+                                      child: const Icon(Icons.edit, size: 20),
+                                      onPressed: () {},
+                                    )),
+                                SizedBox(
+                                  width: 40,
+                                  child: TextButton(
+                                    onPressed: _handleDelete,
+                                    child: const Icon(Icons.delete, size: 20),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        : const SizedBox(height: 50.0)
+                  ],
+                ),
+              ));
+        },
+      ),
     );
   }
 }
