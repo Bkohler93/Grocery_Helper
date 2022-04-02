@@ -1,87 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc.dart';
+import 'package:grocery_helper_app/data/models/meal.dart';
 
-class MealCard extends StatelessWidget {
-  const MealCard(this.name, this.isSelected, this.onSelected, this.isEditing, this.onEdit,
-      {Key? key})
-      : super(key: key);
+class MealCard extends StatefulWidget {
+  const MealCard(this.meal, {Key? key}) : super(key: key);
 
-  final String name;
-  final bool isSelected; //display selected icon
-  final bool isEditing; //display edit/delete buttons
-  final ValueChanged<String> onSelected; //tell parent widget this meal selected
-  final ValueChanged<String> onEdit; //tell parent this widget to edit
+  final Meal meal;
+  @override
+  State<MealCard> createState() => _MealCardState();
+}
 
-  // final int idx;
+class _MealCardState extends State<MealCard> {
+  late bool isSelected;
+  late bool isEditing;
 
-  void _handleTap() {
-    onSelected(name);
+  @override
+  initState() {
+    super.initState();
+    isSelected = widget.meal.checked;
+    isEditing = false;
   }
 
-  void _handleLongPress() {
-    onEdit(name);
-  }
-
-  void _handleDelete() {}
-
+  //tell parent this widget to edit
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: BlocConsumer<MealCardBloc, MealCardState>(
-        listener: (context, state) {
-          // TODO: implement listener
+      child: InkWell(
+        onTap: () => {
+          context.read<MealCardBloc>().add(SelectMealEvent(widget.meal)),
+          setState(() {
+            isSelected = !isSelected;
+          })
         },
-        builder: (context, state) {
-          return InkWell(
-              onTap: () => context.read<MealCardBloc>().add(SelectMealEvent(name)),
-              onLongPress: () => context.read<MealCardBloc>().add(EditMealEvent(name)),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 15.0,
-                  bottom: 15.0,
-                  left: 10.0,
+        onLongPress: () => setState(() {
+          isEditing = !isEditing;
+        }),
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 15.0,
+            bottom: 15.0,
+            left: 10.0,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.all(15.0),
+                height: 18.0,
+                width: 18.0,
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.blue : null,
+                  shape: BoxShape.circle,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(15.0),
-                      height: 18.0,
-                      width: 18.0,
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.blue : null,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Text(name),
-                    const Spacer(),
-                    isEditing
-                        ? SizedBox(
-                            height: 50,
-                            child: ButtonBar(
-                              children: [
-                                SizedBox(
-                                    width: 40,
-                                    child: TextButton(
-                                      child: const Icon(Icons.edit, size: 20),
-                                      onPressed: () {},
-                                    )),
-                                SizedBox(
-                                  width: 40,
-                                  child: TextButton(
-                                    onPressed: _handleDelete,
-                                    child: const Icon(Icons.delete, size: 20),
-                                  ),
-                                )
-                              ],
+              ),
+              Text(widget.meal.name),
+              const Spacer(),
+              isEditing
+                  ? SizedBox(
+                      height: 50,
+                      child: ButtonBar(
+                        children: [
+                          SizedBox(
+                              width: 40,
+                              child: TextButton(
+                                child: const Icon(Icons.edit, size: 20),
+                                onPressed: () {},
+                              )),
+                          SizedBox(
+                            width: 40,
+                            child: TextButton(
+                              onPressed: () {},
+                              child: const Icon(Icons.delete, size: 20),
                             ),
                           )
-                        : const SizedBox(height: 50.0)
-                  ],
-                ),
-              ));
-        },
+                        ],
+                      ),
+                    )
+                  : const SizedBox(height: 50.0)
+            ],
+          ),
+        ),
       ),
     );
   }

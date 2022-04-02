@@ -318,6 +318,6 @@ class SQLHelper {
     return await db.rawUpdate("""
       UPDATE meals SET name = ?, checked = ?
       WHERE id = ?
-    """, [meal.name, meal.checked, meal.id]);
+    """, [meal.name, meal.checked ? 1 : 0, meal.id]);
   }
 }

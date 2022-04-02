@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/grocery_bloc/grocery_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
-import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/grocery_repository.dart';
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
 import 'package:grocery_helper_app/presentation/screens/add_meal.dart';

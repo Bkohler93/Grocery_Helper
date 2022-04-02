@@ -4,16 +4,8 @@ import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart
 import 'package:grocery_helper_app/data/models/meal.dart';
 import '../widgets/meal_card.dart';
 
-class ChooseMealsPage extends StatefulWidget {
+class ChooseMealsPage extends StatelessWidget {
   const ChooseMealsPage({Key? key}) : super(key: key);
-
-  @override
-  _ChooseMealsPageState createState() => _ChooseMealsPageState();
-}
-
-class _ChooseMealsPageState extends State<ChooseMealsPage> {
-  final Map<String, bool> mealsSelected = {};
-  final Map<String, bool> mealsEditing = {};
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +25,7 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
               } else if (state is MealLoaded) {
                 return buildListWithData(state.meals);
               } else {
-                return buildInitialInput();
+                return Text("Something went wrong");
               }
             }),
         Positioned(
@@ -88,37 +80,7 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
     return ListView(
         scrollDirection: Axis.vertical,
         children: meals.map((meal) {
-          //initialize selected/editing values only if unitialized
-          if (mealsSelected[meal.name] == null || mealsEditing[meal.name] == null) {
-            mealsSelected[meal.name] = false;
-            mealsEditing[meal.name] = false;
-          }
-
-          return MealCard(meal.name, mealsSelected[meal.name]!, _handleMealClicked,
-              mealsEditing[meal.name]!, _handleMealEditing);
+          return MealCard(meal);
         }).toList());
-  }
-
-  void _handleMealClicked(String name) {
-    setState(() {
-      mealsEditing.updateAll((key, value) => false);
-      mealsSelected[name] = !mealsSelected[name]!;
-    });
-  }
-
-  //disable editing on any meals that currently have editing enabled
-  void _handleMealEditing(String name) {
-    mealsEditing.forEach((key, value) {
-      if (value == true && key != name) {
-        setState(() {
-          mealsEditing[key] = false;
-        });
-      }
-    });
-    bool currentValue = mealsEditing[name]!;
-
-    setState(() {
-      mealsEditing[name] = !currentValue;
-    });
   }
 }

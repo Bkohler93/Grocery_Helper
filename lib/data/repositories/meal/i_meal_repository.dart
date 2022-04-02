@@ -8,4 +8,5 @@ abstract class IMealRepository {
   Future<void> update(String name, List<GroceryItem> items);
   Future<void> delete(String name);
   Future<void> populateGroceryList(List<String> mealNames);
+  Future<Meal> checkMeal(Meal meal);
 }

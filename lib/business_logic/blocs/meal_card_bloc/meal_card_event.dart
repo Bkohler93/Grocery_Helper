@@ -1,4 +1,4 @@
-part of 'meal_card_bloc_bloc.dart';
+part of 'meal_card_bloc.dart';
 
 abstract class MealCardEvent extends Equatable {
   const MealCardEvent();
@@ -8,19 +8,19 @@ abstract class MealCardEvent extends Equatable {
 }
 
 class SelectMealEvent extends MealCardEvent {
-  final String name;
+  final Meal meal;
 
-  const SelectMealEvent(this.name);
+  const SelectMealEvent(this.meal);
 
   @override
-  List<Object> get props => [name];
+  List<Object> get props => [meal];
 }
 
 class EditMealEvent extends MealCardEvent {
-  final String name;
+  final Meal meal;
 
-  const EditMealEvent(this.name);
+  const EditMealEvent(this.meal);
 
   @override
-  List<Object> get props => [name];
+  List<Object> get props => [meal];
 }

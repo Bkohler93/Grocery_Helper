@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:grocery_helper_app/data/models/meal.dart';
 import 'package:grocery_helper_app/data/repositories/meal/i_meal_repository.dart';
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
 
-part 'meal_card_bloc_event.dart';
-part 'meal_card_bloc_state.dart';
+part 'meal_card_event.dart';
+part 'meal_card_state.dart';
 
 class MealCardBloc extends Bloc<MealCardEvent, MealCardState> {
   final IMealRepository _mealRepository;
@@ -19,11 +20,18 @@ class MealCardBloc extends Bloc<MealCardEvent, MealCardState> {
     if (event is SelectMealEvent) {
       await _selectMeal(emit, event);
     } else if (event is EditMealEvent) {
-      await _addMeal(emit, event);
+      await _editMeal(emit, event);
     }
   }
 
-  _selectMeal(Emitter<MealCardState> emit, SelectMealEvent event) {}
+  Future<void> _selectMeal(Emitter<MealCardState> emit, SelectMealEvent event) async {
+    try {
+      Meal meal = await _mealRepository.checkMeal(event.meal);
+      emit(MealCardSelected(meal));
+    } catch (error) {
+      emit(MealCardError("Unable to select meal"));
+    }
+  }
 
-  _addMeal(Emitter<MealCardState> emit, EditMealEvent event) {}
+  _editMeal(Emitter<MealCardState> emit, EditMealEvent event) {}
 }

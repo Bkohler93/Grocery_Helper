@@ -7,6 +7,10 @@ class Meal {
 
   Meal({required this.name, this.id, required this.checked});
 
+  Meal checkOff() {
+    return Meal(checked: !checked, id: id, name: name);
+  }
+
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {"name": name, "checked": checked};
 
@@ -18,6 +22,6 @@ class Meal {
   }
 
   static fromMap(Map map) {
-    return Meal(name: map["name"], id: map["id"], checked: map['checked']);
+    return Meal(name: map["name"], id: map["id"], checked: map['checked'] == 1 ? true : false);
   }
 }

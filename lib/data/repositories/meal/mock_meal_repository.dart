@@ -86,4 +86,10 @@ class MockMealRepository implements IMealRepository {
       }
     }
   }
+
+  @override
+  Future<Meal> checkMeal(Meal meal) {
+    // TODO: implement checkMeal
+    throw UnimplementedError();
+  }
 }

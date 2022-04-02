@@ -47,4 +47,11 @@ class MealRepository implements IMealRepository {
     //insert groceries into shopping_list
     await SQLHelper.insertGroceries(mealIngredients);
   }
+
+  @override
+  Future<Meal> checkMeal(Meal meal) async {
+    Meal mealChecked = meal.checkOff();
+    await SQLHelper.updateMeal(mealChecked);
+    return mealChecked;
+  }
 }
