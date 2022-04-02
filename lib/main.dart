@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/grocery_bloc/grocery_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc_bloc.dart';
+import 'package:grocery_helper_app/data/repositories/grocery/grocery_repository.dart';
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
+import 'package:grocery_helper_app/presentation/screens/add_meal.dart';
 
 // import 'package:grocery_helper_app/data/models/grocery_list.dart';
 import 'package:grocery_helper_app/presentation/screens/choose_meals.dart';
 
-import 'business_logic/meal_bloc/meal_bloc.dart';
 // import 'presentation/screens/add_meal.dart';
 // import 'presentation/screens/grocery_list.dart';
 
@@ -34,10 +38,12 @@ class MyApp extends StatelessWidget {
         BlocProvider<MealBloc>(
           create: (context) => MealBloc(MealRepository()),
         ),
-        //TODO INITIALIZE Grocery Bloc provider
-        // BlocProvider<GroceryBloc>(
-        //   create: (context) => GroceryBloc(GroceryRepository()),
-        // )
+        BlocProvider<GroceryBloc>(
+          create: (context) => GroceryBloc(GroceryRepository()),
+        ),
+        BlocProvider<MealCardBloc>(
+          create: (context) => MealCardBloc(MealRepository()),
+        )
       ],
       child: DefaultTabController(
         length: 1,
@@ -62,17 +68,17 @@ class MyApp extends StatelessWidget {
                         textStyle: const TextStyle(fontSize: 16),
                       ),
                       onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => const AddMealPage()),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AddMealPage()),
+                        );
                       },
                       child: const Text('Add Meal'),
                     )),
               ),
             ],
           ),
-          body: const TabBarView(
+          body: TabBarView(
             children: [ChooseMealsPage() /*, GroceryListPage()*/],
           ),
         ),

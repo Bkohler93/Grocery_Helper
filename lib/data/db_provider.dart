@@ -1,6 +1,6 @@
 import 'package:fraction/fraction.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
-import 'package:grocery_helper_app/data/models/ingredient.dart';
+import 'package:grocery_helper_app/data/models/meal.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'dart:async';
@@ -11,7 +11,8 @@ class SQLHelper {
   static Future<void> createTables(sql.Database db) async {
     await db.execute("""CREATE TABLE meals(
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-      name TEXT NOT NULL UNIQUE
+      name TEXT NOT NULL UNIQUE,
+      checked INTEGER NOT NULL
       )
       """);
     await db.execute("""CREATE TABLE ingredients(
@@ -46,7 +47,8 @@ class SQLHelper {
 
   static Future<void> fillTables(sql.Database db) async {
     await db.execute("""
-      INSERT INTO meals(name) VALUES ("meatballs with bulgogi sauce")
+      INSERT INTO meals(name, checked) 
+      VALUES ("meatballs with bulgogi sauce", 0), ("lemon chicken stock", 1)
     """);
 
     await db.execute("""
@@ -62,7 +64,11 @@ class SQLHelper {
         ((SELECT id from meals WHERE name="meatballs with bulgogi sauce"),
           (SELECT id from ingredients WHERE name="bulgogi sauce"),"3","tsp"),
         ((SELECT id from meals WHERE name="meatballs with bulgogi sauce"),
-          (SELECT id from ingredients WHERE name="chicken stock"),"1/2","cup") 
+          (SELECT id from ingredients WHERE name="chicken stock"),"1/2","cup"),
+        ((SELECT id from meals WHERE name="lemon chicken stock"),
+          (SELECT id from ingredients WHERE name="chicken stock"),"1/2","cup"),
+        ((SELECT id from meals WHERE name="lemon chicken stock"),
+          (SELECT id from ingredients WHERE name="lemon"),"1","")
     """);
 
     await db.execute("""
@@ -97,7 +103,7 @@ class SQLHelper {
     }
 
     var id = await db.rawInsert("""
-      INSERT INTO meals (name) VALUES (?)
+      INSERT INTO meals (name, checked) VALUES (?, 0)
     """, [mealName]);
 
     //check if ingredient already exists before adding new entry to
@@ -134,15 +140,15 @@ class SQLHelper {
   }
 
   //retrieve list of meals
-  static Future<List<Map>> getMeals() async {
+  static Future<List<Meal>> getMeals() async {
     // sql.databaseFactory
     //     .deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
     final db = await SQLHelper.db();
     var result = await db.query('meals');
 
-    List<Map> meals = [];
+    List<Meal> meals = [];
     for (var meal in result) {
-      meals.add(meal);
+      meals.add(Meal.fromMap(meal));
     }
 
     return meals;
@@ -207,7 +213,6 @@ class SQLHelper {
           //update shopping list quanty
           RegExp fractionQtyRegEx = RegExp(r"(\d+)(/)(\d+)");
 
-          print("entry category: ${entry['category']}\t item category: ${item.category}");
           if (fractionQtyRegEx.hasMatch(item.qty) ||
               fractionQtyRegEx.hasMatch(entry['qty'].toString())) {
             final oldQtyFrac = Fraction.fromString(entry['qty'].toString());
@@ -221,8 +226,6 @@ class SQLHelper {
               UPDATE shopping_list SET qty = ? 
               WHERE id = ?""", [totalQtyStr, entry['id']]);
           } else {
-            print(
-                "adding whole numbers... now equal to${int.parse(entry['qty'].toString()) + int.parse(item.qty)}");
             return await db.rawUpdate("""
               UPDATE shopping_list SET qty=? 
               WHERE id = ?
@@ -307,5 +310,14 @@ class SQLHelper {
       UPDATE shopping_list SET name = ?, qty = ?, qty_unit = ?, category = ?, checked = ? 
       WHERE id = ?
     """, [item.name, item.qty, item.qtyUnit, item.category, item.checkedOff ? 1 : 0, item.id]);
+  }
+
+  static Future<int> updateMeal(Meal meal) async {
+    final db = await SQLHelper.db();
+
+    return await db.rawUpdate("""
+      UPDATE meals SET name = ?, checked = ?
+      WHERE id = ?
+    """, [meal.name, meal.checked, meal.id]);
   }
 }

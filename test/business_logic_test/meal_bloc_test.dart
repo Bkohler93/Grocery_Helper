@@ -1,7 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:grocery_helper_app/business_logic/meal_bloc/meal_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/meal/mock_meal_repository.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
 import 'package:grocery_helper_app/data/models/meal.dart';
-import '../../business_logic/meal_bloc/meal_bloc.dart';
 import '../widgets/meal_card.dart';
 
 class ChooseMealsPage extends StatefulWidget {
@@ -16,13 +16,6 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
   final Map<String, bool> mealsEditing = {};
 
   @override
-  void initState() {
-    final mealBloc = context.read<MealBloc>();
-    mealBloc.add(GetMealsEvent());
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
 
@@ -33,6 +26,7 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
             listener: (context, state) {},
             builder: (context, state) {
               if (state is MealInitial) {
+                context.read<MealBloc>().add(GetMealsEvent());
                 return buildInitialInput();
               } else if (state is MealLoading) {
                 return buildLoading();

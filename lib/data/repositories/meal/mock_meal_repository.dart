@@ -5,10 +5,10 @@ import 'dart:async';
 import 'package:grocery_helper_app/data/repositories/meal/i_meal_repository.dart';
 
 var mockMeals = <Meal>[
-  Meal(name: "Meatballs with Bulgogi Sauce", id: 1),
-  Meal(name: "Cheesy  Beef Tostadas", id: 2),
-  Meal(name: "Chicken Pineapple Quesadillas", id: 3),
-  Meal(name: "Parmesan-Crusted Chicken", id: 4)
+  Meal(name: "Meatballs with Bulgogi Sauce", id: 1, checked: false),
+  Meal(name: "Cheesy  Beef Tostadas", id: 2, checked: false),
+  Meal(name: "Chicken Pineapple Quesadillas", id: 3, checked: false),
+  Meal(name: "Parmesan-Crusted Chicken", id: 4, checked: false)
 ];
 
 var mockGroceryList = <GroceryItem>[
@@ -65,7 +65,7 @@ class MockMealRepository implements IMealRepository {
       }
     }
 
-    mockMeals.add(Meal(name: name, id: mockMeals.length + 1));
+    mockMeals.add(Meal(name: name, id: mockMeals.length + 1, checked: false));
 
     return true;
   }

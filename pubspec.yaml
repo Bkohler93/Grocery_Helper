@@ -42,6 +42,7 @@ dependencies:
   path: ^1.8.0
   modal_side_sheet: ^0.0.1
   progress_indicators: ^1.0.0
+  rxdart: ^0.27.3
 
 flutter_icons:
   android: "launcher_icon"
