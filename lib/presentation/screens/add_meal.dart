@@ -1,6 +1,8 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/extensions/string.dart';
 import 'package:progress_indicators/progress_indicators.dart';
@@ -16,81 +18,7 @@ class AddMealPage extends StatefulWidget {
 }
 
 class _AddMealPageState extends State<AddMealPage> {
-  final _formKey = GlobalKey<FormState>();
-  bool _loading = false;
-  final _ingredientFormKey = GlobalKey<FormState>();
-  final ingredientNameController = TextEditingController();
-  final categoryController = TextEditingController();
-  final qtyController = TextEditingController();
-  final mealNameController = TextEditingController();
-
   final List<GroceryItem> _ingredients = [];
-
-  void _handleSavePress() async {
-    if (_formKey.currentState!.validate() && _ingredients.isNotEmpty) {
-      UnmodifiableListView<GroceryItem> ingredientsView = UnmodifiableListView(_ingredients);
-      setState(() {
-        _loading = true;
-      });
-      // await SQLHelper.insertMeal(Meal(name: mealNameController.text), ingredientsView);
-      mealNameController.clear();
-      qtyController.clear();
-      ingredientNameController.clear();
-      categoryController.clear();
-      setState(() {
-        _loading = false;
-        _ingredients.clear();
-      });
-    } else if (_ingredients.isEmpty) {
-      final snackBar = SnackBar(
-        content: const Text("Add at least one ingredient"),
-        action: SnackBarAction(
-          label: 'Close',
-          onPressed: () {},
-        ),
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-  }
-
-  void _addGroceryItem() {
-    String itemName = ingredientNameController.text.capitalize();
-    List<String> itemQtyUnit = qtyController.text.split(' ');
-    String category = categoryController.text.capitalize();
-
-    if (itemQtyUnit.length > 1) {
-      // setState(() {
-      //   _ingredients.add(GroceryItem(
-      //     category,
-      //     itemName,
-      //     qty: itemQtyUnit[0].capitalize(),
-      //     qtyUnit: itemQtyUnit[1].capitalize(),
-      //   ));
-      // });
-    } else if (itemQtyUnit.length == 1) {
-      // setState(() {
-      //   _ingredients.add(GroceryItem(
-      //     category,
-      //     itemName,
-      //     qty: itemQtyUnit[0].capitalize(),
-      //     qtyUnit: " ",
-      //   ));
-      // });
-    } else {
-      // setState(() {
-      //   _ingredients.add(GroceryItem(
-      //     category,
-      //     itemName,
-      //     qty: " ",
-      //     qtyUnit: " ",
-      //   ));
-      // });
-    }
-    ingredientNameController.clear();
-    qtyController.clear();
-    categoryController.clear();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +33,7 @@ class _AddMealPageState extends State<AddMealPage> {
               padding: const EdgeInsets.only(right: 8.0),
               child: IconButton(
                 icon: const Icon(Icons.save),
-                onPressed: () async => _handleSavePress(),
+                onPressed: () {},
               ),
             )
           ],
@@ -113,63 +41,51 @@ class _AddMealPageState extends State<AddMealPage> {
         body: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Center(
-              child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      MealName(mealNameController: mealNameController),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: const Padding(
-                              child: Text(
-                                'Ingredients',
-                                textAlign: TextAlign.start,
-                                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-                              ),
-                              padding: EdgeInsets.only(bottom: 10.0))),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 15.0),
-                        child: Form(
-                          key: _ingredientFormKey,
-                          child: Row(children: [
-                            IngredientField(
-                              validatorMsg: 'Enter name',
-                              hintText: 'Banana',
-                              ingredientFieldController: ingredientNameController,
-                            ),
-                            IngredientField(
-                              validatorMsg: 'Enter quantity',
-                              hintText: '1 bunch',
-                              ingredientFieldController: qtyController,
-                            ),
-                            IngredientField(
-                              hintText: 'produce',
-                              validatorMsg: 'Enter category',
-                              ingredientFieldController: categoryController,
-                            ),
-                            const Spacer(),
-                            TextButton(
-                                style: ButtonStyle(
-                                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-                                ),
-                                onPressed: () {
-                                  if (_ingredientFormKey.currentState!.validate()) {
-                                    _addGroceryItem();
-                                  }
-                                },
-                                child: const Text('Add'))
-                          ]),
-                        ),
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const MealNameField(),
+              SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: const Padding(
+                      child: Text(
+                        'Ingredients',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
                       ),
-                      Wrap(
-                          children: _ingredients.map((ingredient) {
-                        return IngredientBadge(groceryItem: ingredient);
-                      }).toList()),
-                      const Spacer(),
-                    ],
-                  ))),
+                      padding: EdgeInsets.only(bottom: 10.0))),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 15.0),
+                child: Row(children: [
+                  const IngredientField(
+                    validatorMsg: 'Enter name',
+                    hintText: 'Banana',
+                  ),
+                  const IngredientField(
+                    validatorMsg: 'Enter quantity',
+                    hintText: '1 bunch',
+                  ),
+                  const IngredientField(
+                    hintText: 'produce',
+                    validatorMsg: 'Enter category',
+                  ),
+                  const Spacer(),
+                  TextButton(
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                      ),
+                      onPressed: () {},
+                      child: const Text('Add'))
+                ]),
+              ),
+              Wrap(
+                  children: _ingredients.map((ingredient) {
+                return IngredientBadge(groceryItem: ingredient);
+              }).toList()),
+              const Spacer(),
+            ],
+          )),
         ));
   }
 }
@@ -241,23 +157,17 @@ class IngredientField extends StatelessWidget {
     Key? key,
     required this.validatorMsg,
     required this.hintText,
-    required this.ingredientFieldController,
   }) : super(key: key);
 
-  final TextEditingController ingredientFieldController;
   final String hintText;
   final String validatorMsg;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: TextFormField(
-          controller: ingredientFieldController,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return validatorMsg;
-            }
-            return null;
+      child: TextField(
+          onChanged: (text) {
+            print(text);
           },
           decoration: InputDecoration(
             border: InputBorder.none,
@@ -268,33 +178,29 @@ class IngredientField extends StatelessWidget {
   }
 }
 
-class MealName extends StatelessWidget {
-  const MealName({
+class MealNameField extends StatelessWidget {
+  const MealNameField({
     Key? key,
-    required this.mealNameController,
   }) : super(key: key);
-
-  final TextEditingController mealNameController;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 40.0),
-      child: TextFormField(
-        controller: mealNameController,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter a name for this meal';
-          }
-          return null;
-        },
-        decoration: InputDecoration(
-            hintText: 'Sloppy Joes',
-            labelText: 'Name',
-            enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5.0),
-                borderSide: const BorderSide(color: Colors.lightBlue, width: 1.0))),
-      ),
+      child: BlocBuilder<AddMealBloc, AddMealState>(builder: (context, state) {
+        return TextField(
+          onChanged: (text) {
+            print(text);
+          },
+          decoration: InputDecoration(
+              hintText: 'Sloppy Joes',
+              labelText: 'Name',
+              errorText: (state is MealNameInvalidated) ? state.msg : null,
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: const BorderSide(color: Colors.lightBlue, width: 1.0))),
+        );
+      }),
     );
   }
 }

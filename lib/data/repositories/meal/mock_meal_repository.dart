@@ -33,13 +33,13 @@ Map<String, List<GroceryItem>> mockMealIngredients = {
 
 class MockMealRepository implements IMealRepository {
   @override
-  Future<void> delete(String name) async {
+  Future<void> delete(Meal meal) async {
     await Future.delayed(const Duration(microseconds: 500));
 
-    if (!mockMeals.any((element) => element.name == name)) {
+    if (!mockMeals.any((element) => element.name == meal.name)) {
       throw Error();
     }
-    mockMeals.removeWhere((element) => element.name == name);
+    mockMeals.removeWhere((element) => element.name == meal.name);
   }
 
   @override
@@ -90,6 +90,12 @@ class MockMealRepository implements IMealRepository {
   @override
   Future<Meal> checkMeal(Meal meal) {
     // TODO: implement checkMeal
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> mealExists(String name) {
+    // TODO: implement mealExists
     throw UnimplementedError();
   }
 }

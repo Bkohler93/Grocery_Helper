@@ -16,10 +16,10 @@ class SelectMealEvent extends MealCardEvent {
   List<Object> get props => [meal];
 }
 
-class EditMealEvent extends MealCardEvent {
+class DeleteMealCardEvent extends MealCardEvent {
   final Meal meal;
 
-  const EditMealEvent(this.meal);
+  const DeleteMealCardEvent(this.meal);
 
   @override
   List<Object> get props => [meal];

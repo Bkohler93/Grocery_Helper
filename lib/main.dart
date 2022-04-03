@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/grocery_bloc/grocery_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc.dart';
@@ -18,12 +19,27 @@ void main() {
     // ChangeNotifierProvider(
     //   create: (BuildContext context) => GroceryListModel(),
     // child:
-    MaterialApp(
-        home: const MyApp(),
-        title: "Grocery Helper",
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        )),
+    MultiBlocProvider(
+        providers: [
+          BlocProvider<MealBloc>(
+            create: (context) => MealBloc(MealRepository()),
+          ),
+          BlocProvider<GroceryBloc>(
+            create: (context) => GroceryBloc(GroceryRepository()),
+          ),
+          BlocProvider<MealCardBloc>(
+            create: (context) => MealCardBloc(MealRepository()),
+          ),
+          BlocProvider<AddMealBloc>(
+            create: (context) => AddMealBloc(MealRepository()),
+          )
+        ],
+        child: MaterialApp(
+            home: const MyApp(),
+            title: "Grocery Helper",
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ))),
   );
   // );
 }
@@ -33,54 +49,52 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<MealBloc>(
-          create: (context) => MealBloc(MealRepository()),
+    return const Home();
+  }
+}
+
+class Home extends StatelessWidget {
+  const Home({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 1,
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: const TabBar(tabs: [
+            Tab(icon: Icon(Icons.restaurant_menu)),
+            // Tab(
+            //   icon: Icon(Icons.checklist),
+            // )
+          ]),
+          title: const Text('Grocery Helper'),
+          actions: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Container(
+                  margin: const EdgeInsets.fromLTRB(0, 3, 10, 0),
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.all(4.0),
+                      primary: Colors.white,
+                      textStyle: const TextStyle(fontSize: 16),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AddMealPage()),
+                      );
+                    },
+                    child: const Text('Add Meal'),
+                  )),
+            ),
+          ],
         ),
-        BlocProvider<GroceryBloc>(
-          create: (context) => GroceryBloc(GroceryRepository()),
-        ),
-        BlocProvider<MealCardBloc>(
-          create: (context) => MealCardBloc(MealRepository()),
-        )
-      ],
-      child: DefaultTabController(
-        length: 1,
-        child: Scaffold(
-          appBar: AppBar(
-            bottom: const TabBar(tabs: [
-              Tab(icon: Icon(Icons.restaurant_menu)),
-              // Tab(
-              //   icon: Icon(Icons.checklist),
-              // )
-            ]),
-            title: const Text('Grocery Helper'),
-            actions: <Widget>[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: Container(
-                    margin: const EdgeInsets.fromLTRB(0, 3, 10, 0),
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.all(4.0),
-                        primary: Colors.white,
-                        textStyle: const TextStyle(fontSize: 16),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AddMealPage()),
-                        );
-                      },
-                      child: const Text('Add Meal'),
-                    )),
-              ),
-            ],
-          ),
-          body: TabBarView(
-            children: [ChooseMealsPage() /*, GroceryListPage()*/],
-          ),
+        body: TabBarView(
+          children: [ChooseMealsPage() /*, GroceryListPage()*/],
         ),
       ),
     );

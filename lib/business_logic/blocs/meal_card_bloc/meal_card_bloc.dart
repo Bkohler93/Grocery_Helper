@@ -19,8 +19,8 @@ class MealCardBloc extends Bloc<MealCardEvent, MealCardState> {
   void mapEventToState(MealCardEvent event, Emitter<MealCardState> emit) async {
     if (event is SelectMealEvent) {
       await _selectMeal(emit, event);
-    } else if (event is EditMealEvent) {
-      await _editMeal(emit, event);
+    } else if (event is DeleteMealCardEvent) {
+      await _deleteMeal(emit, event);
     }
   }
 
@@ -33,5 +33,12 @@ class MealCardBloc extends Bloc<MealCardEvent, MealCardState> {
     }
   }
 
-  _editMeal(Emitter<MealCardState> emit, EditMealEvent event) {}
+  Future<void> _deleteMeal(Emitter<MealCardState> emit, DeleteMealCardEvent event) async {
+    try {
+      await _mealRepository.delete(event.meal);
+      emit(MealCardDeleted());
+    } catch (error) {
+      emit(MealCardError("Unable to delete meal"));
+    }
+  }
 }

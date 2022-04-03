@@ -16,8 +16,8 @@ class MealRepository implements IMealRepository {
   }
 
   @override
-  Future<void> delete(String name) async {
-    await SQLHelper.deleteMeal(name);
+  Future<void> delete(Meal meal) async {
+    await SQLHelper.deleteMeal(meal);
   }
 
   @override
@@ -53,5 +53,10 @@ class MealRepository implements IMealRepository {
     Meal mealChecked = meal.checkOff();
     await SQLHelper.updateMeal(mealChecked);
     return mealChecked;
+  }
+
+  @override
+  Future<bool> mealExists(String name) async {
+    return await SQLHelper.mealExists(name);
   }
 }

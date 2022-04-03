@@ -26,3 +26,10 @@ class MealCardError extends MealCardState {
   @override
   List<Object> get props => [msg];
 }
+
+class MealCardDeleted extends MealCardState {
+  const MealCardDeleted();
+
+  @override
+  List<Object> get props => [];
+}

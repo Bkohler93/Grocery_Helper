@@ -279,20 +279,16 @@ class SQLHelper {
     """, [item.checkedOff ? 1 : 0, item.id]);
   }
 
-  static Future<void> deleteMeal(String name) async {
+  static Future<void> deleteMeal(Meal meal) async {
     final db = await SQLHelper.db();
-
-    var id = await db.rawQuery("""
-      SELECT meals.id FROM meals WHERE meals.name = ?
-    """, [name]);
 
     await db.rawDelete("""
       DELETE FROM meal_ingredients WHERE meal_ingredients.meal_id = ?  
-    """, [id.first.values.first]);
+    """, [meal.id]);
 
     await db.rawDelete("""
       DELETE FROM meals WHERE meals.id = ?
-    """, [id.first.values.first]);
+    """, [meal.id]);
   }
 
   static Future<int> removeShoppingItem(int id) async {
@@ -319,5 +315,15 @@ class SQLHelper {
       UPDATE meals SET name = ?, checked = ?
       WHERE id = ?
     """, [meal.name, meal.checked ? 1 : 0, meal.id]);
+  }
+
+  static Future<bool> mealExists(String name) async {
+    final db = await SQLHelper.db();
+
+    var results = await db.rawQuery("""
+      SELECT * FROM meals WHERE name = ?
+    """, [name]);
+
+    return results.isNotEmpty;
   }
 }

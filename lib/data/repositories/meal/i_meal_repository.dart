@@ -6,7 +6,8 @@ abstract class IMealRepository {
   Future<Meal?> getMeal({int id, String name});
   Future<bool> insert(String name, List<GroceryItem> items);
   Future<void> update(String name, List<GroceryItem> items);
-  Future<void> delete(String name);
+  Future<void> delete(Meal meal);
   Future<void> populateGroceryList(List<String> mealNames);
   Future<Meal> checkMeal(Meal meal);
+  Future<bool> mealExists(String name);
 }
