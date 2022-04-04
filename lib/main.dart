@@ -30,9 +30,6 @@ void main() {
           BlocProvider<MealCardBloc>(
             create: (context) => MealCardBloc(MealRepository()),
           ),
-          BlocProvider<AddMealBloc>(
-            create: (context) => AddMealBloc(MealRepository()),
-          )
         ],
         child: MaterialApp(
             home: const MyApp(),

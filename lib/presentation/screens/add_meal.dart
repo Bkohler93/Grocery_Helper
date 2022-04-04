@@ -1,24 +1,37 @@
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
+import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
 import 'package:grocery_helper_app/extensions/string.dart';
+import 'package:grocery_helper_app/presentation/widgets/ingredient_category_dropdown.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 
 import 'package:grocery_helper_app/data/db_provider.dart';
 import 'package:grocery_helper_app/data/models/meal.dart';
 
-class AddMealPage extends StatefulWidget {
+class AddMealPage extends StatelessWidget {
   const AddMealPage({Key? key}) : super(key: key);
 
   @override
-  _AddMealPageState createState() => _AddMealPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) {
+        return AddMealBloc(MealRepository());
+      },
+      child: AddMealForm(),
+    );
+  }
 }
 
-class _AddMealPageState extends State<AddMealPage> {
-  final List<GroceryItem> _ingredients = [];
+class AddMealForm extends StatelessWidget {
+  AddMealForm({Key? key}) : super(key: key);
+  final ingredientNameController = TextEditingController();
+  final ingredientQtyController = TextEditingController();
+  final ingredientNameFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -56,33 +69,43 @@ class _AddMealPageState extends State<AddMealPage> {
                       padding: EdgeInsets.only(bottom: 10.0))),
               Padding(
                 padding: const EdgeInsets.only(bottom: 15.0),
-                child: Row(children: [
-                  const IngredientField(
-                    validatorMsg: 'Enter name',
-                    hintText: 'Banana',
-                  ),
-                  const IngredientField(
-                    validatorMsg: 'Enter quantity',
-                    hintText: '1 bunch',
-                  ),
-                  const IngredientField(
-                    hintText: 'produce',
-                    validatorMsg: 'Enter category',
-                  ),
-                  const Spacer(),
+                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    IngredientNameField(
+                        controller: ingredientNameController, focusNode: ingredientNameFocusNode),
+                    Row(
+                      children: [
+                        IngredientQtyField(controller: ingredientQtyController),
+                        CategoryDropdown(),
+                      ],
+                    ),
+                  ]),
                   TextButton(
                       style: ButtonStyle(
                         foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                         backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<AddMealBloc>().add(AddIngredientEvent());
+                        ingredientNameController.clear();
+                        ingredientQtyController.clear();
+                        ingredientNameFocusNode.requestFocus();
+                      },
                       child: const Text('Add'))
                 ]),
               ),
-              Wrap(
-                  children: _ingredients.map((ingredient) {
-                return IngredientBadge(groceryItem: ingredient);
-              }).toList()),
+              BlocBuilder<AddMealBloc, AddMealState>(
+                builder: (context, state) {
+                  if (state.items.isNotEmpty) {
+                    return Wrap(
+                        children: state.items.map((ingredient) {
+                      return IngredientBadge(groceryItem: ingredient);
+                    }).toList());
+                  } else {
+                    return Text("Add some ingredients!");
+                  }
+                },
+              ),
               const Spacer(),
             ],
           )),
@@ -152,28 +175,71 @@ class IngredientBadge extends StatelessWidget {
   }
 }
 
-class IngredientField extends StatelessWidget {
-  const IngredientField({
+class IngredientNameField extends StatefulWidget {
+  const IngredientNameField({
     Key? key,
-    required this.validatorMsg,
-    required this.hintText,
+    required this.controller,
+    required this.focusNode,
   }) : super(key: key);
+  final TextEditingController controller;
+  final FocusNode focusNode;
 
-  final String hintText;
-  final String validatorMsg;
+  @override
+  State<IngredientNameField> createState() => _IngredientNameFieldState();
+}
+
+class _IngredientNameFieldState extends State<IngredientNameField> {
+  final _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: TextField(
-          onChanged: (text) {
-            print(text);
-          },
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: hintText,
-          )),
-      width: MediaQuery.of(context).size.width * 0.24,
+      child: BlocBuilder<AddMealBloc, AddMealState>(
+        builder: (context, state) {
+          return TextField(
+              focusNode: widget.focusNode,
+              controller: widget.controller,
+              onChanged: (text) {
+                context.read<AddMealBloc>().add(EditIngredientNameEvent(text));
+              },
+              maxLength: 25,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Name',
+                counterText: "",
+              ));
+        },
+      ),
+      width: MediaQuery.of(context).size.width * 0.7,
+    );
+  }
+}
+
+class IngredientQtyField extends StatelessWidget {
+  const IngredientQtyField({
+    required this.controller,
+    Key? key,
+  }) : super(key: key);
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      child: BlocBuilder<AddMealBloc, AddMealState>(
+        builder: (context, state) {
+          return TextField(
+              controller: controller,
+              onChanged: (text) {
+                context.read<AddMealBloc>().add(EditIngredientQtyEvent(text));
+              },
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Quantity',
+                errorText: state.ingredientQtyErrorText == '' ? null : state.ingredientQtyErrorText,
+              ));
+        },
+      ),
+      width: MediaQuery.of(context).size.width * 0.4,
     );
   }
 }
@@ -190,15 +256,13 @@ class MealNameField extends StatelessWidget {
       child: BlocBuilder<AddMealBloc, AddMealState>(builder: (context, state) {
         return TextField(
           onChanged: (text) {
-            print(text);
+            context.read<AddMealBloc>().add(EditMealNameEvent(text));
           },
           decoration: InputDecoration(
-              hintText: 'Sloppy Joes',
-              labelText: 'Name',
-              errorText: (state is MealNameInvalidated) ? state.msg : null,
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                  borderSide: const BorderSide(color: Colors.lightBlue, width: 1.0))),
+            hintText: 'Sloppy Joes',
+            labelText: 'Name',
+            errorText: state.nameErrorText == '' ? null : state.nameErrorText,
+          ),
         );
       }),
     );

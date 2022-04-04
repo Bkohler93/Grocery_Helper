@@ -30,6 +30,29 @@ class GroceryItem {
     return map;
   }
 
+  static fromRawQty({
+    required String rawQty,
+    required String category,
+    required String name,
+  }) {
+    String? qty;
+    String? qtyUnit;
+
+    qty = RegExp(r"([0-9]* [0-9]*/[0-9]*)|([0-9]*/[0-9]*)|([0-9]?.[0-9]*)|([0-9]*)")
+        .firstMatch(rawQty)
+        ?.group(0);
+
+    qtyUnit = rawQty.replaceAll(qty ?? ' ', '').replaceFirst(' ', '');
+
+    return GroceryItem(
+      category: category,
+      name: name,
+      checkedOff: false,
+      qty: qty ?? ' ',
+      qtyUnit: qtyUnit,
+    );
+  }
+
   static fromMap(Map data) {
     return GroceryItem(
         category: data['category'],

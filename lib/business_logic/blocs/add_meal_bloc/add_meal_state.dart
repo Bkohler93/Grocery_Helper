@@ -1,33 +1,69 @@
 part of 'add_meal_bloc.dart';
 
-abstract class AddMealState extends Equatable {
-  const AddMealState();
+enum AddMealStatus { initialized, valid, invalid, error }
+
+class AddMealState extends Equatable {
+  const AddMealState({
+    this.status = AddMealStatus.initialized,
+    this.items = const [],
+    this.nameErrorText = '',
+    this.ingredientNameErrorText = '',
+    this.ingredientQtyErrorText = '',
+    this.mealName = '',
+    this.ingredientName = '',
+    this.ingredientQty = '',
+    this.ingredientCategory = '',
+  });
+
+  final AddMealStatus status;
+  final List<GroceryItem> items;
+  final String nameErrorText;
+  final String ingredientNameErrorText;
+  final String ingredientQtyErrorText;
+  final String mealName;
+  final String ingredientName;
+  final String ingredientQty;
+  final String ingredientCategory;
+
+  AddMealState copyWith({
+    AddMealStatus? status,
+    List<GroceryItem>? items,
+    String? nameErrorText,
+    String? ingredientNameErrorText,
+    String? ingredientQtyErrorText,
+    String? mealName,
+    String? ingredientName,
+    String? ingredientQty,
+    String? ingredientCategory,
+  }) {
+    return AddMealState(
+      status: status ?? this.status,
+      items: items ?? this.items,
+      nameErrorText: nameErrorText ?? this.nameErrorText,
+      ingredientNameErrorText: ingredientNameErrorText ?? this.ingredientNameErrorText,
+      ingredientQtyErrorText: ingredientQtyErrorText ?? this.ingredientQtyErrorText,
+      mealName: mealName ?? this.mealName,
+      ingredientName: ingredientName ?? this.ingredientName,
+      ingredientQty: ingredientQty ?? this.ingredientQty,
+      ingredientCategory: ingredientCategory ?? this.ingredientCategory,
+    );
+  }
+
+  bool ingredientFieldsComplete() {
+    return (ingredientName.isNotEmpty &&
+        ingredientNameErrorText.isEmpty &&
+        ingredientQtyErrorText.isEmpty);
+  }
 
   @override
-  List<Object> get props => [];
-}
-
-class AddMealInitial extends AddMealState {}
-
-class MealNameInvalidated extends AddMealState {
-  final String msg;
-  const MealNameInvalidated(this.msg);
-
-  @override
-  List<Object> get props => [msg];
-}
-
-class MealNameValidated extends AddMealState {
-  const MealNameValidated();
-
-  @override
-  List<Object> get props => [];
-}
-
-class AddMealError extends AddMealState {
-  final String msg;
-  const AddMealError(this.msg);
-
-  @override
-  List<Object> get props => [msg];
+  List<Object> get props => [
+        status,
+        items,
+        nameErrorText,
+        ingredientNameErrorText,
+        ingredientQtyErrorText,
+        mealName,
+        ingredientName,
+        ingredientQty,
+      ];
 }
