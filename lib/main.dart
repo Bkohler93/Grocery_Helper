@@ -21,14 +21,17 @@ void main() {
     // child:
     MultiBlocProvider(
         providers: [
+          BlocProvider<MealCardBloc>(
+            create: (context) => MealCardBloc(MealRepository()),
+          ),
           BlocProvider<MealBloc>(
-            create: (context) => MealBloc(MealRepository()),
+            create: (context) => MealBloc(
+              mealRepository: MealRepository(),
+              mealCardBloc: context.read<MealCardBloc>(),
+            ),
           ),
           BlocProvider<GroceryBloc>(
             create: (context) => GroceryBloc(GroceryRepository()),
-          ),
-          BlocProvider<MealCardBloc>(
-            create: (context) => MealCardBloc(MealRepository()),
           ),
         ],
         child: MaterialApp(

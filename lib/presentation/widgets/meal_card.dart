@@ -71,9 +71,9 @@ class _MealCardState extends State<MealCard> {
                           SizedBox(
                             width: 40,
                             child: TextButton(
-                              onPressed: () => context
-                                  .read<MealCardBloc>()
-                                  .add(DeleteMealCardEvent(widget.meal)),
+                              onPressed: () {
+                                context.read<MealCardBloc>().add(DeleteMealCardEvent(widget.meal));
+                              },
                               child: const Icon(Icons.delete, size: 20),
                             ),
                           )

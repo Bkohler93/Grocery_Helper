@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:grocery_helper_app/business_logic/cubits/cubit/add_ingredient_cubit.dart';
@@ -10,19 +9,21 @@ part 'add_meal_event.dart';
 part 'add_meal_state.dart';
 
 class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
-  final IMealRepository mealRepository;
+  final IMealRepository _mealRepository;
   final AddIngredientCubit _addIngredientCubit;
   late final StreamSubscription<AddIngredientState> _addIngredientStreamSubscription;
 
-  AddMealBloc({required this.mealRepository, required AddIngredientCubit addIngredientCubit})
+  AddMealBloc(
+      {required IMealRepository mealRepository, required AddIngredientCubit addIngredientCubit})
       : _addIngredientCubit = addIngredientCubit,
+        _mealRepository = mealRepository,
         super(const AddMealState()) {
     _addIngredientStreamSubscription = _addIngredientCubit.stream.listen((addIngredientState) {
       if (addIngredientState.status == AddIngredientStatus.add) {
         _addIngredient(addIngredientState, state);
       }
     });
-
+    on<InitializeForm>(_reset);
     on<EditMealNameEvent>(_validateName);
     on<DeleteIngredientEvent>(_deleteIngredient);
     on<SaveMealEvent>(_saveMeal);
@@ -32,7 +33,7 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
     final String name = event.text.toLowerCase();
 
     try {
-      bool nameExists = await mealRepository.mealExists(name);
+      bool nameExists = await _mealRepository.mealExists(name);
       if (nameExists) {
         emit(state.copyWith(
           status: AddMealStatus.invalid,
@@ -104,10 +105,14 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
 
   FutureOr<void> _saveMeal(SaveMealEvent event, Emitter<AddMealState> emit) async {
     try {
-      await mealRepository.insert(state.mealName, state.items);
+      await _mealRepository.insert(state.mealName, state.items);
       emit(state.copyWith(status: AddMealStatus.success, items: [], mealName: ""));
     } catch (error) {
       emit(state.copyWith(status: AddMealStatus.error));
     }
+  }
+
+  FutureOr<void> _reset(AddMealEvent event, Emitter<AddMealState> emit) {
+    emit(const AddMealState());
   }
 }

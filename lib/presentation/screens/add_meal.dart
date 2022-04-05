@@ -1,6 +1,3 @@
-import 'dart:collection';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
@@ -8,12 +5,7 @@ import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart
 import 'package:grocery_helper_app/business_logic/cubits/cubit/add_ingredient_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
-import 'package:grocery_helper_app/extensions/string.dart';
 import 'package:grocery_helper_app/presentation/widgets/ingredient_category_dropdown.dart';
-import 'package:progress_indicators/progress_indicators.dart';
-
-import 'package:grocery_helper_app/data/db_provider.dart';
-import 'package:grocery_helper_app/data/models/meal.dart';
 
 class AddMealPage extends StatelessWidget {
   const AddMealPage({Key? key}) : super(key: key);
@@ -61,13 +53,17 @@ class AddMealForm extends StatelessWidget {
                   if (state.status == AddMealStatus.success) {
                     return IconButton(
                       icon: const Icon(Icons.check_circle),
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<AddMealBloc>().add(const InitializeForm());
+                      },
                     );
                   } else {
                     return IconButton(
                       icon: const Icon(Icons.save),
                       onPressed: () {
-                        context.read<AddMealBloc>().add(SaveMealEvent());
+                        if (state.status == AddMealStatus.valid) {
+                          context.read<AddMealBloc>().add(const SaveMealEvent());
+                        }
                       },
                     );
                   }
@@ -126,7 +122,7 @@ class AddMealForm extends StatelessWidget {
                       return IngredientBadge(groceryItem: ingredient);
                     }).toList());
                   } else {
-                    return const Text("Add some ingredients!");
+                    return const Center(heightFactor: 20.0, child: Text("Add some ingredients!"));
                   }
                 },
               ),

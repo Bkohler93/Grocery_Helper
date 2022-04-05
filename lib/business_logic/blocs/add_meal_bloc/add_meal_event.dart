@@ -7,6 +7,13 @@ abstract class AddMealEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class InitializeForm extends AddMealEvent {
+  const InitializeForm();
+
+  @override
+  List<Object> get props => [];
+}
+
 class EditMealNameEvent extends AddMealEvent {
   final String text;
 

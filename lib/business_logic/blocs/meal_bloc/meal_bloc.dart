@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/meal.dart';
 import 'package:bloc/bloc.dart';
@@ -11,14 +12,24 @@ part 'meal_state.dart';
 
 class MealBloc extends Bloc<MealEvent, MealState> {
   final IMealRepository _mealRepository;
+  final MealCardBloc _mealCardBloc;
+  late final StreamSubscription<MealCardState> _mealCardStreamSubscription;
 
-  MealBloc(this._mealRepository) : super(const MealInitial()) {
+  MealBloc({required IMealRepository mealRepository, required MealCardBloc mealCardBloc})
+      : _mealRepository = mealRepository,
+        _mealCardBloc = mealCardBloc,
+        super(const MealInitial()) {
+    _mealCardStreamSubscription = _mealCardBloc.stream.listen((mealCardState) async {
+      if (mealCardState is MealCardDeleted) {
+        await _getMeals();
+      }
+    });
     on<MealEvent>(mapEventToState);
   }
 
   void mapEventToState(MealEvent event, Emitter<MealState> emit) async {
     if (event is GetMealsEvent) {
-      await _getMeals(emit);
+      await _getMeals();
     } else if (event is AddMealEvent) {
       await _addMeal(emit, event);
     } else if (event is DeleteMealEvent) {
@@ -28,7 +39,7 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     }
   }
 
-  Future<void> _getMeals(Emitter emit) async {
+  Future<void> _getMeals() async {
     emit(const MealLoading());
     try {
       final meals = await _mealRepository.getMeals();
