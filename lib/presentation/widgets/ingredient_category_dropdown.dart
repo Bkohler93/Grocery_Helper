@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
+import 'package:grocery_helper_app/business_logic/cubits/cubit/add_ingredient_cubit.dart';
 
 class CategoryDropdown extends StatefulWidget {
   const CategoryDropdown({Key? key}) : super(key: key);
@@ -11,13 +12,6 @@ class CategoryDropdown extends StatefulWidget {
 
 class _CategoryDropdownState extends State<CategoryDropdown> {
   String? dropdownValue;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    context.read<AddMealBloc>().add(const ChangeIngredientCategoryEvent('Produce'));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +25,7 @@ class _CategoryDropdownState extends State<CategoryDropdown> {
         height: 0,
       ),
       onChanged: (String? newValue) {
-        context.read<AddMealBloc>().add(ChangeIngredientCategoryEvent(newValue!));
+        context.read<AddIngredientCubit>().changeSection(newValue!);
         setState(() {
           dropdownValue = newValue;
         });

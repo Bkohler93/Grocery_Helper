@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
+import 'package:grocery_helper_app/business_logic/cubits/cubit/add_ingredient_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
 import 'package:grocery_helper_app/extensions/string.dart';
@@ -18,10 +19,17 @@ class AddMealPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        return AddMealBloc(MealRepository());
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AddIngredientCubit>(
+          create: (context) => AddIngredientCubit(),
+        ),
+        BlocProvider<AddMealBloc>(
+          create: (context) => AddMealBloc(
+              addIngredientCubit: context.read<AddIngredientCubit>(),
+              mealRepository: MealRepository()),
+        )
+      ],
       child: AddMealForm(),
     );
   }
@@ -86,7 +94,7 @@ class AddMealForm extends StatelessWidget {
                         backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
                       ),
                       onPressed: () {
-                        context.read<AddMealBloc>().add(AddIngredientEvent());
+                        context.read<AddIngredientCubit>().addIngredient();
                         ingredientNameController.clear();
                         ingredientQtyController.clear();
                         ingredientNameFocusNode.requestFocus();
@@ -194,13 +202,13 @@ class _IngredientNameFieldState extends State<IngredientNameField> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: BlocBuilder<AddMealBloc, AddMealState>(
+      child: BlocBuilder<AddIngredientCubit, AddIngredientState>(
         builder: (context, state) {
           return TextField(
               focusNode: widget.focusNode,
               controller: widget.controller,
               onChanged: (text) {
-                context.read<AddMealBloc>().add(EditIngredientNameEvent(text));
+                context.read<AddIngredientCubit>().editIngredientName(text);
               },
               maxLength: 25,
               decoration: const InputDecoration(
@@ -225,17 +233,17 @@ class IngredientQtyField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: BlocBuilder<AddMealBloc, AddMealState>(
+      child: BlocBuilder<AddIngredientCubit, AddIngredientState>(
         builder: (context, state) {
           return TextField(
               controller: controller,
               onChanged: (text) {
-                context.read<AddMealBloc>().add(EditIngredientQtyEvent(text));
+                context.read<AddIngredientCubit>().editIngredientQty(text);
               },
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Quantity',
-                errorText: state.ingredientQtyErrorText == '' ? null : state.ingredientQtyErrorText,
+                errorText: state.quantityErrorText == '' ? null : state.quantityErrorText,
               ));
         },
       ),

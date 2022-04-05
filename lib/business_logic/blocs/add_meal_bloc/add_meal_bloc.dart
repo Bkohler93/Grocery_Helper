@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:grocery_helper_app/business_logic/cubits/cubit/add_ingredient_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/meal/i_meal_repository.dart';
 
@@ -9,21 +10,27 @@ part 'add_meal_event.dart';
 part 'add_meal_state.dart';
 
 class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
-  final IMealRepository _mealRepository;
+  final IMealRepository mealRepository;
+  final AddIngredientCubit _addIngredientCubit;
+  late final StreamSubscription<AddIngredientState> _addIngredientStreamSubscription;
 
-  AddMealBloc(this._mealRepository) : super(const AddMealState()) {
+  AddMealBloc({required this.mealRepository, required AddIngredientCubit addIngredientCubit})
+      : _addIngredientCubit = addIngredientCubit,
+        super(const AddMealState()) {
+    _addIngredientStreamSubscription = _addIngredientCubit.stream.listen((addIngredientState) {
+      if (addIngredientState.status == AddIngredientStatus.add) {
+        _addIngredient(addIngredientState, state);
+      }
+    });
+
     on<EditMealNameEvent>(_validateName);
-    on<EditIngredientNameEvent>(_validateIngredientName);
-    on<EditIngredientQtyEvent>(_validateIngredientQty);
-    on<ChangeIngredientCategoryEvent>(_changeIngredientCategory);
-    on<AddIngredientEvent>(_addIngredient);
   }
 
   Future<void> _validateName(EditMealNameEvent event, Emitter<AddMealState> emit) async {
     final String name = event.text.toLowerCase();
 
     try {
-      bool nameExists = await _mealRepository.mealExists(name);
+      bool nameExists = await mealRepository.mealExists(name);
       if (nameExists) {
         emit(state.copyWith(
           status: AddMealStatus.invalid,
@@ -57,61 +64,23 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
     }
   }
 
-  FutureOr<void> _validateIngredientName(
-      EditIngredientNameEvent event, Emitter<AddMealState> emit) {
-    final String name = event.text.toLowerCase();
+  void _addIngredient(AddIngredientState ingredientState, AddMealState state) {
+    var newIngredient = GroceryItem.fromRawQty(
+      category: ingredientState.section,
+      name: ingredientState.name,
+      rawQty: ingredientState.quantity,
+    );
 
-    if (name.isEmpty || name.startsWith(' ')) {
-      emit(state.copyWith(
-        ingredientNameErrorText: "Ingredient must have a name.",
-      ));
-    } else if (name.length > 20) {
-      emit(state.copyWith(
-        ingredientNameErrorText: "Name cannot be over 20 characters long.",
-      ));
-    } else {
-      emit(state.copyWith(ingredientNameErrorText: "", ingredientName: name));
-    }
+    // ignore: invalid_use_of_visible_for_testing_member
+    emit(state.copyWith(
+      items: [...state.items, newIngredient],
+      status: state.nameErrorText == "" ? AddMealStatus.valid : AddMealStatus.invalid,
+    ));
   }
 
-  FutureOr<void> _validateIngredientQty(EditIngredientQtyEvent event, Emitter<AddMealState> emit) {
-    final String qty = event.text.toLowerCase();
-
-    if (qty.length > 10) {
-      emit(state.copyWith(
-        ingredientQtyErrorText: "Field cannot be over 10 characters long.",
-      ));
-    } else if (!qty.contains(RegExp(r"^([0-9A-Za-z/.]*)$"))) {
-      emit(state.copyWith(
-        ingredientQtyErrorText: "Invalid characters found.",
-      ));
-    } else {
-      emit(state.copyWith(ingredientNameErrorText: "", ingredientQty: qty));
-    }
-  }
-
-  FutureOr<void> _changeIngredientCategory(
-      ChangeIngredientCategoryEvent event, Emitter<AddMealState> emit) {
-    final String category = event.category.toLowerCase();
-
-    emit(state.copyWith(ingredientCategory: category));
-  }
-
-  FutureOr<void> _addIngredient(AddIngredientEvent event, Emitter<AddMealState> emit) {
-    if (state.ingredientFieldsComplete()) {
-      var newIngredient = GroceryItem.fromRawQty(
-        category: state.ingredientCategory,
-        name: state.ingredientName,
-        rawQty: state.ingredientQty,
-      );
-
-      emit(state.copyWith(
-        ingredientCategory: "Produce",
-        ingredientName: "",
-        ingredientQty: '',
-        items: [...state.items, newIngredient],
-        status: state.nameErrorText == "" ? AddMealStatus.valid : AddMealStatus.invalid,
-      ));
-    }
+  @override
+  Future<void> close() {
+    _addIngredientStreamSubscription.cancel();
+    return super.close();
   }
 }
