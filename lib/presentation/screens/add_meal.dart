@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/cubit/add_ingredient_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
@@ -47,14 +48,30 @@ class AddMealForm extends StatelessWidget {
         appBar: AppBar(
           leading: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context)),
+              onPressed: () {
+                context.read<MealBloc>().add(GetMealsEvent());
+                Navigator.pop(context);
+              }),
           title: const Text('Add Meals'),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
-              child: IconButton(
-                icon: const Icon(Icons.save),
-                onPressed: () {},
+              child: BlocBuilder<AddMealBloc, AddMealState>(
+                builder: (context, state) {
+                  if (state.status == AddMealStatus.success) {
+                    return IconButton(
+                      icon: const Icon(Icons.check_circle),
+                      onPressed: () {},
+                    );
+                  } else {
+                    return IconButton(
+                      icon: const Icon(Icons.save),
+                      onPressed: () {
+                        context.read<AddMealBloc>().add(SaveMealEvent());
+                      },
+                    );
+                  }
+                },
               ),
             )
           ],
@@ -79,11 +96,10 @@ class AddMealForm extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 15.0),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    IngredientNameField(
-                        controller: ingredientNameController, focusNode: ingredientNameFocusNode),
+                    const IngredientNameField(),
                     Row(
-                      children: [
-                        IngredientQtyField(controller: ingredientQtyController),
+                      children: const [
+                        IngredientQtyField(),
                         CategoryDropdown(),
                       ],
                     ),
@@ -104,13 +120,13 @@ class AddMealForm extends StatelessWidget {
               ),
               BlocBuilder<AddMealBloc, AddMealState>(
                 builder: (context, state) {
-                  if (state.items.isNotEmpty) {
+                  if (state.status != AddMealStatus.initialized) {
                     return Wrap(
                         children: state.items.map((ingredient) {
                       return IngredientBadge(groceryItem: ingredient);
                     }).toList());
                   } else {
-                    return Text("Add some ingredients!");
+                    return const Text("Add some ingredients!");
                   }
                 },
               ),
@@ -134,7 +150,7 @@ class IngredientBadge extends StatelessWidget {
     return Material(
       child: InkWell(
         onTap: () {
-          //TODO remove item from list of ingredients
+          context.read<AddMealBloc>().add(DeleteIngredientEvent(groceryItem));
         },
         child: Container(
           margin: const EdgeInsets.fromLTRB(3.0, 3.0, 3.0, 3.0),
@@ -186,11 +202,7 @@ class IngredientBadge extends StatelessWidget {
 class IngredientNameField extends StatefulWidget {
   const IngredientNameField({
     Key? key,
-    required this.controller,
-    required this.focusNode,
   }) : super(key: key);
-  final TextEditingController controller;
-  final FocusNode focusNode;
 
   @override
   State<IngredientNameField> createState() => _IngredientNameFieldState();
@@ -198,21 +210,31 @@ class IngredientNameField extends StatefulWidget {
 
 class _IngredientNameFieldState extends State<IngredientNameField> {
   final _controller = TextEditingController();
+  final _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: BlocBuilder<AddIngredientCubit, AddIngredientState>(
+      child: BlocConsumer<AddIngredientCubit, AddIngredientState>(
+        listener: (context, state) {
+          if (state.status == AddIngredientStatus.add) {
+            setState(() {
+              _controller.clear();
+              _focusNode.requestFocus();
+            });
+          }
+        },
         builder: (context, state) {
           return TextField(
-              focusNode: widget.focusNode,
-              controller: widget.controller,
+              focusNode: _focusNode,
+              controller: _controller,
               onChanged: (text) {
                 context.read<AddIngredientCubit>().editIngredientName(text);
               },
               maxLength: 25,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: InputBorder.none,
+                errorText: state.nameErrorText.isEmpty ? null : state.nameErrorText,
                 hintText: 'Name',
                 counterText: "",
               ));
@@ -223,20 +245,32 @@ class _IngredientNameFieldState extends State<IngredientNameField> {
   }
 }
 
-class IngredientQtyField extends StatelessWidget {
+class IngredientQtyField extends StatefulWidget {
   const IngredientQtyField({
-    required this.controller,
     Key? key,
   }) : super(key: key);
-  final TextEditingController controller;
+
+  @override
+  State<IngredientQtyField> createState() => _IngredientQtyFieldState();
+}
+
+class _IngredientQtyFieldState extends State<IngredientQtyField> {
+  final _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: BlocBuilder<AddIngredientCubit, AddIngredientState>(
+      child: BlocConsumer<AddIngredientCubit, AddIngredientState>(
+        listener: (context, state) {
+          if (state.status == AddIngredientStatus.add) {
+            setState(() {
+              _controller.clear();
+            });
+          }
+        },
         builder: (context, state) {
           return TextField(
-              controller: controller,
+              controller: _controller,
               onChanged: (text) {
                 context.read<AddIngredientCubit>().editIngredientQty(text);
               },
@@ -252,17 +286,32 @@ class IngredientQtyField extends StatelessWidget {
   }
 }
 
-class MealNameField extends StatelessWidget {
+class MealNameField extends StatefulWidget {
   const MealNameField({
     Key? key,
   }) : super(key: key);
 
   @override
+  State<MealNameField> createState() => _MealNameFieldState();
+}
+
+class _MealNameFieldState extends State<MealNameField> {
+  final _controller = TextEditingController();
+  final _focusNode = FocusNode();
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 40.0),
-      child: BlocBuilder<AddMealBloc, AddMealState>(builder: (context, state) {
+      child: BlocConsumer<AddMealBloc, AddMealState>(listener: (context, state) {
+        if (state.status == AddMealStatus.success) {
+          _controller.clear();
+          _focusNode.requestFocus();
+        }
+      }, builder: (context, state) {
         return TextField(
+          controller: _controller,
+          focusNode: _focusNode,
           onChanged: (text) {
             context.read<AddMealBloc>().add(EditMealNameEvent(text));
           },

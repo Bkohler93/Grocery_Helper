@@ -27,6 +27,7 @@ class AddIngredientCubit extends Cubit<AddIngredientState> {
         status: _validateFields(
           quantityErrorText: state.quantityErrorText,
           nameErrorText: '',
+          section: state.section,
         ),
       ));
     }
@@ -35,10 +36,13 @@ class AddIngredientCubit extends Cubit<AddIngredientState> {
   AddIngredientStatus _validateFields({
     required String quantityErrorText,
     required String nameErrorText,
+    required String section,
   }) {
     if (quantityErrorText.isNotEmpty) {
       return AddIngredientStatus.invalid;
     } else if (nameErrorText.isNotEmpty) {
+      return AddIngredientStatus.invalid;
+    } else if (section.isEmpty) {
       return AddIngredientStatus.invalid;
     } else {
       return AddIngredientStatus.valid;
@@ -53,7 +57,7 @@ class AddIngredientCubit extends Cubit<AddIngredientState> {
         quantityErrorText: "Field cannot be over 10 characters long.",
         status: AddIngredientStatus.invalid,
       ));
-    } else if (!qty.contains(RegExp(r"^([0-9A-Za-z/.]*)$"))) {
+    } else if (!qty.contains(RegExp(r"^([0-9A-Za-z/. ]*)$"))) {
       emit(state.copyWith(
         quantityErrorText: "Invalid characters found.",
         status: AddIngredientStatus.invalid,
@@ -65,6 +69,7 @@ class AddIngredientCubit extends Cubit<AddIngredientState> {
         status: _validateFields(
           quantityErrorText: "",
           nameErrorText: state.nameErrorText,
+          section: state.section,
         ),
       ));
     }
@@ -73,17 +78,33 @@ class AddIngredientCubit extends Cubit<AddIngredientState> {
   void changeSection(String text) {
     final String section = text.toLowerCase();
 
-    emit(state.copyWith(section: section));
+    emit(state.copyWith(
+        section: section,
+        sectionErrorText: "",
+        status: _validateFields(
+          quantityErrorText: state.quantityErrorText,
+          nameErrorText: state.nameErrorText,
+          section: section,
+        )));
   }
 
   void addIngredient() {
-    var newIngredient = GroceryItem.fromRawQty(
-      category: state.section,
-      name: state.name,
-      rawQty: state.quantity,
-    );
+    if (state.status == AddIngredientStatus.valid) {
+      var newIngredient = GroceryItem.fromRawQty(
+        category: state.section,
+        name: state.name,
+        rawQty: state.quantity,
+      );
 
-    emit(state.copyWith(status: AddIngredientStatus.add));
-    emit(AddIngredientState());
+      emit(state.copyWith(status: AddIngredientStatus.add));
+      emit(AddIngredientState());
+    } else if (state.section.isEmpty) {
+      emit(state.copyWith(
+        sectionErrorText: "Choose a section the ingredient can be found in.",
+      ));
+      emit(state.copyWith(
+        sectionErrorText: "",
+      ));
+    }
   }
 }

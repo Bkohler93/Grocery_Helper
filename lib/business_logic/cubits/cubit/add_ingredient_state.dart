@@ -17,6 +17,7 @@ class AddIngredientState extends IngredientState {
     this.name = '',
     this.quantity = '',
     this.section = '',
+    this.sectionErrorText = '',
     this.nameErrorText = '',
     this.quantityErrorText = '',
   });
@@ -24,6 +25,7 @@ class AddIngredientState extends IngredientState {
   final String name;
   final String quantity;
   final String section;
+  final String sectionErrorText;
   final String nameErrorText;
   final String quantityErrorText;
 
@@ -33,6 +35,7 @@ class AddIngredientState extends IngredientState {
     String? name,
     String? quantity,
     String? section,
+    String? sectionErrorText,
     String? nameErrorText,
     String? quantityErrorText,
   }) {
@@ -41,13 +44,15 @@ class AddIngredientState extends IngredientState {
       name: name ?? this.name,
       quantity: quantity ?? this.quantity,
       section: section ?? this.section,
+      sectionErrorText: sectionErrorText ?? this.sectionErrorText,
       nameErrorText: nameErrorText ?? this.nameErrorText,
       quantityErrorText: quantityErrorText ?? this.quantityErrorText,
     );
   }
 
   @override
-  List<Object> get props => [name, quantity, section, status, nameErrorText, quantityErrorText];
+  List<Object> get props =>
+      [name, quantity, section, status, nameErrorText, quantityErrorText, sectionErrorText];
 }
 
 class SendIngredientState extends IngredientState {

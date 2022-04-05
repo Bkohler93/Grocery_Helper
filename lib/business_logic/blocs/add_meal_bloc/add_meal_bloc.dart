@@ -24,6 +24,8 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
     });
 
     on<EditMealNameEvent>(_validateName);
+    on<DeleteIngredientEvent>(_deleteIngredient);
+    on<SaveMealEvent>(_saveMeal);
   }
 
   Future<void> _validateName(EditMealNameEvent event, Emitter<AddMealState> emit) async {
@@ -82,5 +84,30 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
   Future<void> close() {
     _addIngredientStreamSubscription.cancel();
     return super.close();
+  }
+
+  FutureOr<void> _deleteIngredient(DeleteIngredientEvent event, Emitter<AddMealState> emit) {
+    GroceryItem itemToRemove = event.groceryItem;
+
+    List<GroceryItem> newList = [];
+
+    for (var item in state.items) {
+      if (item.id != itemToRemove.id) {
+        newList.add(item);
+      }
+    }
+
+    emit(state.copyWith(
+      items: newList,
+    ));
+  }
+
+  FutureOr<void> _saveMeal(SaveMealEvent event, Emitter<AddMealState> emit) async {
+    try {
+      await mealRepository.insert(state.mealName, state.items);
+      emit(state.copyWith(status: AddMealStatus.success, items: [], mealName: ""));
+    } catch (error) {
+      emit(state.copyWith(status: AddMealStatus.error));
+    }
   }
 }

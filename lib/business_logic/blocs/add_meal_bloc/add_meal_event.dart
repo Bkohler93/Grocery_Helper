@@ -49,3 +49,18 @@ class AddIngredientEvent extends AddMealEvent {
   @override
   List<Object> get props => [];
 }
+
+class DeleteIngredientEvent extends AddMealEvent {
+  const DeleteIngredientEvent(this.groceryItem);
+  final GroceryItem groceryItem;
+
+  @override
+  List<Object> get props => [groceryItem];
+}
+
+class SaveMealEvent extends AddMealEvent {
+  const SaveMealEvent();
+
+  @override
+  List<Object> get props => [];
+}

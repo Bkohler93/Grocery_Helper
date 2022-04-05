@@ -1,6 +1,6 @@
 part of 'add_meal_bloc.dart';
 
-enum AddMealStatus { initialized, valid, invalid, error }
+enum AddMealStatus { initialized, valid, invalid, error, success }
 
 class AddMealState extends Equatable {
   const AddMealState({
