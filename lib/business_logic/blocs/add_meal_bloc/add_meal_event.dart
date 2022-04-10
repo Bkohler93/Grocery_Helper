@@ -51,10 +51,14 @@ class ChangeIngredientCategoryEvent extends AddMealEvent {
 }
 
 class AddIngredientEvent extends AddMealEvent {
-  const AddIngredientEvent();
+  const AddIngredientEvent({required this.name, required this.rawQty, required this.category});
+
+  final String name;
+  final String rawQty;
+  final String category;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [name, rawQty, category];
 }
 
 class DeleteIngredientEvent extends AddMealEvent {

@@ -35,3 +35,19 @@ class UpdateGroceryEvent extends GroceryEvent {
   @override
   List<Object> get props => [item];
 }
+
+class CheckOffGroceryItemEvent extends GroceryEvent {
+  final GroceryItem item;
+
+  CheckOffGroceryItemEvent(this.item);
+
+  @override
+  List<Object> get props => [item];
+}
+
+class AllGroceriesCheckedEvent extends GroceryEvent {
+  AllGroceriesCheckedEvent();
+
+  @override
+  List<Object> get props => [];
+}

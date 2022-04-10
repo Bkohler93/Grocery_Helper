@@ -5,7 +5,6 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'dart:async';
 
-//TODO All returns should be RAW DATA from database, NOT MODELS like how it is now
 //! This shoudl be instantiated INSIDE the REPOSITORY (currently grocer_list)
 class SQLHelper {
   static Future<void> createTables(sql.Database db) async {
@@ -273,7 +272,6 @@ class SQLHelper {
   static Future<void> updateCheckedItem(GroceryItem item) async {
     final db = await SQLHelper.db();
 
-    // update item in shopping_list to be !checked
     await db.rawUpdate("""
       UPDATE shopping_list SET checked = ? WHERE id = ?
     """, [item.checkedOff ? 1 : 0, item.id]);

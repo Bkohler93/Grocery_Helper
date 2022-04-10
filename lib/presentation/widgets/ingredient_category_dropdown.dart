@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
-import 'package:grocery_helper_app/business_logic/cubits/cubit/add_ingredient_cubit.dart';
+import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_ingredient_cubit.dart';
 
 class CategoryDropdown extends StatefulWidget {
   const CategoryDropdown({Key? key}) : super(key: key);

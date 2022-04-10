@@ -5,7 +5,11 @@ import 'package:grocery_helper_app/data/models/meal.dart';
 import '../widgets/meal_card.dart';
 
 class ChooseMealsPage extends StatelessWidget {
-  const ChooseMealsPage({Key? key}) : super(key: key);
+  const ChooseMealsPage({
+    Key? key,
+    required this.onSubmit,
+  }) : super(key: key);
+  final Function onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -34,30 +38,12 @@ class ChooseMealsPage extends StatelessWidget {
           height: 60.0,
           child: ElevatedButton(
             style: style,
-            onPressed: () {} /*_handleBuildGroceryList*/,
+            onPressed: () {
+              context.read<MealBloc>().add(PopulateGroceryList());
+              onSubmit();
+              //move to other tab
+            },
             child: const Text("Build Grocery List"),
-          ),
-        ),
-        Positioned(
-          bottom: 150,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-                color: Colors.blue,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    primary: Colors.white,
-                    textStyle: const TextStyle(fontSize: 16),
-                  ),
-                  onPressed: () {
-                    /*_refreshMeals();*/
-                  },
-                  child: RichText(
-                    text: const TextSpan(
-                      children: [WidgetSpan(child: Icon(Icons.refresh, size: 24))],
-                    ),
-                  ),
-                )),
           ),
         ),
       ],

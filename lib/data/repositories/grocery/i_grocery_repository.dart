@@ -9,4 +9,5 @@ abstract class IGroceryRepository {
   Future<int> updateGroceryItem(GroceryItem item);
   Future<void> addGroceryItems(List<GroceryItem> items);
   Future<void> checkOffGroceryItem(GroceryItem item);
+  Future<void> clearGroceryItems();
 }

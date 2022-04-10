@@ -60,3 +60,10 @@ class GroceryUpdated extends GroceryState {
   @override
   List<Object> get props => [id];
 }
+
+class AllGroceriesChecked extends GroceryState {
+  const AllGroceriesChecked();
+
+  @override
+  List<Object> get props => [];
+}

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grocery_helper_app/business_logic/cubits/grocery_item_cubit/grocery_item_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/i_grocery_repository.dart';
 
@@ -9,9 +10,22 @@ part 'grocery_event.dart';
 
 class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
   final IGroceryRepository _groceryRepository;
+  final GroceryItemCubit _groceryItemCubit;
+  late final StreamSubscription<GroceryItemState> _groceryItemStreamSubscription;
 
-  GroceryBloc(this._groceryRepository) : super(const GroceryInitial()) {
+  GroceryBloc(
+      {required IGroceryRepository groceryRepository, required GroceryItemCubit groceryItemCubit})
+      : _groceryRepository = groceryRepository,
+        _groceryItemCubit = groceryItemCubit,
+        super(const GroceryInitial()) {
+    _groceryItemStreamSubscription = _groceryItemCubit.stream.listen((groceryItemState) {
+      if (groceryItemState is GroceryItemUpdated) {
+        add(CheckOffGroceryItemEvent(groceryItemState.item));
+      }
+    });
     on<GroceryEvent>(mapEventToState);
+    on<CheckOffGroceryItemEvent>(_handleGroceryItemCheckOff);
+    on<AllGroceriesCheckedEvent>(_handleAllGroceriesChecked);
   }
 
   void mapEventToState(GroceryEvent event, Emitter<GroceryState> emit) async {
@@ -39,7 +53,7 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
   Future<void> _addGrocery(AddGroceryEvent event, Emitter<GroceryState> emit) async {
     try {
       var id = await _groceryRepository.addGroceryItem(event.item);
-      emit(GroceryAdded(id));
+      add(GetGroceriesEvent());
     } catch (error) {
       emit(GroceriesError("Failed to add item to list"));
     }
@@ -56,10 +70,37 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
 
   Future<void> _updateGrocery(UpdateGroceryEvent event, Emitter<GroceryState> emit) async {
     try {
-      var id = await _groceryRepository.updateGroceryItem(event.item);
-      emit(GroceryUpdated(id));
+      var id = await _groceryRepository.checkOffGroceryItem(event.item);
+      add(GetGroceriesEvent());
     } catch (error) {
       emit(GroceriesError("Failed to update item"));
     }
+  }
+
+  FutureOr<void> _handleGroceryItemCheckOff(
+      CheckOffGroceryItemEvent event, Emitter<GroceryState> emit) async {
+    try {
+      var groceries = await _groceryRepository.getGroceries();
+      int count = 0;
+
+      for (GroceryItem grocery in groceries) {
+        if (grocery.checkedOff) count++;
+      }
+
+      if (count == groceries.length) {
+        add(AllGroceriesCheckedEvent());
+        await _groceryRepository.clearGroceryItems();
+      }
+    } catch (err) {
+      emit(GroceriesError("Failed to handle grocery item check off"));
+    }
+  }
+
+  FutureOr<void> _handleAllGroceriesChecked(
+      AllGroceriesCheckedEvent event, Emitter<GroceryState> emit) async {
+    emit(AllGroceriesChecked());
+    //TODO maybe incorporate animation!?!?!?
+    await Future.delayed(const Duration(seconds: 2));
+    emit(GroceryInitial());
   }
 }

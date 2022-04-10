@@ -29,10 +29,17 @@ class DeleteMealEvent extends MealEvent {
 }
 
 class PopulateGroceryList extends MealEvent {
-  final List<String> mealNames;
-
-  PopulateGroceryList(this.mealNames);
+  PopulateGroceryList();
 
   @override
-  List<Object> get props => [mealNames];
+  List<Object> get props => [];
+}
+
+class CheckOffMealEvent extends MealEvent {
+  CheckOffMealEvent(this.meal);
+
+  final Meal meal;
+
+  @override
+  List<Object> get props => [meal];
 }

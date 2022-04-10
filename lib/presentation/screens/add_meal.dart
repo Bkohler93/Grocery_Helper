@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
-import 'package:grocery_helper_app/business_logic/cubits/cubit/add_ingredient_cubit.dart';
+import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_ingredient_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
 import 'package:grocery_helper_app/presentation/widgets/ingredient_category_dropdown.dart';
@@ -122,7 +122,9 @@ class AddMealForm extends StatelessWidget {
                       return IngredientBadge(groceryItem: ingredient);
                     }).toList());
                   } else {
-                    return const Center(heightFactor: 20.0, child: Text("Add some ingredients!"));
+                    return const Expanded(
+                      child: Center(child: Text("Add some ingredients!")),
+                    );
                   }
                 },
               ),

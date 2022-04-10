@@ -63,4 +63,10 @@ class MockGroceryRepository implements IGroceryRepository {
     // TODO: implement updateGroceryItem
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> clearGroceryItems() {
+    // TODO: implement clearGroceryItems
+    throw UnimplementedError();
+  }
 }

@@ -19,9 +19,11 @@ class MealBloc extends Bloc<MealEvent, MealState> {
       : _mealRepository = mealRepository,
         _mealCardBloc = mealCardBloc,
         super(const MealInitial()) {
-    _mealCardStreamSubscription = _mealCardBloc.stream.listen((mealCardState) async {
+    _mealCardStreamSubscription = _mealCardBloc.stream.listen((mealCardState) {
       if (mealCardState is MealCardDeleted) {
-        await _getMeals();
+        add(GetMealsEvent());
+      } else if (mealCardState is MealCardSelected) {
+        add(CheckOffMealEvent(mealCardState.meal));
       }
     });
     on<MealEvent>(mapEventToState);
@@ -29,38 +31,23 @@ class MealBloc extends Bloc<MealEvent, MealState> {
 
   void mapEventToState(MealEvent event, Emitter<MealState> emit) async {
     if (event is GetMealsEvent) {
-      await _getMeals();
-    } else if (event is AddMealEvent) {
-      await _addMeal(emit, event);
+      await _getMeals(emit, event);
     } else if (event is DeleteMealEvent) {
       await _deleteMeal(emit, event);
     } else if (event is PopulateGroceryList) {
       await _populateGroceryList(emit, event);
+    } else if (event is CheckOffMealEvent) {
+      _checkOffMeal(emit, event);
     }
   }
 
-  Future<void> _getMeals() async {
+  Future<void> _getMeals(emit, event) async {
     emit(const MealLoading());
     try {
       final meals = await _mealRepository.getMeals();
       emit(MealLoaded(meals));
     } catch (error) {
       emit(MealError(error.toString()));
-    }
-  }
-
-  Future<void> _addMeal(emit, event) async {
-    emit(const MealLoading());
-    try {
-      final success = await _mealRepository.insert(event.name, event.items);
-
-      if (success) {
-        emit(MealAdded(true));
-      } else {
-        throw (Error());
-      }
-    } catch (error) {
-      emit(MealError('A meal with that name already exists'));
     }
   }
 
@@ -76,13 +63,37 @@ class MealBloc extends Bloc<MealEvent, MealState> {
   }
 
   Future<void> _populateGroceryList(Emitter<MealState> emit, PopulateGroceryList event) async {
-    emit(const MealLoading());
-    try {
-      await _mealRepository.populateGroceryList(event.mealNames);
+    if (state is MealLoaded) {
+      MealLoaded trueState = state as MealLoaded;
 
-      emit(GroceryListPopulated());
-    } catch (error) {
-      emit(MealError('There were some errors adding grocery items to your shopping list'));
+      List<Meal> meals = [];
+      for (var meal in trueState.meals) {
+        if (meal.checked) {
+          meals.add(meal);
+        }
+      }
+
+      try {
+        await _mealRepository.populateGroceryList(meals.map((e) => e.name).toList());
+      } catch (error) {
+        emit(MealError('There were some errors adding grocery items to your shopping list'));
+      }
+    }
+  }
+
+  void _checkOffMeal(Emitter<MealState> emit, CheckOffMealEvent event) {
+    if (state is MealLoaded) {
+      MealLoaded trueState = state as MealLoaded;
+
+      List<Meal> meals = trueState.meals.map((meal) {
+        if (meal.name == event.meal.name) {
+          return Meal(checked: !meal.checked, id: meal.id, name: meal.name);
+        } else {
+          return meal;
+        }
+      }).toList();
+
+      emit(MealLoaded(meals));
     }
   }
 }

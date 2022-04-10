@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:grocery_helper_app/business_logic/cubits/cubit/add_ingredient_cubit.dart';
+import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_ingredient_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/meal/i_meal_repository.dart';
 
@@ -20,13 +20,18 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
         super(const AddMealState()) {
     _addIngredientStreamSubscription = _addIngredientCubit.stream.listen((addIngredientState) {
       if (addIngredientState.status == AddIngredientStatus.add) {
-        _addIngredient(addIngredientState, state);
+        add(AddIngredientEvent(
+          name: addIngredientState.name,
+          rawQty: addIngredientState.quantity,
+          category: addIngredientState.section,
+        ));
       }
     });
     on<InitializeForm>(_reset);
     on<EditMealNameEvent>(_validateName);
     on<DeleteIngredientEvent>(_deleteIngredient);
     on<SaveMealEvent>(_saveMeal);
+    on<AddIngredientEvent>(_addIngredient);
   }
 
   Future<void> _validateName(EditMealNameEvent event, Emitter<AddMealState> emit) async {
@@ -67,14 +72,13 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
     }
   }
 
-  void _addIngredient(AddIngredientState ingredientState, AddMealState state) {
+  FutureOr<void> _addIngredient(AddIngredientEvent event, Emitter<AddMealState> emit) async {
     var newIngredient = GroceryItem.fromRawQty(
-      category: ingredientState.section,
-      name: ingredientState.name,
-      rawQty: ingredientState.quantity,
+      category: event.category,
+      name: event.name,
+      rawQty: event.rawQty,
     );
 
-    // ignore: invalid_use_of_visible_for_testing_member
     emit(state.copyWith(
       items: [...state.items, newIngredient],
       status: state.nameErrorText == "" ? AddMealStatus.valid : AddMealStatus.invalid,

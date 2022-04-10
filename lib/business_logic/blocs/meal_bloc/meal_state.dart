@@ -1,5 +1,13 @@
 part of 'meal_bloc.dart';
 
+// if need to refactor to single state, with multiple status attributes use enum
+// enum MealStatus {
+//   initial,
+//   loading,
+//   loaded,
+//   error,
+// }
+
 abstract class MealState extends Equatable {
   const MealState();
 }
