@@ -4,7 +4,9 @@ import 'package:grocery_helper_app/data/models/grocery_item.dart';
 
 part 'add_ingredient_state.dart';
 
-class AddIngredientCubit extends Cubit<AddIngredientState> {
+mixin GroceryListAddIngredientCubit on Cubit<AddIngredientState> {}
+
+class AddIngredientCubit extends Cubit<AddIngredientState> with GroceryListAddIngredientCubit {
   AddIngredientCubit() : super(const AddIngredientState());
 
   void editIngredientName(String text) {

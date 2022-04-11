@@ -5,6 +5,7 @@ import 'package:grocery_helper_app/business_logic/blocs/grocery_bloc/grocery_blo
 import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/grocery_item_cubit/grocery_item_cubit.dart';
+import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_ingredient_cubit.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/grocery_repository.dart';
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
 import 'package:grocery_helper_app/presentation/screens/add_meal.dart';
@@ -34,11 +35,13 @@ void main() {
           ),
           BlocProvider<GroceryItemCubit>(
               create: (context) => GroceryItemCubit(groceryRepository: GroceryRepository())),
+          BlocProvider<AddIngredientCubit>(create: (context) => AddIngredientCubit()),
           BlocProvider<GroceryBloc>(
             create: (context) => GroceryBloc(
               groceryItemCubit: context.read<GroceryItemCubit>(),
               groceryRepository: GroceryRepository(),
               mealBloc: context.read<MealBloc>(),
+              addIngredientCubit: context.read<AddIngredientCubit>(),
             ),
           ),
         ],
