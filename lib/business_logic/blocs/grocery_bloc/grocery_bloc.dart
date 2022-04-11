@@ -73,7 +73,7 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
   Future<void> _deleteGrocery(DeleteGroceryEvent event, Emitter<GroceryState> emit) async {
     try {
       var id = await _groceryRepository.deleteGroceryItem(event.id);
-      emit(GroceryDeleted(id));
+      add(GetGroceriesEvent());
     } catch (error) {
       emit(GroceriesError("failed to delete grocery item"));
     }

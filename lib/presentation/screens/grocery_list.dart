@@ -4,6 +4,7 @@ import 'package:grocery_helper_app/business_logic/blocs/grocery_bloc/grocery_blo
 import 'package:grocery_helper_app/business_logic/cubits/grocery_item_cubit/grocery_item_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/grocery_repository.dart';
+import 'package:grocery_helper_app/presentation/widgets/add_ingredient_modal.dart';
 
 import 'package:grocery_helper_app/presentation/widgets/grocery_list_item.dart';
 
@@ -64,11 +65,37 @@ class _GroceryListPageState extends State<GroceryListPage> {
   }
 
   Widget buildGroceryList(List<GroceryItem> items) {
-    return ListView(
-      scrollDirection: Axis.vertical,
-      children: items.map((item) {
-        return GroceryListItem(item: item);
-      }).toList(),
+    return Stack(
+      children: <Widget>[
+        ListView(
+          scrollDirection: Axis.vertical,
+          children: items.map((item) {
+            return GroceryListItem(item: item);
+          }).toList(),
+        ),
+        Positioned(
+            right: 30,
+            bottom: 30,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(20),
+              ),
+              child: const Icon(Icons.add, size: 35.0),
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (BuildContext context) {
+                    return FractionallySizedBox(
+                      heightFactor: 0.7,
+                      child: AddIngredientModal(),
+                    );
+                  },
+                );
+              },
+            ))
+      ],
     );
   }
 

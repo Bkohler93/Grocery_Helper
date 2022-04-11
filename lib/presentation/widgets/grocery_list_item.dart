@@ -77,7 +77,7 @@ class _GroceryItemState extends State<GroceryListItem> {
                                 child: TextButton(
                                   child: const Icon(Icons.edit, size: 20),
                                   onPressed: () {
-                                    //TODO edit ingredient page/popup
+                                    // show slideup bar to edit
                                   },
                                 )),
                             SizedBox(
@@ -86,7 +86,9 @@ class _GroceryItemState extends State<GroceryListItem> {
                                 onPressed: () {
                                   setState(() {
                                     _isEditing = !_isEditing;
-                                    //TODO Grocery Bloc delete grocery item
+                                    context
+                                        .read<GroceryBloc>()
+                                        .add(DeleteGroceryEvent(widget.item.id!));
                                   });
                                 },
                                 child: const Icon(Icons.delete, size: 20),
