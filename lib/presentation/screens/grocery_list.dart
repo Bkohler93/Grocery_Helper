@@ -19,6 +19,7 @@ class _GroceryListPageState extends State<GroceryListPage> {
   final textNameController = TextEditingController();
   final textQtyController = TextEditingController();
   final textCategoryController = TextEditingController();
+  final _listController = ScrollController(keepScrollOffset: true);
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -26,6 +27,7 @@ class _GroceryListPageState extends State<GroceryListPage> {
     textNameController.dispose();
     textQtyController.dispose();
     textCategoryController.dispose();
+    _listController.dispose();
     super.dispose();
   }
 
@@ -64,15 +66,23 @@ class _GroceryListPageState extends State<GroceryListPage> {
     return const Text("Something went wrong.");
   }
 
-  Widget buildGroceryList(List<GroceryItem> items) {
+  Widget buildGroceryList(List<Map<String, List<GroceryItem>>> items) {
     return Stack(
       children: <Widget>[
-        ListView(
-          scrollDirection: Axis.vertical,
-          children: items.map((item) {
-            return GroceryListItem(item: item);
-          }).toList(),
-        ),
+        ListView(scrollDirection: Axis.vertical, controller: _listController, children: <Widget>[
+          ...items
+              .map((category) => <Widget>[
+                    Center(
+                        child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 5.0, 0, 5.0),
+                      child: Text(category.keys.first,
+                          style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                    )),
+                    ...category.values.first.map((item) => GroceryListItem(item: item))
+                  ])
+              .expand((element) => element)
+              .toList()
+        ]),
         Positioned(
             right: 30,
             bottom: 30,

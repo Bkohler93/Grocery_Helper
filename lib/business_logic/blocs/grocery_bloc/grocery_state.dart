@@ -22,7 +22,7 @@ class GroceryLoading extends GroceryState {
 }
 
 class GroceriesLoaded extends GroceryState {
-  final List<GroceryItem> groceries;
+  final List<Map<String, List<GroceryItem>>> groceries;
   const GroceriesLoaded(this.groceries);
 
   @override

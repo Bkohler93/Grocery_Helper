@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/grocery_item_cubit/grocery_item_cubit.dart';
+import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_ingredient_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/i_grocery_repository.dart';
 
@@ -15,14 +16,18 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
   late final StreamSubscription<MealState> _mealStreamSubscription;
   final GroceryItemCubit _groceryItemCubit;
   late final StreamSubscription<GroceryItemState> _groceryItemStreamSubscription;
+  final AddIngredientCubit _addIngredientCubit;
+  late final StreamSubscription<AddIngredientState> _addIngredientStreamSubscription;
 
   GroceryBloc(
       {required IGroceryRepository groceryRepository,
       required GroceryItemCubit groceryItemCubit,
-      required MealBloc mealBloc})
+      required MealBloc mealBloc,
+      required AddIngredientCubit addIngredientCubit})
       : _groceryRepository = groceryRepository,
         _groceryItemCubit = groceryItemCubit,
         _mealBloc = mealBloc,
+        _addIngredientCubit = addIngredientCubit,
         super(const GroceryInitial()) {
     _groceryItemStreamSubscription = _groceryItemCubit.stream.listen((groceryItemState) {
       if (groceryItemState is GroceryItemUpdated) {
@@ -32,6 +37,15 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
     _mealStreamSubscription = _mealBloc.stream.listen((mealState) {
       if (mealState is GroceryListPopulated) {
         add(GetGroceriesEvent());
+      }
+    });
+    _addIngredientStreamSubscription = _addIngredientCubit.stream.listen((addIngredientState) {
+      if (addIngredientState.status == AddIngredientStatus.add) {
+        GroceryItem newItem = GroceryItem.fromRawQty(
+            category: addIngredientState.section,
+            rawQty: addIngredientState.quantity,
+            name: addIngredientState.name);
+        add(AddGroceryEvent(newItem));
       }
     });
     on<GroceryEvent>(mapEventToState);
@@ -55,7 +69,20 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
   Future<void> _getGroceries(GetGroceriesEvent event, Emitter<GroceryState> emit) async {
     try {
       var groceries = await _groceryRepository.getGroceries();
-      emit(GroceriesLoaded(groceries));
+      List<Map<String, List<GroceryItem>>> groceryList = [];
+
+      for (var grocery in groceries) {
+        int index = groceryList.indexWhere((element) => element.keys.first == grocery.category);
+        if (index != -1) {
+          groceryList[index].values.first.add(grocery);
+        } else {
+          groceryList.add({
+            grocery.category: [grocery]
+          });
+        }
+      }
+
+      emit(GroceriesLoaded(groceryList));
     } catch (error) {
       emit(GroceriesError("Failed to retrieve groceries"));
     }
@@ -102,7 +129,20 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
         add(AllGroceriesCheckedEvent());
         await _groceryRepository.clearGroceryItems();
       } else {
-        add(GetGroceriesEvent());
+        List<Map<String, List<GroceryItem>>> groceryList = [];
+
+        for (var grocery in groceries) {
+          int index = groceryList.indexWhere((element) => element.keys.first == grocery.category);
+          if (index != -1) {
+            groceryList[index].values.first.add(grocery);
+          } else {
+            groceryList.add({
+              grocery.category: [grocery]
+            });
+          }
+        }
+
+        emit(GroceriesLoaded(groceryList));
       }
     } catch (err) {
       emit(GroceriesError("Failed to handle grocery item check off"));
