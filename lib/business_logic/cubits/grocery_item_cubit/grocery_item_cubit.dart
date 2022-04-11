@@ -16,5 +16,6 @@ class GroceryItemCubit extends Cubit<GroceryItemState> {
   void checkItem(GroceryItem item) {
     _groceryRepository.checkOffGroceryItem(item);
     emit(GroceryItemUpdated(item));
+    emit(GroceryItemInitial());
   }
 }

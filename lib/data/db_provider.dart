@@ -219,7 +219,8 @@ class SQLHelper {
 
             final totalQtyFrac = oldQtyFrac + newQtyFrac;
 
-            final totalQtyStr = totalQtyFrac.toString();
+            final totalQtyReduced = totalQtyFrac.reduce();
+            final totalQtyStr = totalQtyReduced.toString();
 
             return await db.rawUpdate("""
               UPDATE shopping_list SET qty = ? 

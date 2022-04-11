@@ -42,6 +42,10 @@ class _GroceryListPageState extends State<GroceryListPage> {
           return buildInitial();
         } else if (state is GroceriesLoaded) {
           return buildGroceryList(state.groceries);
+        } else if (state is AllGroceriesChecked) {
+          return buildCompletedAnimation();
+        } else if (state is AwaitingGroceries) {
+          return buildWaitingGroceries();
         } else {
           return buildErrorDisplay();
         }
@@ -66,5 +70,13 @@ class _GroceryListPageState extends State<GroceryListPage> {
         return GroceryListItem(item: item);
       }).toList(),
     );
+  }
+
+  Widget buildCompletedAnimation() {
+    return Container(alignment: Alignment.center, child: Text("YAY!"));
+  }
+
+  Widget buildWaitingGroceries() {
+    return Container(alignment: Alignment.center, child: Text("Add some groceries first!"));
   }
 }

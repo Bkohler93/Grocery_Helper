@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/grocery_item_cubit/grocery_item_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/i_grocery_repository.dart';
@@ -10,17 +11,27 @@ part 'grocery_event.dart';
 
 class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
   final IGroceryRepository _groceryRepository;
+  final MealBloc _mealBloc;
+  late final StreamSubscription<MealState> _mealStreamSubscription;
   final GroceryItemCubit _groceryItemCubit;
   late final StreamSubscription<GroceryItemState> _groceryItemStreamSubscription;
 
   GroceryBloc(
-      {required IGroceryRepository groceryRepository, required GroceryItemCubit groceryItemCubit})
+      {required IGroceryRepository groceryRepository,
+      required GroceryItemCubit groceryItemCubit,
+      required MealBloc mealBloc})
       : _groceryRepository = groceryRepository,
         _groceryItemCubit = groceryItemCubit,
+        _mealBloc = mealBloc,
         super(const GroceryInitial()) {
     _groceryItemStreamSubscription = _groceryItemCubit.stream.listen((groceryItemState) {
       if (groceryItemState is GroceryItemUpdated) {
         add(CheckOffGroceryItemEvent(groceryItemState.item));
+      }
+    });
+    _mealStreamSubscription = _mealBloc.stream.listen((mealState) {
+      if (mealState is GroceryListPopulated) {
+        add(GetGroceriesEvent());
       }
     });
     on<GroceryEvent>(mapEventToState);
@@ -90,6 +101,8 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
       if (count == groceries.length) {
         add(AllGroceriesCheckedEvent());
         await _groceryRepository.clearGroceryItems();
+      } else {
+        add(GetGroceriesEvent());
       }
     } catch (err) {
       emit(GroceriesError("Failed to handle grocery item check off"));
@@ -101,6 +114,6 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
     emit(AllGroceriesChecked());
     //TODO maybe incorporate animation!?!?!?
     await Future.delayed(const Duration(seconds: 2));
-    emit(GroceryInitial());
+    emit(AwaitingGroceries());
   }
 }

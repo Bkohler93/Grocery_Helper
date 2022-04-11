@@ -67,3 +67,10 @@ class AllGroceriesChecked extends GroceryState {
   @override
   List<Object> get props => [];
 }
+
+class AwaitingGroceries extends GroceryState {
+  const AwaitingGroceries();
+
+  @override
+  List<Object> get props => [];
+}

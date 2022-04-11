@@ -38,6 +38,7 @@ void main() {
             create: (context) => GroceryBloc(
               groceryItemCubit: context.read<GroceryItemCubit>(),
               groceryRepository: GroceryRepository(),
+              mealBloc: context.read<MealBloc>(),
             ),
           ),
         ],
@@ -119,7 +120,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         children: [
           ChooseMealsPage(
             onSubmit: () {
-              context.read<GroceryBloc>().add(GetGroceriesEvent());
               _tabController.index = 1;
             },
           ),

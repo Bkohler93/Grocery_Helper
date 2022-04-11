@@ -75,6 +75,8 @@ class MealBloc extends Bloc<MealEvent, MealState> {
 
       try {
         await _mealRepository.populateGroceryList(meals.map((e) => e.name).toList());
+        emit(GroceryListPopulated());
+        add(GetMealsEvent());
       } catch (error) {
         emit(MealError('There were some errors adding grocery items to your shopping list'));
       }
