@@ -54,7 +54,6 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
   }
 
   void mapEventToState(GroceryEvent event, Emitter<GroceryState> emit) async {
-    emit(GroceryLoading());
     if (event is GetGroceriesEvent) {
       await _getGroceries(event, emit);
     } else if (event is AddGroceryEvent) {

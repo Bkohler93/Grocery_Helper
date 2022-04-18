@@ -10,12 +10,13 @@ import 'package:grocery_helper_app/presentation/screens/add_meal.dart';
 import 'package:grocery_helper_app/presentation/widgets/ingredient_category_dropdown.dart';
 
 class AddIngredientModalPage extends StatelessWidget {
+  const AddIngredientModalPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
       body: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(20),
         child: MultiBlocProvider(
           providers: [
             BlocProvider<AddIngredientCubit>(create: (context) => AddIngredientCubit()),
@@ -51,7 +52,7 @@ class _AddIngredientModalState extends State<AddIngredientModal> {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 15.0),
+        padding: const EdgeInsets.all(15.0),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const IngredientNameField(),

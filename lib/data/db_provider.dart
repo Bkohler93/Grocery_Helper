@@ -325,4 +325,18 @@ class SQLHelper {
 
     return results.isNotEmpty;
   }
+
+  static Future<void> updateMealAndIngredients(Meal meal, List<GroceryItem> items) async {
+    final db = await SQLHelper.db();
+
+    await db.rawDelete("""
+      DELETE FROM meal_ingredients WHERE meal_id = ?
+    """, [meal.id]);
+
+    await db.rawDelete("""
+      DELETE FROM meals WHERE id = ?
+    """, [meal.id]);
+
+    await insertMeal(meal.name, items);
+  }
 }

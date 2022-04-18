@@ -98,4 +98,16 @@ class MockMealRepository implements IMealRepository {
     // TODO: implement mealExists
     throw UnimplementedError();
   }
+
+  @override
+  Future<List<GroceryItem>> getMealIngredients({required String mealName}) {
+    // TODO: implement getMealIngredients
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateMeal(int mealId, String mealName, List<GroceryItem> items) {
+    // TODO: implement updateMeal
+    throw UnimplementedError();
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc.dart';
 import 'package:grocery_helper_app/data/models/meal.dart';
+import 'package:grocery_helper_app/presentation/screens/edit_meal.dart';
 
 class MealCard extends StatefulWidget {
   const MealCard(this.meal, {Key? key}) : super(key: key);
@@ -66,7 +67,15 @@ class _MealCardState extends State<MealCard> {
                               width: 40,
                               child: TextButton(
                                 child: const Icon(Icons.edit, size: 20),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditMealPage(
+                                              meal: widget.meal,
+                                            )),
+                                  );
+                                },
                               )),
                           SizedBox(
                             width: 40,

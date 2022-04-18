@@ -59,4 +59,15 @@ class MealRepository implements IMealRepository {
   Future<bool> mealExists(String name) async {
     return await SQLHelper.mealExists(name);
   }
+
+  @override
+  Future<List<GroceryItem>> getMealIngredients({required String mealName}) {
+    return SQLHelper.getIngredients([mealName]);
+  }
+
+  @override
+  Future<void> updateMeal(int mealId, String mealName, List<GroceryItem> items) async {
+    await SQLHelper.updateMealAndIngredients(
+        Meal(name: mealName, id: mealId, checked: false), items);
+  }
 }
