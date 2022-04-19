@@ -1,6 +1,7 @@
 import 'package:fraction/fraction.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/meal.dart';
+import 'package:grocery_helper_app/data/models/section.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'dart:async';
@@ -9,25 +10,35 @@ import 'dart:async';
 class SQLHelper {
   static Future<void> createTables(sql.Database db) async {
     await db.execute("""CREATE TABLE sections(
-      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-      priority INTEGER AUTOINCREMENT NOT NULL,
+      priority INTEGER,
       name TEXT NOT NULL UNIQUE
     )""");
+    await db.execute("""
+    CREATE TRIGGER auto_increment_trigger
+    AFTER INSERT ON sections
+    WHEN new.priority IS NULL
+    BEGIN
+        UPDATE sections
+        SET priority = (SELECT IFNULL(MAX(priority), 0) + 1 FROM sections)
+        WHERE rowid = new.rowid;
+    END;
+    fdsafdsfsda
+    """);
     await db.execute("""CREATE TABLE meals(
-      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+      id INTEGER PRIMARY KEY  NOT NULL, 
       name TEXT NOT NULL UNIQUE,
       checked INTEGER NOT NULL
       )
       """);
     await db.execute("""CREATE TABLE ingredients(
-        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+        id INTEGER PRIMARY KEY  NOT NULL, 
         name TEXT NOT NULL UNIQUE,
         category TEXT
       )
       """);
     await db.execute("""
       CREATE TABLE meal_ingredients(
-        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+        id INTEGER PRIMARY KEY  NOT NULL, 
         meal_id INTEGER NOT NULL, 
         ingredient_id INTEGER NOT NULL, 
         qty TEXT,
@@ -39,7 +50,7 @@ class SQLHelper {
       )""");
     await db.execute("""
       CREATE TABLE shopping_list(
-        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        id INTEGER PRIMARY KEY  NOT NULL,
         name TEXT NOT NULL,
         category TEXT NOT NULL,
         checked INTEGER NOT NULL,
@@ -51,7 +62,7 @@ class SQLHelper {
 
   static Future<void> fillTables(sql.Database db) async {
     await db.execute("""
-      INSERT INTO sections(name) VALUES ("")
+      INSERT INTO sections(name) VALUES ("produce"), ("personal"), ("snacks"), ("candy"),("condiments"), ("canned"), ("grains"), ("pasta"), ("asian"), ("seasoning"), ("baking"), ("breakfast"), ("bulk"), ("deli"), ("meat"), ("beer"), ("dairy"), ("cold beverages"), ("frozen"), ("household"), ("mexican"), ("chips"), ("soda"), ("bakery"), ("wine"), ("bread"), ("other")
     """);
     await db.execute("""
       INSERT INTO meals(name, checked) 
@@ -86,7 +97,7 @@ class SQLHelper {
 
   //retrieve database
   static Future<sql.Database> db() async {
-    //!sql.databaseFactory.deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
+    //sql.databaseFactory.deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
     return sql.openDatabase(join(await sql.getDatabasesPath(), 'grocery.db'), version: 1,
         onCreate: (sql.Database database, int version) async {
       await createTables(database);
@@ -346,5 +357,44 @@ class SQLHelper {
     """, [meal.id]);
 
     await insertMeal(meal.name, items);
+  }
+
+  static Future<int> insertSection(String name) async {
+    final db = await SQLHelper.db();
+
+    Section section = Section(name: name);
+
+    return await db.insert('sections', section.toMap(),
+        conflictAlgorithm: sql.ConflictAlgorithm.abort);
+  }
+
+  static Future<void> reorderSections(List<Section> sections) async {
+    final db = await SQLHelper.db();
+
+    var batch = db.batch();
+    for (var section in sections) {
+      await db.update('sections', section.toMap(), where: 'rowid = ?', whereArgs: [section.id]);
+    }
+    await batch.commit(noResult: true);
+  }
+
+  static Future<List<Section>> getSections() async {
+    final db = await SQLHelper.db();
+
+    var data =
+        await db.query('sections', columns: ['rowid', 'name', 'priority'], orderBy: 'priority');
+    return [for (var datum in data) Section.fromMap(datum)];
+  }
+
+  static Future<void> deleteSection(Section section) async {
+    final db = await SQLHelper.db();
+
+    await db.delete('sections', where: 'rowid = ?', whereArgs: [section.id]);
+  }
+
+  static Future<void> updateSection(Section section) async {
+    final db = await SQLHelper.db();
+
+    await db.update('sections', section.toMap(), where: 'rowid = ?', whereArgs: [section.id]);
   }
 }

@@ -73,45 +73,50 @@ class AddMealForm extends StatelessWidget {
           ],
         ),
         body: Padding(
-          padding: const EdgeInsets.all(18.0),
+          padding: const EdgeInsets.only(top: 10.0),
           child: Center(
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const MealNameField(),
-              SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: const Padding(
-                      child: Text(
-                        'Ingredients',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-                      ),
-                      padding: EdgeInsets.only(bottom: 10.0))),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.0),
+                child: MealNameField(),
+              ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 15.0),
-                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const IngredientNameField(),
-                    Row(
-                      children: const [
-                        IngredientQtyField(),
-                        CategoryDropdown(),
-                      ],
-                    ),
-                  ]),
-                  TextButton(
-                      style: ButtonStyle(
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-                      ),
-                      onPressed: () {
-                        context.read<AddIngredientCubit>().addIngredient();
-                        ingredientNameController.clear();
-                        ingredientQtyController.clear();
-                        ingredientNameFocusNode.requestFocus();
-                      },
-                      child: const Text('Add'))
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: const Padding(
+                        child: Text(
+                          'Ingredients',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+                        ),
+                        padding: EdgeInsets.only(bottom: 10.0))),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  const IngredientNameField(),
+                  const IngredientQtyField(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const CategoryDropdownWidget(),
+                      TextButton(
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                          ),
+                          onPressed: () {
+                            context.read<AddIngredientCubit>().addIngredient();
+                            ingredientNameController.clear();
+                            ingredientQtyController.clear();
+                            ingredientNameFocusNode.requestFocus();
+                          },
+                          child: const Text('Add'))
+                    ],
+                  ),
                 ]),
               ),
               BlocBuilder<AddMealBloc, AddMealState>(

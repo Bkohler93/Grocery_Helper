@@ -50,33 +50,41 @@ class _AddIngredientModalState extends State<AddIngredientModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const IngredientNameField(),
+    return Stack(alignment: Alignment.center, children: <Widget>[
+      Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(children: [
+            Row(children: [
+              const IngredientNameField(),
+              TextButton(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                  ),
+                  onPressed: () {
+                    context.read<AddIngredientCubit>().addIngredient();
+                    ingredientNameController.clear();
+                    ingredientQtyController.clear();
+                    ingredientNameFocusNode.requestFocus();
+                  },
+                  child: const Text('Add')),
+            ]),
             Row(
               children: const [
                 IngredientQtyField(),
-                CategoryDropdown(),
+                CategoryDropdownWidget(),
               ],
             ),
           ]),
-          TextButton(
-              style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-              ),
-              onPressed: () {
-                context.read<AddIngredientCubit>().addIngredient();
-                ingredientNameController.clear();
-                ingredientQtyController.clear();
-                ingredientNameFocusNode.requestFocus();
-              },
-              child: const Text('Add'))
-        ]),
+        ),
       ),
-    );
+      const Positioned(
+          child: Icon(
+            Icons.keyboard_arrow_down_outlined,
+            size: 30,
+          ),
+          top: 0)
+    ]);
   }
 }

@@ -7,8 +7,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:grocery_helper_app/data/models/section.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/grocery_repository.dart';
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
+import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
 
 void main() {
   setUp(() {
@@ -30,21 +32,85 @@ void main() {
     expect(groceries.isNotEmpty, true);
   });
 
-  test('submit a list of meal names to add to grocery list and receive new list of groceries',
-      () async {
-    final mealRepository = MealRepository();
-    final groceryRepository = GroceryRepository();
+  test('retrieve all sections', () async {
+    final sectionRepository = SectionRepository();
 
-    var initialGroceries = await groceryRepository.getGroceries();
-    var initialLemonCount =
-        int.parse(initialGroceries.firstWhere((element) => element.name == 'lemon').qty);
+    var sections = await sectionRepository.getSections();
+    expect(sections.isNotEmpty, true);
+  });
 
-    await mealRepository.populateGroceryList(["meatballs with bulgogi sauce"]);
+  test('change priorities on section items results in swapped order', () async {
+    final sectionRepository = SectionRepository();
+    var sections = await sectionRepository.getSections();
+    var originalFirstid = sections[0].id;
 
-    var finalGroceries = await groceryRepository.getGroceries();
-    var finalLemonCount =
-        int.parse(finalGroceries.firstWhere((element) => element.name == 'lemon').qty);
+    //swap prioirities for first and second element
+    var tmp = sections[0].priority;
+    sections[0] = Section.fromMap(
+        {'name': sections[0].name, 'rowid': sections[0].id, 'priority': sections[1].priority});
+    sections[1] =
+        Section.fromMap({'name': sections[1].name, 'rowid': sections[1].id, 'priority': tmp});
 
-    expect(finalLemonCount, initialLemonCount + 2);
+    await sectionRepository.reorderSections(sections);
+
+    var newSections = await sectionRepository.getSections();
+    expect(newSections[1].id, originalFirstid);
+  });
+
+  test('delete section results in fewer sections from db', () async {
+    final sectionRepository = SectionRepository();
+    var sections = await sectionRepository.getSections();
+    int firstLength = sections.length;
+
+    await sectionRepository.deleteSection(sections[0]);
+
+    sections = await sectionRepository.getSections();
+    int newLength = sections.length;
+
+    expect(newLength, firstLength - 1);
+  });
+
+  test('add section results in more sections from db', () async {
+    final sectionRepository = SectionRepository();
+    var sections = await sectionRepository.getSections();
+    int firstLength = sections.length;
+
+    await sectionRepository.addSection('ethnic');
+
+    sections = await sectionRepository.getSections();
+
+    int newLength = sections.length;
+
+    //cleanup
+    try {
+      Section ethnicSection = sections.firstWhere((section) => section.name == 'ethnic');
+      await sectionRepository.deleteSection(ethnicSection);
+    } catch (err) {
+      print("=== Error finding ethnic section in database.");
+    }
+
+    expect(newLength, firstLength + 1);
+  });
+
+  test('change name of section persists', () async {
+    final sectionRepository = SectionRepository();
+
+    int id = await sectionRepository.addSection('test');
+
+    await sectionRepository.editSection(Section(name: 'testerr', id: id));
+
+    var sections = await sectionRepository.getSections();
+
+    bool foundTesterr = sections.any((section) => section.name == 'testerr');
+
+    //cleanup
+    try {
+      Section testSection = sections.firstWhere((section) => section.name == 'testerr');
+      await sectionRepository.deleteSection(testSection);
+    } catch (err) {
+      print("=== Error finding test section in database.");
+    }
+
+    expect(foundTesterr, true);
   });
 }

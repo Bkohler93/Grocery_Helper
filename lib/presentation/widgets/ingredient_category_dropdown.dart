@@ -2,6 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_ingredient_cubit.dart';
+import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
+import 'package:grocery_helper_app/data/models/section.dart';
+import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
+import 'package:provider/provider.dart';
+
+class CategoryDropdownWidget extends StatelessWidget {
+  const CategoryDropdownWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+        create: (context) =>
+            SectionNotifier(context: context, sectionRepository: SectionRepository()),
+        child: const CategoryDropdown());
+  }
+}
 
 class CategoryDropdown extends StatefulWidget {
   const CategoryDropdown({Key? key}) : super(key: key);
@@ -29,42 +45,31 @@ class _CategoryDropdownState extends State<CategoryDropdown> {
           ));
         }
       },
-      child: DropdownButton<String>(
-        value: dropdownValue,
-        hint: const Text("Section"),
-        iconSize: 35,
-        elevation: 8,
-        style: TextStyle(color: Colors.grey.shade800, fontSize: 16),
-        underline: Container(
-          height: 0,
-        ),
-        onChanged: (String? newValue) {
-          context.read<AddIngredientCubit>().changeSection(newValue!);
-          setState(() {
-            dropdownValue = newValue;
-          });
-        },
-        items: <String>[
-          'Produce',
-          'Meat',
-          'Deli',
-          'Dairy',
-          'Bread',
-          'Bulk',
-          'Asian',
-          'Mexican',
-          'Canned',
-          'Personal',
-          'Baking',
-          'Frozen',
-          'Household',
-          'Other'
-        ].map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
+      child: Consumer<SectionNotifier>(
+        builder: (context, sections, child) {
+          return DropdownButton<String>(
+            value: dropdownValue,
+            hint: const Text("Section"),
+            iconSize: 35,
+            elevation: 8,
+            style: TextStyle(color: Colors.grey.shade800, fontSize: 16),
+            underline: Container(
+              height: 0,
+            ),
+            onChanged: (String? newValue) {
+              context.read<AddIngredientCubit>().changeSection(newValue!);
+              setState(() {
+                dropdownValue = newValue;
+              });
+            },
+            items: sections.sections.map<DropdownMenuItem<String>>((Section value) {
+              return DropdownMenuItem<String>(
+                value: value.name,
+                child: Text(value.name),
+              );
+            }).toList(),
           );
-        }).toList(),
+        },
       ),
     );
   }
