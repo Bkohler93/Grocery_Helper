@@ -8,6 +8,11 @@ import 'dart:async';
 //! This shoudl be instantiated INSIDE the REPOSITORY (currently grocer_list)
 class SQLHelper {
   static Future<void> createTables(sql.Database db) async {
+    await db.execute("""CREATE TABLE sections(
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      priority INTEGER AUTOINCREMENT NOT NULL,
+      name TEXT NOT NULL UNIQUE
+    )""");
     await db.execute("""CREATE TABLE meals(
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
       name TEXT NOT NULL UNIQUE,
@@ -45,6 +50,9 @@ class SQLHelper {
   }
 
   static Future<void> fillTables(sql.Database db) async {
+    await db.execute("""
+      INSERT INTO sections(name) VALUES ("")
+    """);
     await db.execute("""
       INSERT INTO meals(name, checked) 
       VALUES ("meatballs with bulgogi sauce", 0), ("lemon chicken stock", 1)

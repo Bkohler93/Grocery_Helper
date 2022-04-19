@@ -41,6 +41,7 @@ dependencies:
   equatable: ^2.0.3
   path: ^1.8.0
   progress_indicators: ^1.0.0
+  confetti: ^0.6.0
 
 flutter_icons:
   android: "launcher_icon"

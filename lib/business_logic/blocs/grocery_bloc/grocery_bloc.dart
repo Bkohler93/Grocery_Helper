@@ -152,7 +152,7 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
       AllGroceriesCheckedEvent event, Emitter<GroceryState> emit) async {
     emit(AllGroceriesChecked());
     //TODO maybe incorporate animation!?!?!?
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 4));
     emit(AwaitingGroceries());
   }
 }
