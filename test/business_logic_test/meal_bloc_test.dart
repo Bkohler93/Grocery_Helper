@@ -69,8 +69,7 @@ void main() {
     blocTest<MealBloc, MealState>(
       'emits [MealLoading, GroceryListPopulated] states after submitting meal names to add to grocery list',
       build: () => mealBloc,
-      act: (bloc) =>
-          bloc.add(PopulateGroceryList(['Meatballs with Bulgogi Sauce', 'Cheesy Beef Tostadas'])),
+      act: (bloc) => bloc.add(PopulateGroceryList()),
       expect: () => [const MealLoading(), const GroceryListPopulated()],
     );
 

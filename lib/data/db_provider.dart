@@ -282,7 +282,7 @@ class SQLHelper {
           "category": row["category"],
           "name": row["name"],
           "checked": row["checked"],
-          'rowid': row['rowid'],
+          'id': row['id'],
           "qty": row["qty"],
           "qty_unit": row["qty_unit"]
         },

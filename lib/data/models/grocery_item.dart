@@ -58,7 +58,7 @@ class GroceryItem {
         category: data['category'],
         name: data['name'],
         checkedOff: data['checked'] == 1 ? true : false,
-        id: data['rowid'],
+        id: data['id'],
         qty: data['qty'] ?? ' ',
         qtyUnit: data['qty_unit'] ?? ' ');
   }
