@@ -3,7 +3,7 @@ class Meal {
   final bool checked;
   final int? id;
 
-  static final columns = ["id", "name"];
+  static final columns = ["rowid", "name"];
 
   Meal({required this.name, this.id, required this.checked});
 
@@ -15,7 +15,7 @@ class Meal {
     Map<String, dynamic> map = {"name": name, "checked": checked};
 
     if (id != null) {
-      map["id"] = id;
+      map["rowid"] = id;
     }
 
     return map;

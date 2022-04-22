@@ -48,27 +48,28 @@ class _GroceryListPageState extends State<GroceryListPage> {
                             ? buildWaitingGroceries()
                             : buildErrorDisplay(),
             Positioned(
-                right: 30,
-                bottom: 30,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(20),
-                  ),
-                  child: const Icon(Icons.add, size: 35.0),
-                  onPressed: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return const FractionallySizedBox(
-                          heightFactor: 0.7,
-                          child: AddIngredientModal(),
-                        );
-                      },
-                    );
-                  },
-                ))
+              right: 30,
+              bottom: 30,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(20),
+                ),
+                child: const Icon(Icons.add, size: 35.0),
+                onPressed: () {
+                  showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return const FractionallySizedBox(
+                        heightFactor: 0.7,
+                        child: AddIngredientModal(),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
           ],
         );
       },

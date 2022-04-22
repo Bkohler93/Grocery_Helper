@@ -25,32 +25,28 @@ class SQLHelper {
     fdsafdsfsda
     """);
     await db.execute("""CREATE TABLE meals(
-      id INTEGER PRIMARY KEY  NOT NULL, 
       name TEXT NOT NULL UNIQUE,
       checked INTEGER NOT NULL
       )
       """);
     await db.execute("""CREATE TABLE ingredients(
-        id INTEGER PRIMARY KEY  NOT NULL, 
         name TEXT NOT NULL UNIQUE,
         category TEXT
       )
       """);
     await db.execute("""
       CREATE TABLE meal_ingredients(
-        id INTEGER PRIMARY KEY  NOT NULL, 
         meal_id INTEGER NOT NULL, 
         ingredient_id INTEGER NOT NULL, 
         qty TEXT,
         qty_unit TEXT,
-        FOREIGN KEY (meal_id) REFERENCES meals (id) 
+        FOREIGN KEY (meal_id) REFERENCES meals (rowid) 
           ON DELETE NO ACTION ON UPDATE NO ACTION,
-        FOREIGN KEY (ingredient_id) REFERENCES ingredients (id)
+        FOREIGN KEY (ingredient_id) REFERENCES ingredients (rowid)
           ON DELETE NO ACTION ON UPDATE NO ACTION
       )""");
     await db.execute("""
       CREATE TABLE shopping_list(
-        id INTEGER PRIMARY KEY  NOT NULL,
         name TEXT NOT NULL,
         category TEXT NOT NULL,
         checked INTEGER NOT NULL,
@@ -75,18 +71,18 @@ class SQLHelper {
 
     await db.execute("""
       INSERT INTO meal_ingredients(meal_id, ingredient_id, qty, qty_unit) VALUES
-        ((SELECT id from meals WHERE name="meatballs with bulgogi sauce"),
-          (SELECT id from ingredients WHERE name="lemon"), "2", ""),
-        ((SELECT id from meals WHERE name="meatballs with bulgogi sauce"),
-          (SELECT id from ingredients WHERE name="ground beef"),"1", "lb"),
-        ((SELECT id from meals WHERE name="meatballs with bulgogi sauce"),
-          (SELECT id from ingredients WHERE name="bulgogi sauce"),"3","tsp"),
-        ((SELECT id from meals WHERE name="meatballs with bulgogi sauce"),
-          (SELECT id from ingredients WHERE name="chicken stock"),"1/2","cup"),
-        ((SELECT id from meals WHERE name="lemon chicken stock"),
-          (SELECT id from ingredients WHERE name="chicken stock"),"1/2","cup"),
-        ((SELECT id from meals WHERE name="lemon chicken stock"),
-          (SELECT id from ingredients WHERE name="lemon"),"1","")
+        ((SELECT rowid from meals WHERE name="meatballs with bulgogi sauce"),
+          (SELECT rowid from ingredients WHERE name="lemon"), "2", ""),
+        ((SELECT rowid from meals WHERE name="meatballs with bulgogi sauce"),
+          (SELECT rowid from ingredients WHERE name="ground beef"),"1", "lb"),
+        ((SELECT rowid from meals WHERE name="meatballs with bulgogi sauce"),
+          (SELECT rowid from ingredients WHERE name="bulgogi sauce"),"3","tsp"),
+        ((SELECT rowid from meals WHERE name="meatballs with bulgogi sauce"),
+          (SELECT rowid from ingredients WHERE name="chicken stock"),"1/2","cup"),
+        ((SELECT rowid from meals WHERE name="lemon chicken stock"),
+          (SELECT rowid from ingredients WHERE name="chicken stock"),"1/2","cup"),
+        ((SELECT rowid from meals WHERE name="lemon chicken stock"),
+          (SELECT rowid from ingredients WHERE name="lemon"),"1","")
     """);
 
     await db.execute("""
@@ -97,12 +93,15 @@ class SQLHelper {
 
   //retrieve database
   static Future<sql.Database> db() async {
-    //sql.databaseFactory.deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
-    return sql.openDatabase(join(await sql.getDatabasesPath(), 'grocery.db'), version: 1,
-        onCreate: (sql.Database database, int version) async {
-      await createTables(database);
-      await fillTables(database);
-    });
+    //!sql.databaseFactory.deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
+    return sql.openDatabase(
+      join(await sql.getDatabasesPath(), 'grocery.db'),
+      version: 1,
+      onCreate: (sql.Database database, int version) async {
+        await createTables(database);
+        await fillTables(database);
+      },
+    );
   }
 
   //insert new meal into meals table, and insert ingredients into
@@ -131,7 +130,7 @@ class SQLHelper {
       List<Map> results = await db.query("ingredients",
           columns: GroceryItem.ingredientColumns, where: "name = ?", whereArgs: [ingredient.name]);
 
-      int ingredientId = results.isNotEmpty ? results[0]["id"] : await db.rawInsert("""
+      int ingredientId = results.isNotEmpty ? results[0]["rowid"] : await db.rawInsert("""
           INSERT INTO ingredients(name, category)
           VALUES (?, ?)
         """, [ingredient.name, ingredient.category]);
@@ -162,7 +161,7 @@ class SQLHelper {
     // sql.databaseFactory
     //     .deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
     final db = await SQLHelper.db();
-    var result = await db.query('meals');
+    var result = await db.query('meals', columns: ['name', 'checked', 'rowid']);
 
     List<Meal> meals = [];
     for (var meal in result) {
@@ -178,11 +177,23 @@ class SQLHelper {
     List<GroceryItem> items = [];
 
     for (String name in mealNames) {
+      // List<Map> data = await db.rawQuery("""
+      //   SELECT m.name, ingredients.name, ingredients.category, meal_ingredients.qty, meal_ingredients.qty_unit, meal_ingredients.rowid
+      //   FROM (SELECT * FROM meals where meals.name = ?) as m
+      //   INNER JOIN meal_ingredients ON m.rowid = meal_ingredients.meal_id
+      //   INNER JOIN ingredients on meal_ingredients.ingredient_id = ingredients.rowid
+      // """, [name]);
+
+      // List<Map> data = await db.rawQuery("""
+      //   SELECT .OrderID, o.OrderDate, c.CustomerName
+      //   FROM Customers AS c, Orders AS o
+      //   WHERE c.CustomerName="Around the Horn" AND c.CustomerID=o.CustomerID;
+      // """, [name]);
+
       List<Map> data = await db.rawQuery("""
-        SELECT m.name, ingredients.name, ingredients.category, meal_ingredients.qty, meal_ingredients.qty_unit 
-        FROM (SELECT * FROM meals where meals.name = ?) as m
-        INNER JOIN meal_ingredients ON m.id = meal_ingredients.meal_id
-        INNER JOIN ingredients on meal_ingredients.ingredient_id = ingredients.id
+        SELECT i.category, i.name, mi.qty, mi.qty_unit, mi.rowid
+        FROM ingredients AS i, meal_ingredients AS mi, meals as m
+        WHERE m.name=? AND mi.meal_id=m.rowid AND mi.ingredient_id=i.rowid
       """, [name]);
 
       for (var item in data) {
@@ -191,7 +202,7 @@ class SQLHelper {
           "name": item["name"],
           "qty": item['qty'],
           "qty_unit": item['qty_unit'],
-          "id": item['id'],
+          "id": item['rowid'],
           "checked": 0,
         }));
       }
@@ -216,7 +227,7 @@ class SQLHelper {
 
     //find matching grocery item in list
     var queryResult = await db.rawQuery("""
-      SELECT id, name, qty, category, qty_unit FROM shopping_list WHERE name = ?
+      SELECT rowid, name, qty, category, qty_unit FROM shopping_list WHERE name = ?
     """, [item.name]);
 
     //check if qty should be updated, otherwise just insert new entry
@@ -243,12 +254,12 @@ class SQLHelper {
 
             return await db.rawUpdate("""
               UPDATE shopping_list SET qty = ? 
-              WHERE id = ?""", [totalQtyStr, entry['id']]);
+              WHERE rowid = ?""", [totalQtyStr, entry['rowid']]);
           } else {
             return await db.rawUpdate("""
               UPDATE shopping_list SET qty=? 
-              WHERE id = ?
-              """, [int.parse(entry['qty'].toString()) + int.parse(item.qty), entry['id']]);
+              WHERE rowid = ?
+              """, [int.parse(entry['qty'].toString()) + int.parse(item.qty), entry['rowid']]);
           }
         }
       }
@@ -263,9 +274,7 @@ class SQLHelper {
     List<GroceryItem> items = [];
     final db = await SQLHelper.db();
 
-    List<Map> data = await db.rawQuery("""
-      SELECT * FROM shopping_list
-    """);
+    List<Map> data = await db.query('shopping_list', columns: GroceryItem.ingredientColumns);
 
     for (var row in data) {
       items.add(GroceryItem.fromMap(
@@ -273,7 +282,7 @@ class SQLHelper {
           "category": row["category"],
           "name": row["name"],
           "checked": row["checked"],
-          'id': row['id'],
+          'rowid': row['rowid'],
           "qty": row["qty"],
           "qty_unit": row["qty_unit"]
         },
@@ -293,7 +302,7 @@ class SQLHelper {
     final db = await SQLHelper.db();
 
     await db.rawUpdate("""
-      UPDATE shopping_list SET checked = ? WHERE id = ?
+      UPDATE shopping_list SET checked = ? WHERE rowid = ?
     """, [item.checkedOff ? 1 : 0, item.id]);
   }
 
@@ -305,7 +314,7 @@ class SQLHelper {
     """, [meal.id]);
 
     await db.rawDelete("""
-      DELETE FROM meals WHERE meals.id = ?
+      DELETE FROM meals WHERE meals.rowid = ?
     """, [meal.id]);
   }
 
@@ -313,7 +322,7 @@ class SQLHelper {
     final db = await SQLHelper.db();
 
     return await db.rawDelete("""
-      DELETE FROM shopping_list WHERE shopping_list.id = ?
+      DELETE FROM shopping_list WHERE shopping_list.rowid = ?
     """, [id]);
   }
 
@@ -322,7 +331,7 @@ class SQLHelper {
 
     return await db.rawUpdate("""
       UPDATE shopping_list SET name = ?, qty = ?, qty_unit = ?, category = ?, checked = ? 
-      WHERE id = ?
+      WHERE rowid = ?
     """, [item.name, item.qty, item.qtyUnit, item.category, item.checkedOff ? 1 : 0, item.id]);
   }
 
@@ -331,7 +340,7 @@ class SQLHelper {
 
     return await db.rawUpdate("""
       UPDATE meals SET name = ?, checked = ?
-      WHERE id = ?
+      WHERE rowid = ?
     """, [meal.name, meal.checked ? 1 : 0, meal.id]);
   }
 
@@ -353,7 +362,7 @@ class SQLHelper {
     """, [meal.id]);
 
     await db.rawDelete("""
-      DELETE FROM meals WHERE id = ?
+      DELETE FROM meals WHERE rowid = ?
     """, [meal.id]);
 
     await insertMeal(meal.name, items);

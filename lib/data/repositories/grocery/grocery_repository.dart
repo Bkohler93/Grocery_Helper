@@ -50,7 +50,7 @@ class GroceryRepository implements IGroceryRepository {
       'category': item.category,
       'name': item.name,
       'checked': item.checkedOff ? 0 : 1, //flip sign of checked since checking item
-      'id': item.id,
+      'rowid': item.id,
       'qty': item.qty,
       'qty_unit': item.qtyUnit,
     });

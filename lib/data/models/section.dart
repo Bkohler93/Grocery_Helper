@@ -3,7 +3,7 @@ class Section {
   int? priority;
   final int? id;
 
-  static final columns = ["id", "name"];
+  static final columns = ["rowid", "name"];
 
   Section({required this.name, this.id, this.priority});
 

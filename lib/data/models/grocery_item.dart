@@ -13,7 +13,7 @@ class GroceryItem {
       this.id,
       this.checkedOff = false});
 
-  static final ingredientColumns = ["id", "category", "name"];
+  static final ingredientColumns = ["rowid", "category", "name", "qty_unit", "qty", 'checked'];
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
@@ -25,7 +25,7 @@ class GroceryItem {
     };
 
     if (id != null) {
-      map["id"] = id;
+      map["rowid"] = id;
     }
     return map;
   }
@@ -58,7 +58,7 @@ class GroceryItem {
         category: data['category'],
         name: data['name'],
         checkedOff: data['checked'] == 1 ? true : false,
-        id: data['id'],
+        id: data['rowid'],
         qty: data['qty'] ?? ' ',
         qtyUnit: data['qty_unit'] ?? ' ');
   }
