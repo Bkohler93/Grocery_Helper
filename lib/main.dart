@@ -13,6 +13,7 @@ import 'package:grocery_helper_app/presentation/screens/add_meal.dart';
 // import 'package:grocery_helper_app/data/models/grocery_list.dart';
 import 'package:grocery_helper_app/presentation/screens/choose_meals.dart';
 import 'package:grocery_helper_app/presentation/screens/grocery_list.dart';
+import 'package:grocery_helper_app/presentation/screens/settings.dart';
 
 // import 'presentation/screens/add_meal.dart';
 // import 'presentation/screens/grocery_list.dart';
@@ -116,6 +117,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   child: const Text('Add Meal'),
                 )),
           ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+            },
+            child: Icon(Icons.settings),
+          )
         ],
       ),
       body: TabBarView(
