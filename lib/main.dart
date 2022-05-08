@@ -6,6 +6,7 @@ import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart
 import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/grocery_item_cubit/grocery_item_cubit.dart';
 import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_ingredient_cubit.dart';
+import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/grocery_repository.dart';
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
 import 'package:grocery_helper_app/presentation/screens/add_meal.dart';
@@ -14,6 +15,7 @@ import 'package:grocery_helper_app/presentation/screens/add_meal.dart';
 import 'package:grocery_helper_app/presentation/screens/choose_meals.dart';
 import 'package:grocery_helper_app/presentation/screens/grocery_list.dart';
 import 'package:grocery_helper_app/presentation/screens/settings.dart';
+import 'package:provider/provider.dart';
 
 // import 'presentation/screens/add_meal.dart';
 // import 'presentation/screens/grocery_list.dart';

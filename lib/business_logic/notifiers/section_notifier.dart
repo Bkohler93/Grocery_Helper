@@ -57,7 +57,7 @@ class SectionNotifier extends ChangeNotifier {
     });
   }
 
-  void removeSection(int index) {
+  Section removeSection(int index) {
     Section removed = _sections.removeAt(index);
 
     notifyListeners();
@@ -66,6 +66,8 @@ class SectionNotifier extends ChangeNotifier {
       state = SectionNotifierState.errorDeleting;
       notifyListeners();
     });
+
+    return removed;
   }
 
   void addSection(String name) {
@@ -83,7 +85,8 @@ class SectionNotifier extends ChangeNotifier {
     });
   }
 
-  void editSection(String name, int index) {
+  void editSection(String name, Section section) {
+    int index = _sections.indexOf(section);
     _sections[index].setname(name);
 
     notifyListeners();

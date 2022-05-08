@@ -4,6 +4,8 @@ import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart
 import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
 import 'package:grocery_helper_app/data/models/meal.dart';
 import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
+import 'package:grocery_helper_app/presentation/screens/settings/section_editor.dart';
+import 'package:grocery_helper_app/presentation/widgets/settings_choice.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -33,9 +35,29 @@ class SettingsMenu extends StatelessWidget {
               }),
           title: const Text('Settings'),
         ),
-        body: Column(children: <Widget>[
-          Text("Theme"),
-          Text("Section Order"),
-        ]));
+        body: Padding(
+          padding: const EdgeInsets.fromLTRB(50.0, 30.0, 50.0, 30.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SettingsChoice(
+                name: "Theme",
+                iconData: Icons.format_paint_outlined,
+                redirect: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => const SectionEditorPage()));
+                },
+              ),
+              SettingsChoice(
+                name: "Section Order",
+                iconData: Icons.list_alt_outlined,
+                redirect: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => const SectionEditorPage()));
+                },
+              ),
+            ],
+          ),
+        ));
   }
 }
