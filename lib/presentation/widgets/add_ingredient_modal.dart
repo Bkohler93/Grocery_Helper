@@ -10,8 +10,10 @@ import 'package:grocery_helper_app/presentation/screens/add_meal.dart';
 import 'package:grocery_helper_app/presentation/widgets/ingredient_category_dropdown.dart';
 
 class AddIngredientModalPage extends StatelessWidget {
-  const AddIngredientModalPage({Key? key}) : super(key: key);
-
+  AddIngredientModalPage({Key? key, GroceryItem? item}) : super(key: key) {
+    _item = item;
+  }
+  GroceryItem? _item;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,8 +39,8 @@ class AddIngredientModalPage extends StatelessWidget {
 }
 
 class AddIngredientModal extends StatefulWidget {
-  const AddIngredientModal({Key? key, GroceryItem? item}) : super(key: key);
-
+  AddIngredientModal({Key? key, this.item}) : super(key: key);
+  GroceryItem? item;
   @override
   _AddIngredientModalState createState() => _AddIngredientModalState();
 }
@@ -49,6 +51,14 @@ class _AddIngredientModalState extends State<AddIngredientModal> {
   final ingredientNameFocusNode = FocusNode();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    ingredientNameController.text = widget.item?.name ?? "";
+    ingredientQtyController.text = widget.item?.qty ?? "";
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(alignment: Alignment.center, children: <Widget>[
       Center(
@@ -56,7 +66,7 @@ class _AddIngredientModalState extends State<AddIngredientModal> {
           padding: const EdgeInsets.all(24.0),
           child: Column(children: [
             Row(children: [
-              const IngredientNameField(),
+              IngredientNameField(item: widget.item),
               TextButton(
                   style: ButtonStyle(
                     foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
@@ -71,7 +81,7 @@ class _AddIngredientModalState extends State<AddIngredientModal> {
                   child: const Text('Add')),
             ]),
             Row(
-              children: const [
+              children: [
                 IngredientQtyField(),
                 CategoryDropdownWidget(),
               ],

@@ -22,6 +22,6 @@ class Meal {
   }
 
   static fromMap(Map map) {
-    return Meal(name: map["name"], id: map["id"], checked: map['checked'] == 1 ? true : false);
+    return Meal(name: map["name"], id: map["rowid"], checked: map['checked'] == 1 ? true : false);
   }
 }

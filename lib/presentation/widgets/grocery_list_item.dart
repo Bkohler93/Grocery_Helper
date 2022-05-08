@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:grocery_helper_app/business_logic/blocs/grocery_bloc/grocery_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/grocery_item_cubit/grocery_item_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
+import 'package:grocery_helper_app/presentation/widgets/add_ingredient_modal.dart';
+import 'package:grocery_helper_app/presentation/widgets/edit_indredient_modal.dart';
 import 'package:provider/provider.dart';
 
 class GroceryListItem extends StatefulWidget {
@@ -77,7 +79,16 @@ class _GroceryItemState extends State<GroceryListItem> {
                                 child: TextButton(
                                   child: const Icon(Icons.edit, size: 20),
                                   onPressed: () {
-                                    // show slideup bar to edit
+                                    showModalBottomSheet<void>(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (BuildContext context) {
+                                        return FractionallySizedBox(
+                                          heightFactor: 0.7,
+                                          child: EditIngredientModal(item: widget.item),
+                                        );
+                                      },
+                                    );
                                   },
                                 )),
                             SizedBox(

@@ -58,7 +58,7 @@ class SQLHelper {
 
   static Future<void> fillTables(sql.Database db) async {
     await db.execute("""
-      INSERT INTO sections(name) VALUES ("produce"), ("personal"), ("snacks"), ("candy"),("condiments"), ("canned"), ("grains"), ("pasta"), ("asian"), ("seasoning"), ("baking"), ("breakfast"), ("bulk"), ("deli"), ("meat"), ("beer"), ("dairy"), ("cold beverages"), ("frozen"), ("household"), ("mexican"), ("chips"), ("soda"), ("bakery"), ("wine"), ("bread"), ("other")
+      INSERT INTO sections(name) VALUES ("produce"), ("personal"), ("snacks"), ("candy"),("condiments"), ("canned"), ("grains"), ("pasta"), ("soup"), ("asian"), ("seasoning"), ("baking"), ("breakfast"), ("bulk"), ("deli"), ("meat"), ("beer"), ("dairy"), ("cold beverages"), ("frozen"), ("household"), ("mexican"), ("chips"), ("soda"), ("bakery"), ("wine"), ("bread"), ("other")
     """);
     await db.execute("""
       INSERT INTO meals(name, checked) 
@@ -93,7 +93,7 @@ class SQLHelper {
 
   //retrieve database
   static Future<sql.Database> db() async {
-    //!sql.databaseFactory.deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
+    //sql.databaseFactory.deleteDatabase(join(await sql.getDatabasesPath(), 'grocery.db'));
     return sql.openDatabase(
       join(await sql.getDatabasesPath(), 'grocery.db'),
       version: 1,
@@ -167,7 +167,6 @@ class SQLHelper {
     for (var meal in result) {
       meals.add(Meal.fromMap(meal));
     }
-
     return meals;
   }
 
@@ -202,7 +201,7 @@ class SQLHelper {
           "name": item["name"],
           "qty": item['qty'],
           "qty_unit": item['qty_unit'],
-          "id": item['rowid'],
+          "rowid": item['rowid'],
           "checked": 0,
         }));
       }
@@ -282,7 +281,7 @@ class SQLHelper {
           "category": row["category"],
           "name": row["name"],
           "checked": row["checked"],
-          'id': row['rowid'],
+          'rowid': row['rowid'],
           "qty": row["qty"],
           "qty_unit": row["qty_unit"]
         },

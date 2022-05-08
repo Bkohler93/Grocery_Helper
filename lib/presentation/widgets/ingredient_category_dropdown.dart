@@ -3,31 +3,41 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_ingredient_cubit.dart';
 import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
+import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/section.dart';
 import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
 import 'package:provider/provider.dart';
 
 class CategoryDropdownWidget extends StatelessWidget {
-  const CategoryDropdownWidget({Key? key}) : super(key: key);
-
+  CategoryDropdownWidget({Key? key, this.item}) : super(key: key);
+  final GroceryItem? item;
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (context) =>
             SectionNotifier(context: context, sectionRepository: SectionRepository()),
-        child: const CategoryDropdown());
+        child: CategoryDropdown(item: item));
   }
 }
 
 class CategoryDropdown extends StatefulWidget {
-  const CategoryDropdown({Key? key}) : super(key: key);
-
+  CategoryDropdown({Key? key, this.item}) : super(key: key);
+  GroceryItem? item;
   @override
   State<CategoryDropdown> createState() => _CategoryDropdownState();
 }
 
 class _CategoryDropdownState extends State<CategoryDropdown> {
   String? dropdownValue;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.item != null) {
+      dropdownValue = widget.item?.category;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

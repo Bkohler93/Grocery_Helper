@@ -4,6 +4,7 @@ import 'package:grocery_helper_app/business_logic/blocs/grocery_bloc/grocery_blo
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/presentation/widgets/add_ingredient_modal.dart';
 import 'package:grocery_helper_app/presentation/widgets/celebrate.dart';
+import 'package:grocery_helper_app/presentation/widgets/edit_indredient_modal.dart';
 
 import 'package:grocery_helper_app/presentation/widgets/grocery_list_item.dart';
 
@@ -60,8 +61,9 @@ class _GroceryListPageState extends State<GroceryListPage> {
                   showModalBottomSheet<void>(
                     context: context,
                     isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return const FractionallySizedBox(
+                    isDismissible: true,
+                    builder: (context) {
+                      return FractionallySizedBox(
                         heightFactor: 0.7,
                         child: AddIngredientModal(),
                       );

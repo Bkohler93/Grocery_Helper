@@ -97,12 +97,12 @@ class AddMealForm extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                  const IngredientNameField(),
-                  const IngredientQtyField(),
+                  IngredientNameField(),
+                  IngredientQtyField(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const CategoryDropdownWidget(),
+                      CategoryDropdownWidget(),
                       TextButton(
                           style: ButtonStyle(
                             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
@@ -203,9 +203,11 @@ class IngredientBadge extends StatelessWidget {
 }
 
 class IngredientNameField extends StatefulWidget {
-  const IngredientNameField({
+  IngredientNameField({
     Key? key,
+    this.item,
   }) : super(key: key);
+  GroceryItem? item;
 
   @override
   State<IngredientNameField> createState() => _IngredientNameFieldState();
@@ -214,6 +216,15 @@ class IngredientNameField extends StatefulWidget {
 class _IngredientNameFieldState extends State<IngredientNameField> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.item != null) {
+      _controller.text = widget.item!.name;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -249,16 +260,26 @@ class _IngredientNameFieldState extends State<IngredientNameField> {
 }
 
 class IngredientQtyField extends StatefulWidget {
-  const IngredientQtyField({
+  IngredientQtyField({
+    this.item,
     Key? key,
   }) : super(key: key);
-
+  GroceryItem? item;
   @override
   State<IngredientQtyField> createState() => _IngredientQtyFieldState();
 }
 
 class _IngredientQtyFieldState extends State<IngredientQtyField> {
   final _controller = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.item != null && widget.item!.qty != " ") {
+      _controller.text = widget.item!.qty + ' ' + widget.item!.qtyUnit;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

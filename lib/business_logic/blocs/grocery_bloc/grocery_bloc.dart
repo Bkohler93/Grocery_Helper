@@ -107,7 +107,8 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
 
   Future<void> _updateGrocery(UpdateGroceryEvent event, Emitter<GroceryState> emit) async {
     try {
-      var id = await _groceryRepository.checkOffGroceryItem(event.item);
+      emit(GroceryInitial());
+      var id = await _groceryRepository.updateGroceryItem(event.item);
       add(GetGroceriesEvent());
     } catch (error) {
       emit(GroceriesError("Failed to update item"));
