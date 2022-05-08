@@ -1,37 +1,37 @@
-import 'package:grocery_helper_app/data/db_provider.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
+import 'package:grocery_helper_app/data/providers/grocery_provider.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/i_grocery_repository.dart';
 
 class GroceryRepository implements IGroceryRepository {
   @override
   Future<int> addGroceryItem(GroceryItem item) async {
-    var id = await SQLHelper.insertGrocery(item);
+    var id = await GroceryProvider.insertGrocery(item);
     return id;
   }
 
   @override
   Future<void> addGroceryItems(List<GroceryItem> items) async {
-    await SQLHelper.insertGroceries(items);
+    await GroceryProvider.insertGroceries(items);
   }
 
   @override
   Future<int> deleteGroceryItem(int id) async {
-    return await SQLHelper.removeShoppingItem(id);
+    return await GroceryProvider.removeShoppingItem(id);
   }
 
   @override
   Future<List<GroceryItem>> getGroceries() async {
-    return await SQLHelper.retrieveGroceries();
+    return await GroceryProvider.retrieveGroceries();
   }
 
   @override
   Future<int> updateGroceryItem(GroceryItem item) async {
-    return await SQLHelper.updateShoppingItem(item);
+    return await GroceryProvider.updateShoppingItem(item);
   }
 
   @override
   Future<Map<String, List<GroceryItem>>> getGroceriesByCategory() async {
-    List<GroceryItem> items = await SQLHelper.retrieveGroceries();
+    List<GroceryItem> items = await GroceryProvider.retrieveGroceries();
 
     Map<String, List<GroceryItem>> groupedList = {};
     for (var item in items) {
@@ -54,11 +54,11 @@ class GroceryRepository implements IGroceryRepository {
       'qty': item.qty,
       'qty_unit': item.qtyUnit,
     });
-    await SQLHelper.updateCheckedItem(checkedItem);
+    await GroceryProvider.updateCheckedItem(checkedItem);
   }
 
   @override
   Future<void> clearGroceryItems() async {
-    await SQLHelper.clearGroceryList();
+    await GroceryProvider.clearGroceryList();
   }
 }

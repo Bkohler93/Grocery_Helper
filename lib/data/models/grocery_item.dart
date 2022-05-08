@@ -62,4 +62,6 @@ class GroceryItem {
         qty: data['qty'] ?? ' ',
         qtyUnit: data['qty_unit'] ?? ' ');
   }
+
+ 
 }

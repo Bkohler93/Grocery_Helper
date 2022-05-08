@@ -1,6 +1,6 @@
-import 'package:grocery_helper_app/data/db_provider.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/meal.dart';
+import 'package:grocery_helper_app/data/providers/meal_provider.dart';
 
 import 'i_meal_repository.dart';
 
@@ -8,7 +8,7 @@ class MealRepository implements IMealRepository {
   @override
   Future<List<Meal>> getMeals() async {
     List<Meal> meals = [];
-    var rawMealData = await SQLHelper.getMeals();
+    var rawMealData = await MealProvider.getMeals();
     for (var meal in rawMealData) {
       meals.add(meal);
     }
@@ -17,7 +17,7 @@ class MealRepository implements IMealRepository {
 
   @override
   Future<void> delete(Meal meal) async {
-    await SQLHelper.deleteMeal(meal);
+    await MealProvider.deleteMeal(meal);
   }
 
   @override
@@ -28,7 +28,7 @@ class MealRepository implements IMealRepository {
 
   @override
   Future<bool> insert(String name, List<GroceryItem> items) async {
-    int mealId = await SQLHelper.insertMeal(name, items);
+    int mealId = await MealProvider.insertMeal(name, items);
 
     return (mealId > 0);
   }
@@ -42,32 +42,32 @@ class MealRepository implements IMealRepository {
   @override
   Future<void> populateGroceryList(List<String> mealNames) async {
     //get list of ingredients
-    List<GroceryItem> mealIngredients = await SQLHelper.getIngredients(mealNames);
+    List<GroceryItem> mealIngredients = await MealProvider.getIngredients(mealNames);
 
     //insert groceries into shopping_list
-    await SQLHelper.insertGroceries(mealIngredients);
+    await MealProvider.insertGroceries(mealIngredients);
   }
 
   @override
   Future<Meal> checkMeal(Meal meal) async {
     Meal mealChecked = meal.checkOff();
-    await SQLHelper.updateMeal(mealChecked);
+    await MealProvider.updateMeal(mealChecked);
     return mealChecked;
   }
 
   @override
   Future<bool> mealExists(String name) async {
-    return await SQLHelper.mealExists(name);
+    return await MealProvider.mealExists(name);
   }
 
   @override
   Future<List<GroceryItem>> getMealIngredients({required String mealName}) {
-    return SQLHelper.getIngredients([mealName]);
+    return MealProvider.getIngredients([mealName]);
   }
 
   @override
   Future<void> updateMeal(int mealId, String mealName, List<GroceryItem> items) async {
-    await SQLHelper.updateMealAndIngredients(
+    await MealProvider.updateMealAndIngredients(
         Meal(name: mealName, id: mealId, checked: false), items);
   }
 }

@@ -109,4 +109,8 @@ class AddIngredientCubit extends Cubit<AddIngredientState> with GroceryListAddIn
       ));
     }
   }
+
+  void editIngredient() {
+    print("editing ingredient");
+  }
 }

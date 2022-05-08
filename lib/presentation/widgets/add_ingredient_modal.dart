@@ -9,35 +9,6 @@ import 'package:grocery_helper_app/data/repositories/grocery/grocery_repository.
 import 'package:grocery_helper_app/presentation/screens/add_meal.dart';
 import 'package:grocery_helper_app/presentation/widgets/ingredient_category_dropdown.dart';
 
-class AddIngredientModalPage extends StatelessWidget {
-  AddIngredientModalPage({Key? key, GroceryItem? item}) : super(key: key) {
-    _item = item;
-  }
-  GroceryItem? _item;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider<AddIngredientCubit>(create: (context) => AddIngredientCubit()),
-            BlocProvider<GroceryBloc>(
-              create: (context) => GroceryBloc(
-                groceryItemCubit: context.read<GroceryItemCubit>(),
-                groceryRepository: GroceryRepository(),
-                mealBloc: context.read<MealBloc>(),
-                addIngredientCubit: context.read<AddIngredientCubit>(),
-              ),
-            ),
-          ],
-          child: AddIngredientModal(),
-        ),
-      ),
-    );
-  }
-}
-
 class AddIngredientModal extends StatefulWidget {
   AddIngredientModal({Key? key, this.item}) : super(key: key);
   GroceryItem? item;

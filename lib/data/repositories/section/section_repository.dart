@@ -1,29 +1,29 @@
-import 'package:grocery_helper_app/data/db_provider.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/section.dart';
+import 'package:grocery_helper_app/data/providers/section_provider.dart';
 
 class SectionRepository {
   Future<List<Section>> getSections() async {
-    return await SQLHelper.getSections();
+    return await SectionProvider.getSections();
   }
 
   Future<void> reorderSections(List<Section> sections) async {
-    await SQLHelper.reorderSections(sections);
+    await SectionProvider.reorderSections(sections);
   }
 
   Future<void> deleteSection(Section section) async {
-    await SQLHelper.deleteSection(section);
+    await SectionProvider.deleteSection(section);
   }
 
   Future<int> addSection(String name) async {
     try {
-      return await SQLHelper.insertSection(name);
+      return await SectionProvider.insertSection(name);
     } catch (err) {
       return -1;
     }
   }
 
   Future<void> editSection(Section section) async {
-    await SQLHelper.updateSection(section);
+    await SectionProvider.updateSection(section);
   }
 }
