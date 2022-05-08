@@ -36,6 +36,7 @@ class _CategoryDropdownState extends State<CategoryDropdown> {
     super.initState();
     if (widget.item != null) {
       dropdownValue = widget.item?.category;
+      context.read<AddIngredientCubit>().changeSection(widget.item!.category);
     }
   }
 

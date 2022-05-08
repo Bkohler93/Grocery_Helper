@@ -1,6 +1,6 @@
 part of 'add_ingredient_cubit.dart';
 
-enum AddIngredientStatus { initialized, valid, invalid, error, add }
+enum AddIngredientStatus { initialized, valid, invalid, error, add, edit }
 
 class IngredientState extends Equatable {
   const IngredientState();
@@ -20,6 +20,7 @@ class AddIngredientState extends IngredientState {
     this.sectionErrorText = '',
     this.nameErrorText = '',
     this.quantityErrorText = '',
+    this.oldId = 0,
   });
   final AddIngredientStatus status;
   final String name;
@@ -28,6 +29,7 @@ class AddIngredientState extends IngredientState {
   final String sectionErrorText;
   final String nameErrorText;
   final String quantityErrorText;
+  final int oldId;
 
   @override
   AddIngredientState copyWith({
@@ -38,6 +40,7 @@ class AddIngredientState extends IngredientState {
     String? sectionErrorText,
     String? nameErrorText,
     String? quantityErrorText,
+    int? oldId,
   }) {
     return AddIngredientState(
       status: status ?? this.status,
@@ -47,12 +50,13 @@ class AddIngredientState extends IngredientState {
       sectionErrorText: sectionErrorText ?? this.sectionErrorText,
       nameErrorText: nameErrorText ?? this.nameErrorText,
       quantityErrorText: quantityErrorText ?? this.quantityErrorText,
+      oldId: oldId ?? this.oldId,
     );
   }
 
   @override
   List<Object> get props =>
-      [name, quantity, section, status, nameErrorText, quantityErrorText, sectionErrorText];
+      [name, quantity, section, status, nameErrorText, quantityErrorText, sectionErrorText, oldId];
 }
 
 class SendIngredientState extends IngredientState {

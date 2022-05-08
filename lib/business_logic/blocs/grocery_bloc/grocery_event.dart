@@ -20,8 +20,9 @@ class AddGroceryEvent extends GroceryEvent {
 
 class DeleteGroceryEvent extends GroceryEvent {
   final int id;
+  final String name;
 
-  DeleteGroceryEvent(this.id);
+  DeleteGroceryEvent({this.id = 0, this.name = ""});
 
   @override
   List<Object> get props => [id];
@@ -50,4 +51,13 @@ class AllGroceriesCheckedEvent extends GroceryEvent {
 
   @override
   List<Object> get props => [];
+}
+
+class EditGroceryEvent extends GroceryEvent {
+  final String name;
+
+  EditGroceryEvent(this.name);
+
+  @override
+  List<Object> get props => [name];
 }

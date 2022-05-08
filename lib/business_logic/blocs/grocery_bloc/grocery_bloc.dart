@@ -46,23 +46,16 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
             rawQty: addIngredientState.quantity,
             name: addIngredientState.name);
         add(AddGroceryEvent(newItem));
+      } else if (addIngredientState.status == AddIngredientStatus.edit) {
+        add(DeleteGroceryEvent(id: addIngredientState.oldId));
       }
     });
-    on<GroceryEvent>(mapEventToState);
     on<CheckOffGroceryItemEvent>(_handleGroceryItemCheckOff);
     on<AllGroceriesCheckedEvent>(_handleAllGroceriesChecked);
-  }
-
-  void mapEventToState(GroceryEvent event, Emitter<GroceryState> emit) async {
-    if (event is GetGroceriesEvent) {
-      await _getGroceries(event, emit);
-    } else if (event is AddGroceryEvent) {
-      await _addGrocery(event, emit);
-    } else if (event is DeleteGroceryEvent) {
-      await _deleteGrocery(event, emit);
-    } else if (event is UpdateGroceryEvent) {
-      await _updateGrocery(event, emit);
-    }
+    on<GetGroceriesEvent>(_getGroceries);
+    on<AddGroceryEvent>(_addGrocery);
+    on<DeleteGroceryEvent>(_deleteGrocery);
+    on<UpdateGroceryEvent>(_updateGrocery);
   }
 
   Future<void> _getGroceries(GetGroceriesEvent event, Emitter<GroceryState> emit) async {
@@ -98,7 +91,12 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
 
   Future<void> _deleteGrocery(DeleteGroceryEvent event, Emitter<GroceryState> emit) async {
     try {
-      var id = await _groceryRepository.deleteGroceryItem(event.id);
+      if (event.id == 0) {
+        await _groceryRepository.deleteGroceryItem(name: event.name);
+      } else {
+        await _groceryRepository.deleteGroceryItem(id: event.id);
+      }
+
       add(GetGroceriesEvent());
     } catch (error) {
       emit(GroceriesError("failed to delete grocery item"));

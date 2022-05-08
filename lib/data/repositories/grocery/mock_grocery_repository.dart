@@ -41,7 +41,7 @@ class MockGroceryRepository implements IGroceryRepository {
   }
 
   @override
-  Future<int> deleteGroceryItem(int id) {
+  Future<int> deleteGroceryItem({int? id, String? name}) {
     // TODO: implement deleteGroceryItem
     throw UnimplementedError();
   }

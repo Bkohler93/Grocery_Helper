@@ -41,7 +41,7 @@ class _EditIngredientModalState extends State<EditIngredientModal> {
                     backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
                   ),
                   onPressed: () {
-                    context.read<AddIngredientCubit>().editIngredient();
+                    context.read<AddIngredientCubit>().editIngredient(widget.item);
                     Navigator.pop(context);
                   },
                   child: const Text('Update')),

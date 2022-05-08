@@ -64,12 +64,17 @@ class GroceryProvider with SQLite {
       """, [item.name, item.category, item.checkedOff, item.qty, item.qtyUnit]);
   }
 
-  static Future<int> removeShoppingItem(int id) async {
+  static Future<int> removeShoppingItem({int? id, String? name}) async {
     final db = await SQLite.db();
-
-    return await db.rawDelete("""
+    if (id != null && id != 0) {
+      return await db.rawDelete("""
       DELETE FROM shopping_list WHERE shopping_list.rowid = ?
     """, [id]);
+    } else {
+      return await db.rawDelete("""
+      DELETE FROM shopping_list WHERE shopping_list.name = ?
+    """, [name]);
+    }
   }
 
   static Future<int> updateShoppingItem(GroceryItem item) async {

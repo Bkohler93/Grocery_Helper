@@ -223,6 +223,7 @@ class _IngredientNameFieldState extends State<IngredientNameField> {
     super.initState();
     if (widget.item != null) {
       _controller.text = widget.item!.name;
+      context.read<AddIngredientCubit>().editIngredientName(widget.item!.name);
     }
   }
 
@@ -278,6 +279,9 @@ class _IngredientQtyFieldState extends State<IngredientQtyField> {
     super.initState();
     if (widget.item != null && widget.item!.qty != " ") {
       _controller.text = widget.item!.qty + ' ' + widget.item!.qtyUnit;
+      context
+          .read<AddIngredientCubit>()
+          .editIngredientQty(widget.item!.qty + ' ' + widget.item!.qtyUnit);
     }
   }
 

@@ -91,7 +91,7 @@ class AddIngredientCubit extends Cubit<AddIngredientState> with GroceryListAddIn
   }
 
   void addIngredient() {
-    if (state.status == AddIngredientStatus.valid) {
+    if (state.status == AddIngredientStatus.valid || state.status == AddIngredientStatus.edit) {
       var newIngredient = GroceryItem.fromRawQty(
         category: state.section,
         name: state.name,
@@ -110,7 +110,10 @@ class AddIngredientCubit extends Cubit<AddIngredientState> with GroceryListAddIn
     }
   }
 
-  void editIngredient() {
-    print("editing ingredient");
+  void editIngredient(GroceryItem originalItem) {
+    //TODO delete original item from shopping list
+    emit(state.copyWith(status: AddIngredientStatus.edit, oldId: originalItem.id));
+
+    addIngredient();
   }
 }

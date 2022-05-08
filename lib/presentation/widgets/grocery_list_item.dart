@@ -99,7 +99,7 @@ class _GroceryItemState extends State<GroceryListItem> {
                                     _isEditing = !_isEditing;
                                     context
                                         .read<GroceryBloc>()
-                                        .add(DeleteGroceryEvent(widget.item.id!));
+                                        .add(DeleteGroceryEvent(id: widget.item.id!));
                                   });
                                 },
                                 child: const Icon(Icons.delete, size: 20),

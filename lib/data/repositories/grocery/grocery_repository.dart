@@ -15,8 +15,8 @@ class GroceryRepository implements IGroceryRepository {
   }
 
   @override
-  Future<int> deleteGroceryItem(int id) async {
-    return await GroceryProvider.removeShoppingItem(id);
+  Future<int> deleteGroceryItem({int? id, String? name}) async {
+    return await GroceryProvider.removeShoppingItem(id: id, name: name);
   }
 
   @override
