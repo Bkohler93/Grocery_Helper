@@ -27,7 +27,7 @@ class ChooseMealsPage extends StatelessWidget {
               } else if (state is MealLoading) {
                 return buildLoading();
               } else if (state is MealLoaded) {
-                return buildListWithData(state.meals);
+                return buildListWithData(state.meals, context);
               } else {
                 return Text("Something went wrong");
               }
@@ -62,11 +62,15 @@ class ChooseMealsPage extends StatelessWidget {
     );
   }
 
-  Widget buildListWithData(List<Meal> meals) {
-    return ListView(
-        scrollDirection: Axis.vertical,
-        children: meals.map((meal) {
-          return MealCard(meal);
-        }).toList());
+  Widget buildListWithData(List<Meal> meals, context) {
+    return Container(
+      alignment: Alignment.topCenter,
+      margin: const EdgeInsets.only(bottom: 120.0),
+      child: ListView(
+          scrollDirection: Axis.vertical,
+          children: meals.map((meal) {
+            return MealCard(meal);
+          }).toList()),
+    );
   }
 }

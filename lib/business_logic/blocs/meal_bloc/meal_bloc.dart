@@ -98,4 +98,10 @@ class MealBloc extends Bloc<MealEvent, MealState> {
       emit(MealLoaded(meals));
     }
   }
+
+  @override
+  Future<void> close() {
+    _mealCardStreamSubscription.cancel();
+    return super.close();
+  }
 }

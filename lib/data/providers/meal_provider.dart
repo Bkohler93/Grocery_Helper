@@ -21,10 +21,9 @@ class MealProvider with SQLite {
   static Future<void> deleteMeal(Meal meal) async {
     final db = await SQLite.db();
 
-    await db.rawDelete("""
+    int num = await db.rawDelete("""
       DELETE FROM meal_ingredients WHERE meal_ingredients.meal_id = ?  
     """, [meal.id]);
-
     await db.rawDelete("""
       DELETE FROM meals WHERE meals.rowid = ?
     """, [meal.id]);
@@ -53,8 +52,11 @@ class MealProvider with SQLite {
     // ingredients table. Then add all items to meal_ingredients table
     for (GroceryItem ingredient in ingredients) {
       //get ingredient matching name from db, in order to get ingredientId
-      List<Map> results = await db.query("ingredients",
-          columns: GroceryItem.ingredientColumns, where: "name = ?", whereArgs: [ingredient.name]);
+      List<Map> results = await db.rawQuery("""
+        SELECT rowid, name FROM ingredients WHERE name = ?
+      """, [ingredient.name]);
+      // List<Map> results = await db.query("ingredients",
+      //     columns: GroceryItem.ingredientColumns, where: "name = ?", whereArgs: [ingredient.name]);
 
       int ingredientId = results.isNotEmpty ? results[0]["rowid"] : await db.rawInsert("""
           INSERT INTO ingredients(name, category)

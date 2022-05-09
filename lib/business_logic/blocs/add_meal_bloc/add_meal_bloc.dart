@@ -34,7 +34,7 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
     on<AddIngredientEvent>(_addIngredient);
   }
 
-  Future<void> _validateName(EditMealNameEvent event, Emitter<AddMealState> emit) async {
+  Future<bool> _validateName(EditMealNameEvent event, Emitter<AddMealState> emit) async {
     final String name = event.text.toLowerCase();
 
     try {
@@ -45,30 +45,36 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
           nameErrorText: "A meal with that name already exists.",
           mealName: '',
         ));
+        return false;
       } else if (name.length > 30) {
         emit(state.copyWith(
           status: AddMealStatus.invalid,
           nameErrorText: "Meals can have maximum length of 30.",
           mealName: '',
         ));
+        return false;
       } else if (name.isEmpty || name.startsWith(' ')) {
         emit(state.copyWith(
             status: AddMealStatus.invalid, nameErrorText: "Meals must have a name."));
+        return false;
       } else if (state.items.isNotEmpty) {
         emit(state.copyWith(
           status: AddMealStatus.valid,
           mealName: name,
           nameErrorText: '',
         ));
+        return true;
       } else {
         emit(state.copyWith(
           status: AddMealStatus.invalid,
           mealName: name,
           nameErrorText: '',
         ));
+        return false;
       }
     } catch (error) {
       emit(state.copyWith(status: AddMealStatus.error));
+      return false;
     }
   }
 
@@ -109,8 +115,11 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
 
   FutureOr<void> _saveMeal(SaveMealEvent event, Emitter<AddMealState> emit) async {
     try {
-      await _mealRepository.insert(state.mealName, state.items);
-      emit(state.copyWith(status: AddMealStatus.success, items: [], mealName: ""));
+      bool validName = await _validateName(EditMealNameEvent(state.mealName), emit);
+      if (validName && state.items.isNotEmpty) {
+        await _mealRepository.insert(state.mealName, state.items);
+        emit(state.copyWith(status: AddMealStatus.success, items: [], mealName: ""));
+      }
     } catch (error) {
       emit(state.copyWith(status: AddMealStatus.error));
     }

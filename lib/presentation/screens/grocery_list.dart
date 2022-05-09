@@ -89,20 +89,24 @@ class _GroceryListPageState extends State<GroceryListPage> {
   }
 
   Widget buildGroceryList(List<Map<String, List<GroceryItem>>> items) {
-    return ListView(scrollDirection: Axis.vertical, controller: _listController, children: <Widget>[
-      ...items
-          .map((category) => <Widget>[
-                Center(
-                    child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 5.0, 0, 5.0),
-                  child: Text(category.keys.first,
-                      style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                )),
-                ...category.values.first.map((item) => GroceryListItem(item: item))
-              ])
-          .expand((element) => element)
-          .toList()
-    ]);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 120),
+      child:
+          ListView(scrollDirection: Axis.vertical, controller: _listController, children: <Widget>[
+        ...items
+            .map((category) => <Widget>[
+                  Center(
+                      child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 5.0, 0, 5.0),
+                    child: Text(category.keys.first,
+                        style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                  )),
+                  ...category.values.first.map((item) => GroceryListItem(item: item))
+                ])
+            .expand((element) => element)
+            .toList()
+      ]),
+    );
   }
 
   Widget buildCompletedAnimation() {

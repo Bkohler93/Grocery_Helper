@@ -275,7 +275,6 @@ class _IngredientQtyFieldState extends State<IngredientQtyField> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (widget.item != null && widget.item!.qty != " ") {
       _controller.text = widget.item!.qty + ' ' + widget.item!.qtyUnit;

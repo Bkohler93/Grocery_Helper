@@ -90,19 +90,21 @@ class GroceryProvider with SQLite {
     List<GroceryItem> items = [];
     final db = await SQLite.db();
 
-    List<Map> data = await db.query('shopping_list', columns: GroceryItem.ingredientColumns);
+    List<Map> data = await db.query('shopping_list', columns: GroceryItem.shoppingListColumns);
 
     for (var row in data) {
-      items.add(GroceryItem.fromMap(
-        {
-          "category": row["category"],
-          "name": row["name"],
-          "checked": row["checked"],
-          'rowid': row['rowid'],
-          "qty": row["qty"],
-          "qty_unit": row["qty_unit"]
-        },
-      ));
+      items.add(
+        GroceryItem.fromMap(
+          {
+            "category": row["category"],
+            "name": row["name"],
+            "checked": row["checked"],
+            'rowid': row['rowid'],
+            "qty": row["qty"],
+            "qty_unit": row["qty_unit"]
+          },
+        ),
+      );
     }
 
     return items;

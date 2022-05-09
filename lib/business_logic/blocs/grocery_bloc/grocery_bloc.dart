@@ -147,6 +147,14 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
     }
   }
 
+  @override
+  Future<void> close() {
+    _addIngredientStreamSubscription.cancel();
+    _groceryItemStreamSubscription.cancel();
+    _mealStreamSubscription.cancel();
+    return super.close();
+  }
+
   FutureOr<void> _handleAllGroceriesChecked(
       AllGroceriesCheckedEvent event, Emitter<GroceryState> emit) async {
     emit(AllGroceriesChecked());
