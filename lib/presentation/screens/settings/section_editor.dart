@@ -42,7 +42,7 @@ class _SectionEditorState extends State<SectionEditor> {
         title: const Text('Section Editor'),
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(50.0, 30.0, 50.0, 30.0),
+        padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 30.0),
         child: SectionList(),
       ),
     );

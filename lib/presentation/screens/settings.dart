@@ -5,6 +5,7 @@ import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dar
 import 'package:grocery_helper_app/data/models/meal.dart';
 import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
 import 'package:grocery_helper_app/presentation/screens/settings/section_editor.dart';
+import 'package:grocery_helper_app/presentation/screens/settings/theme_editor.dart';
 import 'package:grocery_helper_app/presentation/widgets/settings_choice.dart';
 import 'package:provider/provider.dart';
 
@@ -45,7 +46,7 @@ class SettingsMenu extends StatelessWidget {
                 iconData: Icons.format_paint_outlined,
                 redirect: () {
                   Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => const SectionEditorPage()));
+                      context, MaterialPageRoute(builder: (context) => const ThemeEditorPage()));
                 },
               ),
               SettingsChoice(

@@ -64,7 +64,7 @@ class _SectionListState extends State<SectionList> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 shape: const CircleBorder(),
-                padding: const EdgeInsets.all(25),
+                padding: const EdgeInsets.all(15),
               ),
               child: const Icon(Icons.add, size: 45.0),
               onPressed: () {
