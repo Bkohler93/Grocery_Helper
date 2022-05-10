@@ -8,10 +8,7 @@ class ThemeEditorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (context) =>
-            SectionNotifier(context: context, sectionRepository: SectionRepository()),
-        child: const ThemeEditor());
+    return ThemeEditor();
   }
 }
 

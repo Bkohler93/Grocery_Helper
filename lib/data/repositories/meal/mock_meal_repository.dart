@@ -94,7 +94,7 @@ class MockMealRepository implements IMealRepository {
   }
 
   @override
-  Future<bool> mealExists(String name) {
+  Future<bool> mealExists(String name, int id) {
     // TODO: implement mealExists
     throw UnimplementedError();
   }

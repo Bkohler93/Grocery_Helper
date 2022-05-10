@@ -4,28 +4,37 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/grocery_item_cubit/grocery_item_cubit.dart';
 import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_ingredient_cubit.dart';
+import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
+import 'package:grocery_helper_app/data/models/section.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/i_grocery_repository.dart';
+import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
 
 part 'grocery_state.dart';
 part 'grocery_event.dart';
 
 class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
   final IGroceryRepository _groceryRepository;
+  final SectionRepository _sectionRepository;
   final MealBloc _mealBloc;
   late final StreamSubscription<MealState> _mealStreamSubscription;
   final GroceryItemCubit _groceryItemCubit;
   late final StreamSubscription<GroceryItemState> _groceryItemStreamSubscription;
   final AddIngredientCubit _addIngredientCubit;
   late final StreamSubscription<AddIngredientState> _addIngredientStreamSubscription;
+  final SectionNotifier _sectionNotifier;
 
   GroceryBloc(
       {required IGroceryRepository groceryRepository,
+      required SectionRepository sectionRepository,
       required GroceryItemCubit groceryItemCubit,
       required MealBloc mealBloc,
+      required SectionNotifier sectionNotifier,
       required AddIngredientCubit addIngredientCubit})
       : _groceryRepository = groceryRepository,
+        _sectionRepository = sectionRepository,
         _groceryItemCubit = groceryItemCubit,
+        _sectionNotifier = sectionNotifier,
         _mealBloc = mealBloc,
         _addIngredientCubit = addIngredientCubit,
         super(const GroceryInitial()) {
@@ -44,37 +53,92 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
         GroceryItem newItem = GroceryItem.fromRawQty(
             category: addIngredientState.section,
             rawQty: addIngredientState.quantity,
-            name: addIngredientState.name);
+            name: addIngredientState.name,
+            isChecked: addIngredientState.isChecked);
         add(AddGroceryEvent(newItem));
       } else if (addIngredientState.status == AddIngredientStatus.edit) {
         add(DeleteGroceryEvent(id: addIngredientState.oldId));
       }
     });
+    _sectionNotifier.addListener(() {
+      //delay long enough for section reordering to complete
+      Future.delayed(const Duration(milliseconds: 500), () {
+        add(RefreshGroceriesEvent());
+      });
+    });
+
     on<CheckOffGroceryItemEvent>(_handleGroceryItemCheckOff);
     on<AllGroceriesCheckedEvent>(_handleAllGroceriesChecked);
     on<GetGroceriesEvent>(_getGroceries);
     on<AddGroceryEvent>(_addGrocery);
     on<DeleteGroceryEvent>(_deleteGrocery);
     on<UpdateGroceryEvent>(_updateGrocery);
+    on<RefreshGroceriesEvent>(_refreshGroceries);
+  }
+
+  Future<void> _refreshGroceries(RefreshGroceriesEvent event, Emitter<GroceryState> emit) async {
+    try {
+      var groceries = await _groceryRepository.getGroceries();
+
+      List<Map<String, List<GroceryItem>>> groceryList = [];
+
+      List<Section> sections = await _sectionRepository.getSections();
+
+      for (var section in sections) {
+        var groceriesToAdd = <GroceryItem>[];
+
+        for (var grocery in groceries) {
+          if (grocery.category == section.name) {
+            groceriesToAdd.add(grocery);
+          }
+        }
+
+        if (groceriesToAdd.isNotEmpty) {
+          groceryList.add({
+            section.name: groceriesToAdd,
+          });
+        }
+      }
+
+      if (groceryList.isEmpty) {
+        emit(AwaitingGroceries());
+      } else {
+        emit(GroceriesLoaded(groceryList));
+      }
+    } catch (error) {
+      emit(GroceriesError("Failed to retrieve groceries"));
+    }
   }
 
   Future<void> _getGroceries(GetGroceriesEvent event, Emitter<GroceryState> emit) async {
     try {
       var groceries = await _groceryRepository.getGroceries();
+
       List<Map<String, List<GroceryItem>>> groceryList = [];
 
-      for (var grocery in groceries) {
-        int index = groceryList.indexWhere((element) => element.keys.first == grocery.category);
-        if (index != -1) {
-          groceryList[index].values.first.add(grocery);
-        } else {
+      List<Section> sections = await _sectionRepository.getSections();
+
+      for (var section in sections) {
+        var groceriesToAdd = <GroceryItem>[];
+
+        for (var grocery in groceries) {
+          if (grocery.category == section.name) {
+            groceriesToAdd.add(grocery);
+          }
+        }
+
+        if (groceriesToAdd.isNotEmpty) {
           groceryList.add({
-            grocery.category: [grocery]
+            section.name: groceriesToAdd,
           });
         }
       }
 
-      emit(GroceriesLoaded(groceryList));
+      if (groceryList.isEmpty) {
+        emit(AwaitingGroceries());
+      } else {
+        emit(GroceriesLoaded(groceryList));
+      }
     } catch (error) {
       emit(GroceriesError("Failed to retrieve groceries"));
     }
@@ -129,13 +193,20 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
       } else {
         List<Map<String, List<GroceryItem>>> groceryList = [];
 
-        for (var grocery in groceries) {
-          int index = groceryList.indexWhere((element) => element.keys.first == grocery.category);
-          if (index != -1) {
-            groceryList[index].values.first.add(grocery);
-          } else {
+        List<Section> sections = await _sectionRepository.getSections();
+
+        for (var section in sections) {
+          var groceriesToAdd = <GroceryItem>[];
+
+          for (var grocery in groceries) {
+            if (grocery.category == section.name) {
+              groceriesToAdd.add(grocery);
+            }
+          }
+
+          if (groceriesToAdd.isNotEmpty) {
             groceryList.add({
-              grocery.category: [grocery]
+              section.name: groceriesToAdd,
             });
           }
         }
@@ -152,6 +223,7 @@ class GroceryBloc extends Bloc<GroceryEvent, GroceryState> {
     _addIngredientStreamSubscription.cancel();
     _groceryItemStreamSubscription.cancel();
     _mealStreamSubscription.cancel();
+    _sectionNotifier.removeListener(() {});
     return super.close();
   }
 

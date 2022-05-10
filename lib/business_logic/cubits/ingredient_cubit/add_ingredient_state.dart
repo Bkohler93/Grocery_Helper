@@ -16,6 +16,7 @@ class AddIngredientState extends IngredientState {
     this.status = AddIngredientStatus.initialized,
     this.name = '',
     this.quantity = '',
+    this.isChecked = false,
     this.section = '',
     this.sectionErrorText = '',
     this.nameErrorText = '',
@@ -25,6 +26,7 @@ class AddIngredientState extends IngredientState {
   final AddIngredientStatus status;
   final String name;
   final String quantity;
+  final bool isChecked;
   final String section;
   final String sectionErrorText;
   final String nameErrorText;
@@ -36,6 +38,7 @@ class AddIngredientState extends IngredientState {
     AddIngredientStatus? status,
     String? name,
     String? quantity,
+    bool? isChecked,
     String? section,
     String? sectionErrorText,
     String? nameErrorText,
@@ -46,6 +49,7 @@ class AddIngredientState extends IngredientState {
       status: status ?? this.status,
       name: name ?? this.name,
       quantity: quantity ?? this.quantity,
+      isChecked: isChecked ?? this.isChecked,
       section: section ?? this.section,
       sectionErrorText: sectionErrorText ?? this.sectionErrorText,
       nameErrorText: nameErrorText ?? this.nameErrorText,
@@ -55,8 +59,17 @@ class AddIngredientState extends IngredientState {
   }
 
   @override
-  List<Object> get props =>
-      [name, quantity, section, status, nameErrorText, quantityErrorText, sectionErrorText, oldId];
+  List<Object> get props => [
+        name,
+        quantity,
+        section,
+        status,
+        nameErrorText,
+        quantityErrorText,
+        sectionErrorText,
+        oldId,
+        isChecked
+      ];
 }
 
 class SendIngredientState extends IngredientState {

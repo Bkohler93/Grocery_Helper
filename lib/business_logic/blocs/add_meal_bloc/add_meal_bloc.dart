@@ -38,7 +38,7 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
     final String name = event.text.toLowerCase();
 
     try {
-      bool nameExists = await _mealRepository.mealExists(name);
+      bool nameExists = await _mealRepository.mealExists(name, 0);
       if (nameExists) {
         emit(state.copyWith(
           status: AddMealStatus.invalid,
@@ -83,6 +83,7 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
       category: event.category,
       name: event.name,
       rawQty: event.rawQty,
+      isChecked: false,
     );
 
     emit(state.copyWith(

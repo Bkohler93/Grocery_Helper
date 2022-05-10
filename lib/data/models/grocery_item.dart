@@ -35,6 +35,7 @@ class GroceryItem {
     required String rawQty,
     required String category,
     required String name,
+    required bool isChecked,
   }) {
     String? qty;
     String? qtyUnit;
@@ -48,7 +49,7 @@ class GroceryItem {
     return GroceryItem(
       category: category,
       name: name,
-      checkedOff: false,
+      checkedOff: isChecked,
       qty: qty ?? ' ',
       qtyUnit: qtyUnit,
     );

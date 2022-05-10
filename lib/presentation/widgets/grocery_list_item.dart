@@ -6,41 +6,27 @@ import 'package:grocery_helper_app/presentation/widgets/add_ingredient_modal.dar
 import 'package:grocery_helper_app/presentation/widgets/edit_indredient_modal.dart';
 import 'package:provider/provider.dart';
 
-class GroceryListItem extends StatefulWidget {
-  const GroceryListItem({Key? key, required GroceryItem item})
-      : item = item,
-        super(key: key);
+class GroceryListItem extends StatelessWidget {
+  const GroceryListItem({
+    Key? key,
+    required this.item,
+    required this.onEdit,
+    required this.isEditing,
+  }) : super(key: key);
 
   final GroceryItem item;
-
-  @override
-  _GroceryItemState createState() => _GroceryItemState();
-}
-
-class _GroceryItemState extends State<GroceryListItem> {
-  bool _isEditing = false;
-  late bool _isSelected;
-
-  @override
-  void initState() {
-    super.initState();
-    _isSelected = widget.item.checkedOff;
-  }
+  final Function(String) onEdit;
+  final bool isEditing;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       child: InkWell(
           onLongPress: () {
-            setState(() {
-              _isEditing = !_isEditing;
-            });
+            onEdit(item.name);
           },
           onTap: () {
-            context.read<GroceryItemCubit>().checkItem(widget.item);
-            setState(() {
-              _isSelected = !_isSelected;
-            });
+            context.read<GroceryItemCubit>().checkItem(item);
           },
           child: Padding(
             padding: const EdgeInsets.only(
@@ -51,24 +37,21 @@ class _GroceryItemState extends State<GroceryListItem> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Checkbox(
-                    value: _isSelected,
+                    value: item.checkedOff,
                     splashRadius: 0.0,
                     onChanged: (value) {
-                      context.read<GroceryItemCubit>().checkItem(widget.item);
-                      setState(() {
-                        _isSelected = !_isSelected;
-                      });
+                      context.read<GroceryItemCubit>().checkItem(item);
                     }),
                 SizedBox(
                   child: Text(
-                    widget.item.name,
+                    item.name,
                     style: TextStyle(
-                      decoration: _isSelected ? TextDecoration.lineThrough : null,
+                      decoration: item.checkedOff ? TextDecoration.lineThrough : null,
                     ),
                   ),
                   width: 100.0,
                 ),
-                _isEditing
+                isEditing
                     ? SizedBox(
                         width: 105,
                         child: ButtonBar(
@@ -85,7 +68,7 @@ class _GroceryItemState extends State<GroceryListItem> {
                                       builder: (BuildContext context) {
                                         return FractionallySizedBox(
                                           heightFactor: 0.7,
-                                          child: EditIngredientModal(item: widget.item),
+                                          child: EditIngredientModal(item: item),
                                         );
                                       },
                                     );
@@ -95,12 +78,7 @@ class _GroceryItemState extends State<GroceryListItem> {
                               width: 40,
                               child: TextButton(
                                 onPressed: () {
-                                  setState(() {
-                                    _isEditing = !_isEditing;
-                                    context
-                                        .read<GroceryBloc>()
-                                        .add(DeleteGroceryEvent(id: widget.item.id!));
-                                  });
+                                  context.read<GroceryBloc>().add(DeleteGroceryEvent(id: item.id!));
                                 },
                                 child: const Icon(Icons.delete, size: 20),
                               ),
@@ -111,7 +89,7 @@ class _GroceryItemState extends State<GroceryListItem> {
                     : const SizedBox(width: 105),
                 Container(
                   child: Text(
-                    widget.item.qty + ' ' + widget.item.qtyUnit,
+                    item.qty + ' ' + item.qtyUnit,
                     style: const TextStyle(color: Colors.black54),
                   ),
                   width: 50.0,

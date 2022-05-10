@@ -9,6 +9,13 @@ class GetGroceriesEvent extends GroceryEvent {
   List<Object> get props => [];
 }
 
+class RefreshGroceriesEvent extends GroceryEvent {
+  RefreshGroceriesEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class AddGroceryEvent extends GroceryEvent {
   final GroceryItem item;
 

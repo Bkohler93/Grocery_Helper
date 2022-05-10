@@ -24,6 +24,7 @@ class _EditIngredientModalState extends State<EditIngredientModal> {
     super.initState();
     ingredientNameController.text = widget.item.name;
     ingredientQtyController.text = widget.item.qty;
+    context.read<AddIngredientCubit>().reset();
   }
 
   @override

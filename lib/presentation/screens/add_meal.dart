@@ -223,7 +223,9 @@ class _IngredientNameFieldState extends State<IngredientNameField> {
     super.initState();
     if (widget.item != null) {
       _controller.text = widget.item!.name;
-      context.read<AddIngredientCubit>().editIngredientName(widget.item!.name);
+      context
+          .read<AddIngredientCubit>()
+          .editIngredientName(widget.item!.name, widget.item!.checkedOff);
     }
   }
 
@@ -244,7 +246,9 @@ class _IngredientNameFieldState extends State<IngredientNameField> {
               focusNode: _focusNode,
               controller: _controller,
               onChanged: (text) {
-                context.read<AddIngredientCubit>().editIngredientName(text);
+                context
+                    .read<AddIngredientCubit>()
+                    .editIngredientName(text, widget.item?.checkedOff ?? false);
               },
               maxLength: 25,
               decoration: InputDecoration(

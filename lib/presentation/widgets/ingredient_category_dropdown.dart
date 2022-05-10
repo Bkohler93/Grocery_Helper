@@ -13,10 +13,7 @@ class CategoryDropdownWidget extends StatelessWidget {
   final GroceryItem? item;
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (context) =>
-            SectionNotifier(context: context, sectionRepository: SectionRepository()),
-        child: CategoryDropdown(item: item));
+    return CategoryDropdown(item: item);
   }
 }
 

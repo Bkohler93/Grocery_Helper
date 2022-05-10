@@ -4,12 +4,19 @@ import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart
 import 'package:grocery_helper_app/data/models/meal.dart';
 import '../widgets/meal_card.dart';
 
-class ChooseMealsPage extends StatelessWidget {
+class ChooseMealsPage extends StatefulWidget {
   const ChooseMealsPage({
     Key? key,
     required this.onSubmit,
   }) : super(key: key);
   final Function onSubmit;
+
+  @override
+  State<ChooseMealsPage> createState() => _ChooseMealsPageState();
+}
+
+class _ChooseMealsPageState extends State<ChooseMealsPage> {
+  String mealEditing = "";
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +47,7 @@ class ChooseMealsPage extends StatelessWidget {
             style: style,
             onPressed: () {
               context.read<MealBloc>().add(PopulateGroceryList());
-              onSubmit();
+              widget.onSubmit();
               //move to other tab
             },
             child: const Text("Build Grocery List"),
@@ -67,10 +74,21 @@ class ChooseMealsPage extends StatelessWidget {
       alignment: Alignment.topCenter,
       margin: const EdgeInsets.only(bottom: 120.0),
       child: ListView(
-          scrollDirection: Axis.vertical,
-          children: meals.map((meal) {
-            return MealCard(meal);
-          }).toList()),
+        scrollDirection: Axis.vertical,
+        children: meals.map((meal) {
+          return MealCard(
+            meal: meal,
+            onEdit: handleEdit,
+            isEditing: mealEditing == meal.name ? true : false,
+          );
+        }).toList(),
+      ),
     );
+  }
+
+  handleEdit(String name) {
+    setState(() {
+      mealEditing = (mealEditing == name) ? "" : name;
+    });
   }
 }

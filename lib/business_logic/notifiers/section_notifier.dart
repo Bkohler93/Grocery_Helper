@@ -43,9 +43,17 @@ class SectionNotifier extends ChangeNotifier {
   UnmodifiableListView<Section> get sections => UnmodifiableListView(_sections);
 
   void updateSectionOrder(int oldIndex, int newIndex) {
-    int tmp = _sections[oldIndex].priority!;
     _sections[oldIndex].setPriority(_sections[newIndex].priority!);
-    _sections[newIndex].setPriority(tmp);
+
+    if (newIndex > oldIndex) {
+      for (int i = oldIndex + 1; i <= newIndex; i++) {
+        _sections[i].setPriority(_sections[i].priority! - 1);
+      }
+    } else {
+      for (int i = newIndex; i < oldIndex; i++) {
+        _sections[i].setPriority(_sections[i].priority! + 1);
+      }
+    }
 
     _sections.sort((a, b) => a.priority!.compareTo(b.priority!));
 

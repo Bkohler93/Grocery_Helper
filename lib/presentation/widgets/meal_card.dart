@@ -1,28 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc.dart';
 import 'package:grocery_helper_app/data/models/meal.dart';
 import 'package:grocery_helper_app/presentation/screens/edit_meal.dart';
 
-class MealCard extends StatefulWidget {
-  const MealCard(this.meal, {Key? key}) : super(key: key);
+class MealCard extends StatelessWidget {
+  const MealCard({required this.meal, Key? key, required this.isEditing, required this.onEdit})
+      : super(key: key);
 
   final Meal meal;
-  @override
-  State<MealCard> createState() => _MealCardState();
-}
-
-class _MealCardState extends State<MealCard> {
-  late bool isSelected;
-  late bool isEditing;
-
-  @override
-  initState() {
-    super.initState();
-    isSelected = widget.meal.checked;
-    isEditing = false;
-  }
+  final bool isEditing;
+  final Function(String name) onEdit;
 
   //tell parent this widget to edit
   @override
@@ -30,14 +18,9 @@ class _MealCardState extends State<MealCard> {
     return Material(
       child: InkWell(
         onTap: () => {
-          context.read<MealCardBloc>().add(SelectMealEvent(widget.meal)),
-          setState(() {
-            isSelected = !isSelected;
-          })
+          context.read<MealCardBloc>().add(SelectMealEvent(meal)),
         },
-        onLongPress: () => setState(() {
-          isEditing = !isEditing;
-        }),
+        onLongPress: () => onEdit(meal.name),
         child: Padding(
           padding: const EdgeInsets.only(
             top: 15.0,
@@ -52,11 +35,11 @@ class _MealCardState extends State<MealCard> {
                 height: 18.0,
                 width: 18.0,
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.blue : null,
+                  color: meal.checked ? Colors.blue : null,
                   shape: BoxShape.circle,
                 ),
               ),
-              Text(widget.meal.name),
+              Text(meal.name),
               const Spacer(),
               isEditing
                   ? SizedBox(
@@ -72,7 +55,7 @@ class _MealCardState extends State<MealCard> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => EditMealPage(
-                                              meal: widget.meal,
+                                              meal: meal,
                                             )),
                                   );
                                 },
@@ -81,7 +64,7 @@ class _MealCardState extends State<MealCard> {
                             width: 40,
                             child: TextButton(
                               onPressed: () {
-                                context.read<MealCardBloc>().add(DeleteMealCardEvent(widget.meal));
+                                context.read<MealCardBloc>().add(DeleteMealCardEvent(meal));
                               },
                               child: const Icon(Icons.delete, size: 20),
                             ),

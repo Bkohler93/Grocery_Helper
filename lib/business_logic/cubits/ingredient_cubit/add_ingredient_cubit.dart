@@ -9,23 +9,26 @@ mixin GroceryListAddIngredientCubit on Cubit<AddIngredientState> {}
 class AddIngredientCubit extends Cubit<AddIngredientState> with GroceryListAddIngredientCubit {
   AddIngredientCubit() : super(const AddIngredientState());
 
-  void editIngredientName(String text) {
+  void editIngredientName(String text, bool isChecked) {
     final String name = text.toLowerCase();
 
     if (name.isEmpty || name.startsWith(' ')) {
       emit(state.copyWith(
         nameErrorText: "Ingredient must have a name.",
         status: AddIngredientStatus.invalid,
+        isChecked: isChecked,
       ));
     } else if (name.length > 20) {
       emit(state.copyWith(
         nameErrorText: "Name cannot be over 20 characters long.",
         status: AddIngredientStatus.invalid,
+        isChecked: isChecked,
       ));
     } else {
       emit(state.copyWith(
         nameErrorText: "",
         name: name,
+        isChecked: isChecked,
         status: _validateFields(
           quantityErrorText: state.quantityErrorText,
           nameErrorText: '',
@@ -94,6 +97,7 @@ class AddIngredientCubit extends Cubit<AddIngredientState> with GroceryListAddIn
     if (state.status == AddIngredientStatus.valid || state.status == AddIngredientStatus.edit) {
       var newIngredient = GroceryItem.fromRawQty(
         category: state.section,
+        isChecked: state.isChecked,
         name: state.name,
         rawQty: state.quantity,
       );
@@ -111,9 +115,16 @@ class AddIngredientCubit extends Cubit<AddIngredientState> with GroceryListAddIn
   }
 
   void editIngredient(GroceryItem originalItem) {
-    //TODO delete original item from shopping list
     emit(state.copyWith(status: AddIngredientStatus.edit, oldId: originalItem.id));
-
     addIngredient();
+  }
+
+  void reset() {
+    emit(state.copyWith(
+      name: "",
+      isChecked: false,
+      quantity: "",
+      section: "",
+    ));
   }
 }

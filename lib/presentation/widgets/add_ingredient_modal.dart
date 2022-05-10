@@ -23,8 +23,8 @@ class _AddIngredientModalState extends State<AddIngredientModal> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    context.read<AddIngredientCubit>().reset();
     ingredientNameController.text = widget.item?.name ?? "";
     ingredientQtyController.text = widget.item?.qty ?? "";
   }

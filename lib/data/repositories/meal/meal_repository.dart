@@ -56,8 +56,8 @@ class MealRepository implements IMealRepository {
   }
 
   @override
-  Future<bool> mealExists(String name) async {
-    return await MealProvider.mealExists(name);
+  Future<bool> mealExists(String name, int id) async {
+    return await MealProvider.mealExists(name, id);
   }
 
   @override

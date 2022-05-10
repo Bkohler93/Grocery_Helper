@@ -133,12 +133,12 @@ class MealProvider with SQLite {
     """, [meal.name, meal.checked ? 1 : 0, meal.id]);
   }
 
-  static Future<bool> mealExists(String name) async {
+  static Future<bool> mealExists(String name, int id) async {
     final db = await SQLite.db();
 
     var results = await db.rawQuery("""
-      SELECT * FROM meals WHERE name = ?
-    """, [name]);
+      SELECT * FROM meals WHERE name = ? AND rowid != ?
+    """, [name, id]);
 
     return results.isNotEmpty;
   }

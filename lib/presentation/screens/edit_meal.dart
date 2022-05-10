@@ -52,7 +52,9 @@ class EditMealForm extends StatelessWidget {
               icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
                 context.read<MealBloc>().add(GetMealsEvent());
-                Navigator.pop(context);
+                Future.delayed(const Duration(milliseconds: 30), () {
+                  Navigator.pop(context);
+                });
               }),
           title: const Text('Edit Meal'),
           actions: [
@@ -66,7 +68,9 @@ class EditMealForm extends StatelessWidget {
                       context.read<EditMealBloc>().add(SaveMealEvent());
                       Future.delayed(const Duration(milliseconds: 30), () {
                         context.read<MealBloc>().add(GetMealsEvent());
-                        Navigator.pop(context);
+                        Future.delayed(const Duration(milliseconds: 30), () {
+                          Navigator.pop(context);
+                        });
                       });
                     }
                   },
@@ -231,7 +235,7 @@ class _IngredientNameFieldState extends State<IngredientNameField> {
               focusNode: _focusNode,
               controller: _controller,
               onChanged: (text) {
-                context.read<AddIngredientCubit>().editIngredientName(text);
+                context.read<AddIngredientCubit>().editIngredientName(text, false);
               },
               maxLength: 25,
               decoration: InputDecoration(

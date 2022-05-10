@@ -43,7 +43,7 @@ class EditMealBloc extends Bloc<EditMealEvent, EditMealState> {
     final String name = event.text.toLowerCase();
 
     try {
-      bool nameExists = await _mealRepository.mealExists(name);
+      bool nameExists = await _mealRepository.mealExists(name, state.mealId);
       if (nameExists) {
         emit(state.copyWith(
           status: EditMealStatus.invalid,
@@ -82,6 +82,7 @@ class EditMealBloc extends Bloc<EditMealEvent, EditMealState> {
       category: event.category,
       name: event.name,
       rawQty: event.rawQty,
+      isChecked: false,
     );
 
     emit(state.copyWith(
@@ -109,6 +110,7 @@ class EditMealBloc extends Bloc<EditMealEvent, EditMealState> {
 
     emit(state.copyWith(
       items: newList,
+      status: EditMealStatus.valid,
     ));
   }
 
@@ -124,7 +126,7 @@ class EditMealBloc extends Bloc<EditMealEvent, EditMealState> {
   FutureOr<void> _loadIngredients(LoadIngredientsEvent event, Emitter<EditMealState> emit) async {
     try {
       List<GroceryItem> _items = await _mealRepository.getMealIngredients(mealName: event.mealName);
-      emit(state.copyWith(status: EditMealStatus.initial, items: _items));
+      emit(state.copyWith(status: EditMealStatus.initial, items: _items, mealName: event.mealName));
     } catch (err) {
       emit(state.copyWith(status: EditMealStatus.error));
     }

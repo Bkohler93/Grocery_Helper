@@ -15,10 +15,7 @@ class SectionEditorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (context) =>
-            SectionNotifier(context: context, sectionRepository: SectionRepository()),
-        child: const SectionEditor());
+    return SectionEditor();
   }
 }
 

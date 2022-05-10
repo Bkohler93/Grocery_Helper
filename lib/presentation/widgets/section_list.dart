@@ -5,14 +5,9 @@ import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dar
 import 'package:grocery_helper_app/data/models/section.dart';
 import 'package:provider/provider.dart';
 
-class SectionList extends StatefulWidget {
+class SectionList extends StatelessWidget {
   const SectionList({Key? key}) : super(key: key);
 
-  @override
-  State<SectionList> createState() => _SectionListState();
-}
-
-class _SectionListState extends State<SectionList> {
   @override
   Widget build(BuildContext context) {
     return Consumer<SectionNotifier>(builder: (context, sections, child) {
@@ -30,6 +25,7 @@ class _SectionListState extends State<SectionList> {
                       IconButton(
                         onPressed: () {
                           edit(
+                            context: context,
                             section: sections.sections[index],
                             onPressed: (text, section) {
                               context.read<SectionNotifier>().editSection(text, section);
@@ -55,7 +51,9 @@ class _SectionListState extends State<SectionList> {
                 )
             ],
             onReorder: (int oldIndex, int newIndex) {
-              sections.updateSectionOrder(oldIndex, newIndex);
+              final index = newIndex > oldIndex ? newIndex - 1 : newIndex;
+
+              sections.updateSectionOrder(oldIndex, index);
             },
           ),
           Positioned(
@@ -68,9 +66,11 @@ class _SectionListState extends State<SectionList> {
               ),
               child: const Icon(Icons.add, size: 45.0),
               onPressed: () {
-                add(onPressed: (name) {
-                  context.read<SectionNotifier>().addSection(name);
-                });
+                add(
+                    onPressed: (name) {
+                      context.read<SectionNotifier>().addSection(name);
+                    },
+                    context: context);
               },
             ),
           ),
@@ -79,7 +79,8 @@ class _SectionListState extends State<SectionList> {
     });
   }
 
-  void edit({required Section section, required Function onPressed}) {
+  void edit(
+      {required Section section, required Function onPressed, required BuildContext context}) {
     final textController = TextEditingController();
     textController.text = section.name;
 
@@ -115,7 +116,7 @@ class _SectionListState extends State<SectionList> {
     );
   }
 
-  void add({required Function onPressed}) {
+  void add({required Function onPressed, required BuildContext context}) {
     final textController = TextEditingController();
 
     showDialog(

@@ -9,6 +9,7 @@ import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_in
 import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
 import 'package:grocery_helper_app/data/repositories/grocery/grocery_repository.dart';
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
+import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
 import 'package:grocery_helper_app/presentation/screens/add_meal.dart';
 
 // import 'package:grocery_helper_app/data/models/grocery_list.dart';
@@ -21,11 +22,9 @@ import 'package:provider/provider.dart';
 // import 'presentation/screens/grocery_list.dart';
 
 void main() {
-  runApp(
-    // ChangeNotifierProvider(
-    //   create: (BuildContext context) => GroceryListModel(),
-    // child:
-    MultiBlocProvider(
+  runApp(ChangeNotifierProvider(
+    create: (context) => SectionNotifier(context: context, sectionRepository: SectionRepository()),
+    child: MultiBlocProvider(
         providers: [
           BlocProvider<MealCardBloc>(
             create: (context) => MealCardBloc(MealRepository()),
@@ -41,7 +40,9 @@ void main() {
           BlocProvider<AddIngredientCubit>(create: (context) => AddIngredientCubit()),
           BlocProvider<GroceryBloc>(
             create: (context) => GroceryBloc(
+              sectionNotifier: context.read<SectionNotifier>(),
               groceryItemCubit: context.read<GroceryItemCubit>(),
+              sectionRepository: SectionRepository(),
               groceryRepository: GroceryRepository(),
               mealBloc: context.read<MealBloc>(),
               addIngredientCubit: context.read<AddIngredientCubit>(),
@@ -54,7 +55,7 @@ void main() {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ))),
-  );
+  ));
   // );
 }
 

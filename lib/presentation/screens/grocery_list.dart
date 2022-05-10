@@ -4,7 +4,6 @@ import 'package:grocery_helper_app/business_logic/blocs/grocery_bloc/grocery_blo
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/presentation/widgets/add_ingredient_modal.dart';
 import 'package:grocery_helper_app/presentation/widgets/celebrate.dart';
-import 'package:grocery_helper_app/presentation/widgets/edit_indredient_modal.dart';
 
 import 'package:grocery_helper_app/presentation/widgets/grocery_list_item.dart';
 
@@ -20,6 +19,7 @@ class _GroceryListPageState extends State<GroceryListPage> {
   final textQtyController = TextEditingController();
   final textCategoryController = TextEditingController();
   final _listController = ScrollController(keepScrollOffset: true);
+  String nameEditing = "";
 
   @override
   void dispose() {
@@ -101,7 +101,10 @@ class _GroceryListPageState extends State<GroceryListPage> {
                     child: Text(category.keys.first,
                         style: TextStyle(fontSize: 15, color: Colors.grey[500])),
                   )),
-                  ...category.values.first.map((item) => GroceryListItem(item: item))
+                  ...category.values.first.map((item) => GroceryListItem(
+                      item: item,
+                      isEditing: nameEditing == item.name ? true : false,
+                      onEdit: isEditing))
                 ])
             .expand((element) => element)
             .toList()
@@ -115,5 +118,11 @@ class _GroceryListPageState extends State<GroceryListPage> {
 
   Widget buildWaitingGroceries() {
     return Container(alignment: Alignment.center, child: const Text("Add some groceries first!"));
+  }
+
+  void isEditing(String name) {
+    setState(() {
+      nameEditing = (nameEditing == name) ? "" : name;
+    });
   }
 }
