@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/grocery_bloc/grocery_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_card_bloc/meal_card_bloc.dart';
@@ -12,15 +11,10 @@ import 'package:grocery_helper_app/data/repositories/grocery/grocery_repository.
 import 'package:grocery_helper_app/data/repositories/meal/meal_repository.dart';
 import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
 import 'package:grocery_helper_app/presentation/screens/add_meal.dart';
-
-// import 'package:grocery_helper_app/data/models/grocery_list.dart';
 import 'package:grocery_helper_app/presentation/screens/choose_meals.dart';
 import 'package:grocery_helper_app/presentation/screens/grocery_list.dart';
 import 'package:grocery_helper_app/presentation/screens/settings.dart';
 import 'package:provider/provider.dart';
-
-// import 'presentation/screens/add_meal.dart';
-// import 'presentation/screens/grocery_list.dart';
 
 void main() {
   runApp(
@@ -141,7 +135,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => const SettingsPage()));
             },
-            child: Icon(
+            child: const Icon(
               Icons.settings,
               color: Colors.white,
             ),
@@ -156,7 +150,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               _tabController.index = 1;
             },
           ),
-          GroceryListPage()
+          const GroceryListPage()
         ],
       ),
     );

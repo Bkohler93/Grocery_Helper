@@ -22,7 +22,6 @@ class MealRepository implements IMealRepository {
 
   @override
   Future<Meal?> getMeal({int? id, String? name}) {
-    // TODO: implement getMeal
     throw UnimplementedError();
   }
 
@@ -35,7 +34,6 @@ class MealRepository implements IMealRepository {
 
   @override
   Future<void> update(String name, List<GroceryItem> items) {
-    // TODO: implement update
     throw UnimplementedError();
   }
 

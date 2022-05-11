@@ -1,4 +1,3 @@
-import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/section.dart';
 import 'package:grocery_helper_app/data/providers/section_provider.dart';
 

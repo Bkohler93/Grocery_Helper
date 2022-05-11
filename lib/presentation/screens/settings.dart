@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
-import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
-import 'package:grocery_helper_app/data/models/meal.dart';
-import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
 import 'package:grocery_helper_app/presentation/screens/settings/section_editor.dart';
 import 'package:grocery_helper_app/presentation/screens/settings/theme_editor.dart';
 import 'package:grocery_helper_app/presentation/widgets/settings_choice.dart';
@@ -14,7 +11,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SettingsMenu();
+    return const SettingsMenu();
   }
 }
 

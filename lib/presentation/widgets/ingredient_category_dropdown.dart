@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:grocery_helper_app/business_logic/blocs/add_meal_bloc/add_meal_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_ingredient_cubit.dart';
 import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/section.dart';
 import 'package:grocery_helper_app/data/providers/theme_provider.dart';
-import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
 import 'package:provider/provider.dart';
 
 class CategoryDropdownWidget extends StatelessWidget {
-  CategoryDropdownWidget({Key? key, this.item}) : super(key: key);
+  const CategoryDropdownWidget({Key? key, this.item}) : super(key: key);
   final GroceryItem? item;
   @override
   Widget build(BuildContext context) {
@@ -19,8 +17,8 @@ class CategoryDropdownWidget extends StatelessWidget {
 }
 
 class CategoryDropdown extends StatefulWidget {
-  CategoryDropdown({Key? key, this.item}) : super(key: key);
-  GroceryItem? item;
+  const CategoryDropdown({Key? key, this.item}) : super(key: key);
+  final GroceryItem? item;
   @override
   State<CategoryDropdown> createState() => _CategoryDropdownState();
 }

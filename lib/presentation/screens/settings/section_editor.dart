@@ -1,21 +1,12 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:grocery_helper_app/business_logic/blocs/meal_bloc/meal_bloc.dart';
-import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
-import 'package:grocery_helper_app/data/models/meal.dart';
-import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
 import 'package:grocery_helper_app/presentation/widgets/section_list.dart';
-import 'package:grocery_helper_app/presentation/widgets/settings_choice.dart';
-import 'package:provider/provider.dart';
 
 class SectionEditorPage extends StatelessWidget {
   const SectionEditorPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SectionEditor();
+    return const SectionEditor();
   }
 }
 
@@ -38,8 +29,8 @@ class _SectionEditorState extends State<SectionEditor> {
             }),
         title: const Text('Section Editor'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 30.0),
+      body: const Padding(
+        padding: EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 30.0),
         child: SectionList(),
       ),
     );
@@ -69,7 +60,7 @@ class _SectionEditorState extends State<SectionEditor> {
                       onPressed(textController.text);
                       Navigator.of(context).pop();
                     },
-                    child: Icon(Icons.save_outlined),
+                    child: const Icon(Icons.save_outlined),
                   ),
                 )
               ],

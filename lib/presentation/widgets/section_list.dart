@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
 import 'package:grocery_helper_app/data/models/section.dart';
@@ -18,7 +16,7 @@ class SectionList extends StatelessWidget {
               for (int index = 0; index < sections.sections.length; index += 1)
                 ListTile(
                   key: Key('$index'),
-                  title: Text('${sections.sections[index].name}'),
+                  title: Text(sections.sections[index].name),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -105,7 +103,7 @@ class SectionList extends StatelessWidget {
                       onPressed(textController.text, section);
                       Navigator.of(context).pop();
                     },
-                    child: Icon(Icons.save_outlined),
+                    child: const Icon(Icons.save_outlined),
                   ),
                 )
               ],
@@ -140,7 +138,7 @@ class SectionList extends StatelessWidget {
                       onPressed(textController.text);
                       Navigator.of(context).pop();
                     },
-                    child: Icon(Icons.save_outlined),
+                    child: const Icon(Icons.save_outlined),
                   ),
                 )
               ],

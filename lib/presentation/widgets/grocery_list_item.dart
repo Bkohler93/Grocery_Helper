@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:grocery_helper_app/business_logic/blocs/grocery_bloc/grocery_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/grocery_item_cubit/grocery_item_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
-import 'package:grocery_helper_app/presentation/widgets/add_ingredient_modal.dart';
 import 'package:grocery_helper_app/presentation/widgets/edit_indredient_modal.dart';
 import 'package:provider/provider.dart';
 

@@ -1,5 +1,4 @@
 import 'package:grocery_helper_app/data/models/section.dart';
-import 'package:grocery_helper_app/data/providers/grocery_provider.dart';
 import 'package:grocery_helper_app/data/providers/sqlite_mixin.dart';
 
 class SectionProvider with SQLite {

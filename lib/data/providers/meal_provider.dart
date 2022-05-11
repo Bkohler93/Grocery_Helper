@@ -21,7 +21,7 @@ class MealProvider with SQLite {
   static Future<void> deleteMeal(Meal meal) async {
     final db = await SQLite.db();
 
-    int num = await db.rawDelete("""
+    await db.rawDelete("""
       DELETE FROM meal_ingredients WHERE meal_ingredients.meal_id = ?  
     """, [meal.id]);
     await db.rawDelete("""

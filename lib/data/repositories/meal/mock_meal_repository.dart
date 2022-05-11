@@ -44,7 +44,6 @@ class MockMealRepository implements IMealRepository {
 
   @override
   Future<Meal?> getMeal({int? id, String? name}) {
-    // TODO: implement getMeal
     throw UnimplementedError();
   }
 
@@ -72,7 +71,6 @@ class MockMealRepository implements IMealRepository {
 
   @override
   Future<void> update(String name, List<GroceryItem> items) {
-    // TODO: implement update
     throw UnimplementedError();
   }
 
@@ -89,25 +87,21 @@ class MockMealRepository implements IMealRepository {
 
   @override
   Future<Meal> checkMeal(Meal meal) {
-    // TODO: implement checkMeal
     throw UnimplementedError();
   }
 
   @override
   Future<bool> mealExists(String name, int id) {
-    // TODO: implement mealExists
     throw UnimplementedError();
   }
 
   @override
   Future<List<GroceryItem>> getMealIngredients({required String mealName}) {
-    // TODO: implement getMealIngredients
     throw UnimplementedError();
   }
 
   @override
   Future<void> updateMeal(int mealId, String mealName, List<GroceryItem> items) {
-    // TODO: implement updateMeal
     throw UnimplementedError();
   }
 }

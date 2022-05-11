@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_helper_app/presentation/screens/settings/section_editor.dart';
 
 class SettingsChoice extends StatelessWidget {
   const SettingsChoice({
@@ -16,7 +15,7 @@ class SettingsChoice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Container(
+      SizedBox(
         height: 60.0,
         width: MediaQuery.of(context).size.width,
         child: GestureDetector(
@@ -30,10 +29,10 @@ class SettingsChoice extends StatelessWidget {
                 children: [
                   Icon(iconData),
                   Padding(
-                    padding: EdgeInsets.only(left: 12.0),
+                    padding: const EdgeInsets.only(left: 12.0),
                     child: Text(
                       name,
-                      style: TextStyle(fontSize: 16.0),
+                      style: const TextStyle(fontSize: 16.0),
                     ),
                   ),
                 ],

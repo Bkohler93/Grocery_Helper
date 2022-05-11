@@ -1,8 +1,6 @@
 import 'package:fraction/fraction.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/providers/sqlite_mixin.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart' as sql;
 
 class GroceryProvider with SQLite {
   //insert grocery list into database

@@ -97,12 +97,12 @@ class AddMealForm extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                  IngredientNameField(),
-                  IngredientQtyField(),
+                  const IngredientNameField(),
+                  const IngredientQtyField(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CategoryDropdownWidget(),
+                      const CategoryDropdownWidget(),
                       TextButton(
                           style: ButtonStyle(
                             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
@@ -204,11 +204,11 @@ class IngredientBadge extends StatelessWidget {
 }
 
 class IngredientNameField extends StatefulWidget {
-  IngredientNameField({
+  const IngredientNameField({
     Key? key,
     this.item,
   }) : super(key: key);
-  GroceryItem? item;
+  final GroceryItem? item;
 
   @override
   State<IngredientNameField> createState() => _IngredientNameFieldState();
@@ -220,7 +220,6 @@ class _IngredientNameFieldState extends State<IngredientNameField> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (widget.item != null) {
       _controller.text = widget.item!.name;
@@ -268,11 +267,11 @@ class _IngredientNameFieldState extends State<IngredientNameField> {
 }
 
 class IngredientQtyField extends StatefulWidget {
-  IngredientQtyField({
+  const IngredientQtyField({
     this.item,
     Key? key,
   }) : super(key: key);
-  GroceryItem? item;
+  final GroceryItem? item;
   @override
   State<IngredientQtyField> createState() => _IngredientQtyFieldState();
 }

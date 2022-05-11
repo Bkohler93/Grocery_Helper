@@ -64,12 +64,12 @@ class _NightToggleState extends State<NightToggle> {
 // * setDark
 // sets material app's theme mode to dark
 class NightToggleAnimation extends StatefulWidget {
-  NightToggleAnimation(
+  const NightToggleAnimation(
       {Key? key, required this.startAngle, required this.setLight, required this.setDark})
       : super(key: key);
-  double startAngle;
-  Function setLight;
-  Function setDark;
+  final double startAngle;
+  final Function setLight;
+  final Function setDark;
 
   @override
   State<NightToggleAnimation> createState() => _NightToggleAnimationState();
@@ -106,7 +106,7 @@ class _NightToggleAnimationState extends State<NightToggleAnimation>
 
     controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
     );
 
     Tween<double> _rotationTween = Tween(begin: widget.startAngle, end: widget.startAngle);
@@ -125,7 +125,7 @@ class _NightToggleAnimationState extends State<NightToggleAnimation>
     return Center(
       child: CustomPaint(
         painter: NightToggleAnimationPainter(angle: animation.value),
-        child: Container(
+        child: const SizedBox(
           width: 200,
           height: 200,
         ),
@@ -170,7 +170,7 @@ class NightToggleAnimationPainter extends CustomPainter {
       ..strokeWidth = 4.0;
 
     var sunBrush = Paint()
-      ..color = Color.fromARGB(255, 255, 235, 122)
+      ..color = const Color.fromARGB(255, 255, 235, 122)
       ..strokeWidth = 4.0;
 
     var horizonBrush = Paint()
@@ -183,9 +183,9 @@ class NightToggleAnimationPainter extends CustomPainter {
     if (angle < pi || angle > 2 * pi) {
       final arc1 = Path()
         ..moveTo(moonStartX, moonStartY)
-        ..arcToPoint(Offset(moonEndX, moonEndY), radius: Radius.circular(8.0))
+        ..arcToPoint(Offset(moonEndX, moonEndY), radius: const Radius.circular(8.0))
         ..arcToPoint(Offset(moonStartX, moonStartY),
-            radius: Radius.circular(20.0), clockwise: false);
+            radius: const Radius.circular(20.0), clockwise: false);
 
       canvas.drawPath(arc1, moonBrush);
     }

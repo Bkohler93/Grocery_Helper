@@ -65,7 +65,7 @@ class EditMealForm extends StatelessWidget {
                   icon: const Icon(Icons.save),
                   onPressed: () {
                     if (state.status == EditMealStatus.valid) {
-                      context.read<EditMealBloc>().add(SaveMealEvent());
+                      context.read<EditMealBloc>().add(const SaveMealEvent());
                       Future.delayed(const Duration(milliseconds: 30), () {
                         context.read<MealBloc>().add(GetMealsEvent());
                         Future.delayed(const Duration(milliseconds: 30), () {
@@ -106,8 +106,8 @@ class EditMealForm extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                  IngredientNameField(),
-                  IngredientQtyField(),
+                  const IngredientNameField(),
+                  const IngredientQtyField(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

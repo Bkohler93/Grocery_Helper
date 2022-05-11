@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
 import 'package:grocery_helper_app/data/providers/theme_provider.dart';
-import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
 import 'package:grocery_helper_app/presentation/widgets/night_toggle.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +8,7 @@ class ThemeEditorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ThemeEditor();
+    return const ThemeEditor();
   }
 }
 

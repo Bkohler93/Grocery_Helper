@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:grocery_helper_app/business_logic/blocs/grocery_bloc/grocery_bloc.dart';
 import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_ingredient_cubit.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/presentation/screens/add_meal.dart';
 import 'package:grocery_helper_app/presentation/widgets/ingredient_category_dropdown.dart';
 
 class EditIngredientModal extends StatefulWidget {
-  EditIngredientModal({Key? key, required this.item}) : super(key: key);
-  GroceryItem item;
+  const EditIngredientModal({Key? key, required this.item}) : super(key: key);
+  final GroceryItem item;
   @override
   _EditIngredientModalState createState() => _EditIngredientModalState();
 }
@@ -20,7 +19,6 @@ class _EditIngredientModalState extends State<EditIngredientModal> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     ingredientNameController.text = widget.item.name;
     ingredientQtyController.text = widget.item.qty;

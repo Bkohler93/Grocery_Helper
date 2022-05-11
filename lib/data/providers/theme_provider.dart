@@ -22,7 +22,7 @@ class ThemeProvider extends ChangeNotifier {
 
 class MyThemes {
   static final darkTheme = ThemeData(
-    scaffoldBackgroundColor: Color.fromARGB(255, 48, 48, 48),
+    scaffoldBackgroundColor: const Color.fromARGB(255, 48, 48, 48),
     colorScheme: ColorScheme.dark(
       primary: Colors.green.shade400,
       secondary: Colors.green,

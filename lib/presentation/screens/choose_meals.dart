@@ -36,7 +36,7 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
               } else if (state is MealLoaded) {
                 return buildListWithData(state.meals, context);
               } else {
-                return Text("Something went wrong");
+                return const Text("Something went wrong");
               }
             }),
         Positioned(

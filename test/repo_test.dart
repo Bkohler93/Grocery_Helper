@@ -1,10 +1,3 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grocery_helper_app/data/models/section.dart';
@@ -86,7 +79,7 @@ void main() {
       Section ethnicSection = sections.firstWhere((section) => section.name == 'ethnic');
       await sectionRepository.deleteSection(ethnicSection);
     } catch (err) {
-      print("=== Error finding ethnic section in database.");
+      expect(err, err);
     }
 
     expect(newLength, firstLength + 1);
@@ -108,7 +101,7 @@ void main() {
       Section testSection = sections.firstWhere((section) => section.name == 'testerr');
       await sectionRepository.deleteSection(testSection);
     } catch (err) {
-      print("=== Error finding test section in database.");
+      expect(err, err);
     }
 
     expect(foundTesterr, true);
