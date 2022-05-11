@@ -86,14 +86,12 @@ class _NightToggleAnimationState extends State<NightToggleAnimation>
     controller.reset();
 
     Tween<double> _rotationTween = Tween(begin: widget.startAngle, end: widget.startAngle + pi);
-
     animation = _rotationTween.animate(controller)
       ..addListener(() {
-        if (animation.value.toStringAsFixed(3) == pi.toStringAsFixed(3)) {
-          widget.setLight();
-        }
-        if (animation.value.toStringAsFixed(3) == (2 * pi).toStringAsFixed(3)) {
+        if (animation.value > 2 * pi) {
           widget.setDark();
+        } else if (animation.value > pi && animation.value != (3 * pi / 2)) {
+          widget.setLight();
         }
 
         setState(() {});
@@ -119,6 +117,7 @@ class _NightToggleAnimationState extends State<NightToggleAnimation>
       });
 
     controller.forward();
+    controller.reset();
   }
 
   @override

@@ -115,7 +115,8 @@ class EditMealForm extends StatelessWidget {
                       TextButton(
                           style: ButtonStyle(
                             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Theme.of(context).colorScheme.primary),
                           ),
                           onPressed: () {
                             context.read<AddIngredientCubit>().addIngredient();
@@ -161,7 +162,7 @@ class IngredientBadge extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.fromLTRB(3.0, 3.0, 3.0, 3.0),
           decoration: BoxDecoration(
-            color: Colors.blue[100],
+            color: Theme.of(context).colorScheme.secondaryContainer,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Padding(
@@ -171,7 +172,7 @@ class IngredientBadge extends StatelessWidget {
                 TextSpan(
                   text: groceryItem.name,
                   style: const TextStyle(
-                    color: Colors.black54,
+                    color: Colors.black,
                     fontSize: 12,
                   ),
                 ),
@@ -181,7 +182,7 @@ class IngredientBadge extends StatelessWidget {
                 TextSpan(
                   text: "${groceryItem.qty} ${groceryItem.qtyUnit}",
                   style: const TextStyle(
-                    color: Colors.black54,
+                    color: Colors.black,
                     fontSize: 12,
                   ),
                 ),
@@ -191,7 +192,7 @@ class IngredientBadge extends StatelessWidget {
                 const TextSpan(
                   text: "x",
                   style: TextStyle(
-                    color: Colors.black54,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
@@ -240,6 +241,8 @@ class _IngredientNameFieldState extends State<IngredientNameField> {
               maxLength: 25,
               decoration: InputDecoration(
                 border: InputBorder.none,
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary)),
                 errorText: state.nameErrorText.isEmpty ? null : state.nameErrorText,
                 hintText: 'Name',
                 counterText: "",
@@ -282,6 +285,8 @@ class _IngredientQtyFieldState extends State<IngredientQtyField> {
               },
               decoration: InputDecoration(
                 border: InputBorder.none,
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary)),
                 hintText: 'Quantity',
                 errorText: state.quantityErrorText == '' ? null : state.quantityErrorText,
               ));

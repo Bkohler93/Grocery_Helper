@@ -39,7 +39,8 @@ class _EditIngredientModalState extends State<EditIngredientModal> {
               TextButton(
                   style: ButtonStyle(
                     foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Theme.of(context).colorScheme.primary),
                   ),
                   onPressed: () {
                     context.read<AddIngredientCubit>().editIngredient(widget.item);

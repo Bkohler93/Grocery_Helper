@@ -106,7 +106,8 @@ class AddMealForm extends StatelessWidget {
                       TextButton(
                           style: ButtonStyle(
                             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Theme.of(context).colorScheme.secondary),
                           ),
                           onPressed: () {
                             context.read<AddIngredientCubit>().addIngredient();
@@ -252,6 +253,8 @@ class _IngredientNameFieldState extends State<IngredientNameField> {
               },
               maxLength: 25,
               decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary)),
                 border: InputBorder.none,
                 errorText: state.nameErrorText.isEmpty ? null : state.nameErrorText,
                 hintText: 'Name',
@@ -306,6 +309,8 @@ class _IngredientQtyFieldState extends State<IngredientQtyField> {
                 context.read<AddIngredientCubit>().editIngredientQty(text);
               },
               decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary)),
                 border: InputBorder.none,
                 hintText: 'Quantity',
                 errorText: state.quantityErrorText == '' ? null : state.quantityErrorText,

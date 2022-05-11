@@ -35,7 +35,7 @@ class MealCard extends StatelessWidget {
                 height: 18.0,
                 width: 18.0,
                 decoration: BoxDecoration(
-                  color: meal.checked ? Colors.blue : null,
+                  color: meal.checked ? Theme.of(context).colorScheme.primary : null,
                   shape: BoxShape.circle,
                 ),
               ),

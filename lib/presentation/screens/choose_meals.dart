@@ -58,14 +58,14 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
   }
 
   Widget buildInitialInput() {
-    return const Center(
-      child: CircularProgressIndicator(color: Colors.green),
+    return Center(
+      child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
     );
   }
 
   Widget buildLoading() {
-    return const Center(
-      child: CircularProgressIndicator(color: Colors.blue),
+    return Center(
+      child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
     );
   }
 

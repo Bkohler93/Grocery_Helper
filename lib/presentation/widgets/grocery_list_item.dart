@@ -38,6 +38,7 @@ class GroceryListItem extends StatelessWidget {
               children: [
                 Checkbox(
                     value: item.checkedOff,
+                    activeColor: Theme.of(context).colorScheme.primary,
                     splashRadius: 0.0,
                     onChanged: (value) {
                       context.read<GroceryItemCubit>().checkItem(item);
@@ -90,7 +91,6 @@ class GroceryListItem extends StatelessWidget {
                 Container(
                   child: Text(
                     item.qty + ' ' + item.qtyUnit,
-                    style: const TextStyle(color: Colors.black54),
                   ),
                   width: 50.0,
                   alignment: Alignment.centerRight,

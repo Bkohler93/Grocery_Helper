@@ -5,6 +5,7 @@ import 'package:grocery_helper_app/business_logic/cubits/ingredient_cubit/add_in
 import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
 import 'package:grocery_helper_app/data/models/grocery_item.dart';
 import 'package:grocery_helper_app/data/models/section.dart';
+import 'package:grocery_helper_app/data/providers/theme_provider.dart';
 import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -59,7 +60,11 @@ class _CategoryDropdownState extends State<CategoryDropdown> {
             hint: const Text("Section"),
             iconSize: 35,
             elevation: 8,
-            style: TextStyle(color: Colors.grey.shade800, fontSize: 16),
+            style: TextStyle(
+                color: context.read<ThemeProvider>().isDarkMode
+                    ? Colors.white70
+                    : Colors.grey.shade800,
+                fontSize: 16),
             underline: Container(
               height: 0,
             ),

@@ -103,6 +103,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       appBar: AppBar(
         bottom: TabBar(
           controller: _tabController,
+          indicatorColor: Theme.of(context).colorScheme.primary,
           tabs: const <Widget>[
             Tab(icon: Icon(Icons.restaurant_menu)),
             Tab(
@@ -132,11 +133,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 )),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                primary: context.read<ThemeProvider>().isDarkMode
+                    ? Theme.of(context).colorScheme.background
+                    : Theme.of(context).colorScheme.primary),
             onPressed: () {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => const SettingsPage()));
             },
-            child: Icon(Icons.settings),
+            child: Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
           )
         ],
       ),
