@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_helper_app/business_logic/notifiers/section_notifier.dart';
+import 'package:grocery_helper_app/data/providers/theme_provider.dart';
 import 'package:grocery_helper_app/data/repositories/section/section_repository.dart';
+import 'package:grocery_helper_app/presentation/widgets/night_toggle.dart';
 import 'package:provider/provider.dart';
 
 class ThemeEditorPage extends StatelessWidget {
@@ -33,12 +35,12 @@ class _ThemeEditorState extends State<ThemeEditor> {
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 30.0),
-        child: themePicker(),
+        child: NightToggle(setDark: () {
+          context.read<ThemeProvider>().setDark();
+        }, setLight: () {
+          context.read<ThemeProvider>().setLight();
+        }),
       ),
     );
-  }
-
-  Widget themePicker() {
-    return Text("Theme Picker goes here!");
   }
 }

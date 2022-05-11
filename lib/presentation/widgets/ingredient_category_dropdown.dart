@@ -29,7 +29,6 @@ class _CategoryDropdownState extends State<CategoryDropdown> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (widget.item != null) {
       dropdownValue = widget.item?.category;
