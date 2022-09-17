@@ -19,6 +19,12 @@ class _ChooseMealsPageState extends State<ChooseMealsPage> {
   String mealEditing = "";
 
   @override
+  void initState() {
+    super.initState();
+    context.read<MealBloc>().add(GetMealsEvent());
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
 

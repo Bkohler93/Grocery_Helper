@@ -190,6 +190,7 @@ class NightToggleAnimationPainter extends CustomPainter {
       canvas.drawPath(arc1, moonBrush);
     }
 
+    //draw sun
     if (angle < 2 * pi && angle > pi) {
       canvas.drawCircle(sunCenter, sunRadius, sunBrush);
 

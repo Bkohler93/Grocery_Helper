@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp(
+    //place providers at top of widget tree, allowing all widgets down the tree to access provider methods/data
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
       child: ChangeNotifierProvider(
@@ -51,7 +52,7 @@ void main() {
           child: Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) => MaterialApp(
               home: const MyApp(),
-              title: "Grocery Helper",
+              title: "Purple Basket",
               themeMode: context.read<ThemeProvider>().themeMode,
               theme: MyThemes.lightTheme,
               darkTheme: MyThemes.darkTheme,
@@ -105,7 +106,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             )
           ],
         ),
-        title: const Text('Grocery Helper'),
+        title: const Text('Purple Basket'),
         actions: <Widget>[
           ClipRRect(
             borderRadius: BorderRadius.circular(4),

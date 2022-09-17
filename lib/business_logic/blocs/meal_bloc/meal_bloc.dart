@@ -51,6 +51,15 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     }
   }
 
+  // Future<void> getMeals(emit, event) async {
+  //   try {
+  //     final meals = await _mealRepository.getMeals();
+  //     add()
+  //   } catch (error) {
+  //     print(error);
+  //   }
+  // }
+
   Future<void> _deleteMeal(emit, event) async {
     emit(const MealLoading());
     try {

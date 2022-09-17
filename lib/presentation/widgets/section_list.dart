@@ -32,7 +32,7 @@ class SectionList extends StatelessWidget {
                         },
                         icon: const Icon(
                           Icons.edit,
-                          color: Colors.black54,
+                          color: Colors.grey,
                         ),
                       ),
                       IconButton(
@@ -41,7 +41,7 @@ class SectionList extends StatelessWidget {
                         },
                         icon: const Icon(
                           Icons.delete,
-                          color: Colors.black54,
+                          color: Colors.grey,
                         ),
                       ),
                     ],

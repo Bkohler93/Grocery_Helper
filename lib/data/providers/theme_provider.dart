@@ -33,10 +33,10 @@ class MyThemes {
   static final lightTheme = ThemeData(
     scaffoldBackgroundColor: Colors.grey.shade50,
     colorScheme: ColorScheme.light(
-      primary: Colors.green,
-      secondary: Colors.green,
-      secondaryContainer: Colors.green.shade200,
-      tertiaryContainer: Colors.green.shade100,
+      primary: Colors.purple,
+      secondary: Colors.purple,
+      secondaryContainer: Colors.purple.shade200,
+      tertiaryContainer: Colors.purple.shade100,
     ),
   );
 }

@@ -49,13 +49,11 @@ class EditMealForm extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () {
-                context.read<MealBloc>().add(GetMealsEvent());
-                Future.delayed(const Duration(milliseconds: 30), () {
-                  Navigator.pop(context);
-                });
-              }),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
           title: const Text('Edit Meal'),
           actions: [
             Padding(
@@ -66,9 +64,9 @@ class EditMealForm extends StatelessWidget {
                   onPressed: () {
                     if (state.status == EditMealStatus.valid) {
                       context.read<EditMealBloc>().add(const SaveMealEvent());
-                      Future.delayed(const Duration(milliseconds: 30), () {
+                      Future.delayed(Duration(milliseconds: 50)).then((value) {
                         context.read<MealBloc>().add(GetMealsEvent());
-                        Future.delayed(const Duration(milliseconds: 30), () {
+                        Future.delayed(Duration(milliseconds: 50)).then((value) {
                           Navigator.pop(context);
                         });
                       });
@@ -162,7 +160,7 @@ class IngredientBadge extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.fromLTRB(3.0, 3.0, 3.0, 3.0),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondaryContainer,
+            color: Theme.of(context).colorScheme.tertiaryContainer,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Padding(
